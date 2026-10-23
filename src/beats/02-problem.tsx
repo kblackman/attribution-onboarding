@@ -15,7 +15,7 @@ const beat: Beat = {
       kicker={
         <>
           <span>Everyone knew it was a problem. </span>
-          <span><em>Nobody had put it on the roadmap.</em></span>
+          <span><em>Nobody prioritized fixing it.</em></span>
         </>
       }
     />
