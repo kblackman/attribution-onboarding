@@ -1,4 +1,6 @@
 interface ControlsProps {
+  /** Fades the bar out (deck behavior on the hero). */
+  hidden?: boolean
   beat: number
   beatCount: number
   progress: number
@@ -15,7 +17,7 @@ const Arrow = ({ flip }: { flip?: boolean }) => (
 )
 
 /** Deck chrome: 1px progress line on top, beat count and Back / Next pills on the bottom. */
-export function Controls({ beat, beatCount, progress, canPrev, canNext, onPrev, onNext }: ControlsProps) {
+export function Controls({ hidden = false, beat, beatCount, progress, canPrev, canNext, onPrev, onNext }: ControlsProps) {
   return (
     <>
       <div className="fixed left-0 top-0 z-[60] h-px w-full bg-white/[0.08]" aria-hidden="true">
@@ -26,7 +28,10 @@ export function Controls({ beat, beatCount, progress, canPrev, canNext, onPrev, 
       </div>
       <nav
         aria-label="Presentation"
-        className="fixed inset-x-0 bottom-[max(10px,calc(6.5vh-30px))] z-[70] flex items-center justify-between px-[calc(var(--gutter)+4px)] max-[720px]:bottom-3.5 max-[720px]:px-4"
+        aria-hidden={hidden || undefined}
+        inert={hidden}
+        style={{ opacity: hidden ? 0 : 1 }}
+        className="transition-opacity duration-[400ms] ease-out motion-reduce:transition-none fixed inset-x-0 bottom-[max(10px,calc(6.5vh-30px))] z-[70] flex items-center justify-between px-[calc(var(--gutter)+4px)] max-[720px]:bottom-3.5 max-[720px]:px-4"
       >
         <p className="m-0 text-ui tabular-nums tracking-[0.06em] text-fg-soft">
           Beat {beat} of {beatCount}

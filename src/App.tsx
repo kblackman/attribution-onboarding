@@ -5,9 +5,9 @@ import { Card, type CardStatus } from './components/Card'
 import { VisualFrame, type VisualStatus } from './components/VisualFrame'
 import { Overlay } from './components/Overlay'
 import { Controls } from './components/Controls'
-import { StartHint } from './components/StartHint'
 import { DUR } from './engine/motion'
 import { usePrefersReducedMotion } from './engine/reducedMotion'
+import { PresentationContext } from './engine/presentation'
 
 /*
   Performance: only beats within WINDOW of the current beat are mounted at all. A beat further back
@@ -22,7 +22,6 @@ export function App() {
   const { steps, index, step, direction } = engine
   const reduced = usePrefersReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
-  const [started, setStarted] = useState(false)
   const [revealed, setRevealed] = useState<Set<number>>(() => new Set([0]))
 
   // card content reveals once per beat, the first time its card is current
@@ -31,7 +30,6 @@ export function App() {
   }, [step, revealed])
 
   const begin = useCallback(() => {
-    setStarted(true)
     // inside a Framer embed, a click has to hand the iframe keyboard focus
     window.focus()
     rootRef.current?.focus({ preventScroll: true })
@@ -46,7 +44,6 @@ export function App() {
       const back = k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp'
       if (forward || back || k === 'Home' || k === 'End') {
         e.preventDefault()
-        setStarted(true)
         if (forward) engine.next()
         else if (back) engine.prev()
         else engine.go(k === 'Home' ? 0 : steps.length - 1)
@@ -66,7 +63,6 @@ export function App() {
     const dx = e.changedTouches[0].clientX - t.x
     const dy = e.changedTouches[0].clientY - t.y
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-      setStarted(true)
       if (dx < 0) engine.next()
       else engine.prev()
     }
@@ -79,6 +75,9 @@ export function App() {
   const near = (i: number) => i >= 0 && Math.abs(i - index) <= 1
 
   const cb = step.beat
+  // as in the decks, the hero carries its own Begin control, so the bar stays out of the way until it's left
+  const onHero = beats[cb].variant === 'hero' && step.kind === 'card'
+  const presentation = useMemo(() => ({ next: engine.next }), [engine.next])
   const announce = `Beat ${cb + 1} of ${beats.length}, ${beats[cb].title}. ${
     step.kind === 'card' ? '' : step.kind === 'visual' ? beats[cb].visual?.description ?? '' : 'Overlay.'
   }`
@@ -92,9 +91,13 @@ export function App() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
+      <PresentationContext.Provider value={presentation}>
       <main className="fixed inset-0 overflow-hidden">
         {beats.map((beat, b) => {
           if (Math.abs(b - cb) > WINDOW) return null
+
+          const lastSub = Math.max(1, beat.cardSteps ?? 1) - 1
+          const sub = b === cb && step.kind === 'card' ? step.sub : b > cb ? 0 : lastSub
 
           let cardStatus: CardStatus
           if (b > cb) cardStatus = 'below'
@@ -112,6 +115,8 @@ export function App() {
             <div key={beat.slug}>
               <Card
                 status={cardStatus}
+                variant={beat.variant}
+                sub={sub}
                 revealed={revealed.has(b)}
                 revealLead={b === 0 ? 0 : DUR.revealLead}
                 glow={beat.cardGlow}
@@ -142,10 +147,11 @@ export function App() {
           )
         })}
       </main>
+      </PresentationContext.Provider>
 
       <p className="sr-only" aria-live="polite">{announce}</p>
-      <StartHint show={!started} />
       <Controls
+        hidden={onHero}
         beat={cb + 1}
         beatCount={beats.length}
         progress={steps.length > 1 ? index / (steps.length - 1) : 1}

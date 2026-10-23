@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
+import { useVisualPlayback, type PlaybackMode } from '../engine/useVisualPlayback'
 import { PlaceholderBadge } from '../components/Placeholder'
 
 /*
@@ -28,29 +29,11 @@ const delayFor = (order: number) =>
 const LAST_ORDER = KPI_COUNT + 2
 export const TOTAL = delayFor(LAST_ORDER) + TIMING.resolve + TIMING.data * 0.6
 
-type Mode = 'empty' | 'play' | 'done'
+type Mode = PlaybackMode
 
-export function AttributionResolve({ active, startFinished, reducedMotion, onComplete }: VisualProps) {
-  const [mode, setMode] = useState<Mode>(startFinished ? 'done' : 'empty')
-  const completed = useRef(false)
-
-  useEffect(() => {
-    if (!active) {
-      // reset after the frame has faded out, so a replay starts from empty
-      const t = window.setTimeout(() => { setMode('empty'); completed.current = false }, 800)
-      return () => window.clearTimeout(t)
-    }
-    if (startFinished) {
-      setMode('done')
-      completed.current = true
-      return
-    }
-    if (completed.current) return
-    setMode('play')
-    const total = reducedMotion ? TIMING.reducedHold + TIMING.reducedFade : TOTAL
-    const t = window.setTimeout(() => { completed.current = true; onComplete() }, total * 1000)
-    return () => window.clearTimeout(t)
-  }, [active, startFinished, reducedMotion, onComplete])
+export function AttributionResolve(props: VisualProps) {
+  const { reducedMotion } = props
+  const mode = useVisualPlayback(props, reducedMotion ? TIMING.reducedHold + TIMING.reducedFade : TOTAL)
 
   const ctx: ResolveCtx = { mode, reduced: reducedMotion }
 

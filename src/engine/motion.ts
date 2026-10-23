@@ -11,6 +11,7 @@ export const DUR = {
   revealStep: 0.28, // deck data-delay step
   revealLead: 0.45, // deck: content starts 450ms after a card begins to land
   reduced: 0.3, // crossfade used for every transition under reduced motion
+  statementLead: 0.3, // statement text waits for the outgoing visual to clear
 } as const
 
 const deck = (duration: number, delay = 0): Transition => ({ duration, delay, ease: EASE_DECK })
@@ -35,6 +36,29 @@ export const cardVariantsReduced: Variants = {
   active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: fade },
   behind: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade },
   gone: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade },
+}
+
+/*
+  Statement states. With no container to carry it, a statement arrives as a fade and lets its
+  text do the rising (Reveal), then leaves with the same recede as a card.
+*/
+export const statementVariants: Variants = {
+  below: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: { duration: DUR.reduced, ease: 'easeOut' } },
+  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card) },
+  behind: { y: '-2.4vh', scale: 0.92, opacity: 0, filter: 'blur(1.6px)', transition: deck(DUR.card) },
+  gone: { y: '-2.4vh', scale: 0.92, opacity: 0, filter: 'blur(1.6px)', transition: deck(DUR.card) },
+}
+
+/*
+  Hero states, from the decks' title screen: it recedes into depth (translate3d(0,0,-320px)),
+  blurs 7px, and drops to 0.1 opacity. Brightness is omitted, as on cards.
+*/
+export const heroVariants: Variants = {
+  below: { z: 0, opacity: 0, filter: 'blur(0px)', transition: fade },
+  active: { z: 0, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card) },
+  behind: { z: -320, opacity: 0.1, filter: 'blur(7px)', transition: deck(DUR.card) },
+  // gone fades fully: with frameless statements after it, a 0.1 ghost would show through the text
+  gone: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card) },
 }
 
 /*

@@ -28,8 +28,18 @@ export interface Beat {
   /** Short name used in the progress label and screen reader announcements. */
   title: string
   card: ReactNode
+  /**
+   * card: the deck card. statement: no container, larger type set directly on the background, for emphasis beats.
+   * hero: the decks' title screen, full-bleed with a Begin row, receding into depth on exit. Use for the opening.
+   */
+  variant?: 'card' | 'statement' | 'hero'
   /** Adds a soft accent glow to the card, as on the deck's title and divider cards. */
   cardGlow?: boolean
+  /**
+   * Key presses the card takes before moving on (default 1). Content wrapped in <Reveal step={n}>
+   * appears on press n, e.g. a kicker line that lands after the body.
+   */
+  cardSteps?: number
   visual?: BeatVisual
   overlay?: BeatOverlay
 }
@@ -38,4 +48,6 @@ export type StepKind = 'card' | 'visual' | 'overlay'
 export interface Step {
   beat: number
   kind: StepKind
+  /** Position within the card's own steps (0 for visual and overlay). */
+  sub: number
 }

@@ -38,6 +38,52 @@ body {
 }
 .deck-card.has-glow { background: var(--card-glow), var(--card-gradient); }
 
+/* statement variant: the card's footprint and padding, no frame, so text lines up with card content */
+.deck-statement {
+  position: absolute;
+  top: 7vh;
+  left: var(--gutter);
+  right: var(--gutter);
+  height: 80vh;
+  height: 80dvh;
+  transform-origin: 50% 0%;
+  padding: clamp(32px, calc(var(--u) * 5), 118px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  will-change: transform, filter, opacity;
+}
+
+/* hero variant: the decks' title screen, full-bleed text on the background */
+.deck-hero {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  padding: 0 40px 0 clamp(32px, calc(var(--u) * 9), 200px);
+  transform-origin: 50% 40%;
+  will-change: transform, filter, opacity;
+}
+
+/* deck Begin pill on the hero */
+.begin {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px 30px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: 999px;
+  color: var(--color-accent);
+  font-size: clamp(14px, calc(var(--u) * 1.15), 21px);
+  transition: background 260ms ease, border-color 260ms ease, transform 260ms cubic-bezier(.22, .61, .36, 1);
+}
+.begin svg { display: block; width: 22px; height: 12px; flex: none; }
+.begin:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); border-color: var(--color-accent); transform: translateX(4px); }
+@media (hover: none) { .begin-hint { display: none; } }
+
 /* deck pill controls */
 .pill {
   all: unset;
@@ -67,9 +113,17 @@ body {
     padding: 26px 22px;
     overflow-y: auto;
   }
+  .deck-hero { padding: 0 24px; overflow-y: auto; }
+  .deck-statement {
+    top: 56px;
+    height: calc(100vh - 124px);
+    height: calc(100dvh - 124px);
+    padding: 26px 22px;
+    overflow-y: auto;
+  }
   .pill { padding: 12px 16px; gap: 8px; font-size: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pill, .pill:hover { transition: none; transform: none; }
+  .pill, .pill:hover, .begin, .begin:hover { transition: none; transform: none; }
 }
