@@ -11,7 +11,13 @@ const beat: Beat = {
     <Statement
       headline="The problem"
       body="Freshpaint's healthcare marketing analytics platform was powerful, but it didn't help customers reach the value they'd paid for. Setup flows were confusing and offered little to no guidance. Getting set up correctly meant reading dense documentation or booking a call with CS or an account manager."
-      kicker="Everyone knew it was a problem. Nobody had put it on the roadmap."
+      kickerStyle="spotlight"
+      kicker={
+        <>
+          <span>Everyone knew it was a problem. </span>
+          <span><em>Nobody had put it on the roadmap.</em></span>
+        </>
+      }
     />
   ),
   visual: {

@@ -116,6 +116,7 @@ export function App() {
               <Card
                 status={cardStatus}
                 variant={beat.variant}
+                align={beat.align}
                 sub={sub}
                 revealed={revealed.has(b)}
                 revealLead={b === 0 ? 0 : DUR.revealLead}

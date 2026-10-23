@@ -56,8 +56,8 @@ export const statementVariants: Variants = {
 export const heroVariants: Variants = {
   below: { z: 0, opacity: 0, filter: 'blur(0px)', transition: fade },
   active: { z: 0, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card) },
-  behind: { z: -320, opacity: 0.1, filter: 'blur(7px)', transition: deck(DUR.card) },
-  // gone fades fully: with frameless statements after it, a 0.1 ghost would show through the text
+  // fades fully (deck stops at 0.1): with no card frame covering it, a ghost would show through what follows
+  behind: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card) },
   gone: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card) },
 }
 

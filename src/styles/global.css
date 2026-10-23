@@ -65,6 +65,9 @@ body {
   will-change: transform, filter, opacity;
 }
 
+/* centered hero, after the case study's hero */
+.deck-hero.is-centered { padding: 0 var(--gutter); justify-items: center; text-align: center; }
+
 /* deck Begin pill on the hero */
 .begin {
   all: unset;
@@ -113,7 +116,7 @@ body {
     padding: 26px 22px;
     overflow-y: auto;
   }
-  .deck-hero { padding: 0 24px; overflow-y: auto; }
+  .deck-hero, .deck-hero.is-centered { padding: 0 24px; overflow-y: auto; }
   .deck-statement {
     top: 56px;
     height: calc(100vh - 124px);
@@ -127,3 +130,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .pill, .pill:hover, .begin, .begin:hover { transition: none; transform: none; }
 }
+
+/* spotlight kicker: each line on its own row, the emphasized line in accent */
+.spotlight > span { display: block; }
+.spotlight em { font-style: italic; font-weight: 600; color: var(--color-accent); }

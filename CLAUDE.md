@@ -19,8 +19,8 @@ A standalone, keyboard-driven case study presentation, embedded in Kyle's Framer
 A beat is up to three steps. Right arrow advances one step, left arrow reverses it.
 1. Card. Tells part of the story, in one of three variants (`Beat.variant`):
    - `card`: the deck card frame. On advance it recedes up and back, then fades (see Decisions).
-   - `statement`: no container, larger type set directly on the background, for problem statements and other emphasis beats. Content via `<Statement headline body kicker />`.
-   - `hero`: the decks' title screen (tiled-presentation), full-bleed, no logo (Framer's frame carries bkmn), with a Begin row. Recedes into depth on exit. Only for the opening.
+   - `statement`: no container, larger type set directly on the background, for problem statements and other emphasis beats. Content via `<Statement headline body kicker kickerStyle />`. `kickerStyle: 'spotlight'` steps the headline and body back and centers the kicker in Figtree italic between two short accent rules (an editorial pull statement); `<em>` marks the accent line.
+   - `hero`: the opening title screen, full-bleed, no logo (Framer's frame carries bkmn), with a Begin button and no hint text. `align: 'center'` centers it like the case study pages (Beat 1 uses this, at the larger `text-hero` size); default is the decks' left layout. Recedes into depth and fades fully on exit.
    A card can take extra key presses before moving on (`cardSteps`); content wrapped in `<Reveal step={n}>` lands on press n (e.g. a kicker).
 2. Full-screen visual (optional). A visual or animation takes over the whole screen, not bound by the card.
 3. Overlay (optional). After the visual finishes, a semi-transparent overlay fades in, blurs the visual, and text appears on top. Per beat: appears automatically when the visual completes (`trigger: 'auto'`) or waits for a key press (`trigger: 'key'`).
@@ -54,7 +54,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Respect prefers-reduced-motion: every transition and animation has a crossfade or static fallback, and the overlay still works. Preview it with `?reduced-motion` in the URL.
 
 ## Embedding and accessibility
-- It runs inside a Framer Embed (iframe), so it can't rely on the parent page. The hero's Begin row carries the hint "Click to begin, then use arrow keys" (hidden on touch screens), and any click gives the iframe keyboard focus. As in the decks, the bottom control bar stays hidden on the hero and appears once it's left.
+- It runs inside a Framer Embed (iframe), so it can't rely on the parent page. Kyle removed the on-screen instruction: the hero's Begin button starts it, and any click gives the iframe keyboard focus. As in the decks, the bottom control bar stays hidden on the hero and appears once it's left.
 - Navigation: arrow keys (plus PageUp/PageDown, Space, Home/End), visible Back/Next controls, and horizontal swipe on touch. Progress shows "Beat X of Y" plus a 1px progress line.
 - Responsive down to phone width.
 - WCAG 2.1 AA is the floor. Check contrast for overlay text on blurred visuals and for any accent color on dark backgrounds. Focus states, semantic headings, alt text for images, and a text description for each video or visual (`visual.description`).
@@ -81,23 +81,25 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-23: Performance windowing (one beat either side mounted), per Kyle.
 - 2026-10-23: Beat 1 is not a card. It's the decks' hero (Kyle: "using the word card was a bad move"), with no bkmn logo since the Framer frame has one. The hero fades fully on exit (deck stops at 0.1) so it doesn't ghost behind frameless statements.
 - 2026-10-23: Statement variant built as a reusable card type for emphasis beats, per Kyle. Its kicker uses in-card key presses (`cardSteps`).
+- 2026-10-23: Kyle's narrative plan: hero lightly describing what's being solved, then the problem statement, then the first story beat (how he came across the problem). No visual after the hero. The empty-to-populated Attribution resolve (`src/visuals/AttributionResolve.tsx`, timing approved) is kept unregistered; it shows the outcome, so it may fit a later results beat.
+- 2026-10-23: Hero centered and enlarged after the case study hero; no instruction text. Problem kicker restyled as a centered italic spotlight (research: editorial pull statements set in a true italic between hairline rules; Figtree has a true italic, so the one typeface rule holds).
 
 ## Beats
 | # | Slug | Steps | Visual | Status |
 |---|------|-------|--------|--------|
-| 1 | title | hero, visual | Attribution page resolving from empty-state widgets to populated, built from placeholder shapes (`src/visuals/AttributionResolve.tsx`, timing in `TIMING`). Real screens to come. | Done, timing approved 2026-10-23. Reworked as hero 2026-10-23 |
-| 2 | problem | statement (2 presses: body, then kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
+| 1 | title | hero (centered) | None (visual removed per Kyle) | Revised 2026-10-23, awaiting Kyle's review |
+| 2 | problem | statement (2 presses: body, then spotlight kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ### Beat 1 copy (verbatim)
 - Title: Diagnosing the problem, not the symptom
 - Body: How a few offhand moments on customer calls led to an onboarding framework at Freshpaint.
 - Skill tags: Root Cause Analysis, Codebase Investigation, Data-Informed Design, Rapid Prototyping, Cross-Functional Collaboration
 - Overlay: none
-- Treatment: the decks' hero. Left-aligned title at deck hero size with "not the symptom" in accent (echoing the case study's two-tone title), sub below, skill tags as quiet outlined pills, then the Begin row. No logo. Reveal order: title, sub, tags, Begin.
+- Treatment: centered hero like the case study page, at the larger `text-hero` size, "not the symptom" in accent (the case study's two-tone title), sub below, skill tags as centered outlined pills, then the Begin button. No logo, no instruction text. Reveal order: title, sub, tags, Begin.
 
 ### Beat 2 copy (verbatim)
 - Headline: The problem
 - Body: Freshpaint's healthcare marketing analytics platform was powerful, but it didn't help customers reach the value they'd paid for. Setup flows were confusing and offered little to no guidance. Getting set up correctly meant reading dense documentation or booking a call with CS or an account manager.
-- Kicker (next key press, accent): Everyone knew it was a problem. Nobody had put it on the roadmap.
+- Kicker (next key press, spotlight): Everyone knew it was a problem. Nobody had put it on the roadmap. (Kyle later quoted it as "Nobody prioritized fixing it." Confirm which wording is final.)
 - Visual labels: Documentation, CS call, Account manager
 - Overlay: none
