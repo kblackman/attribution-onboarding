@@ -34,6 +34,7 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - One step engine (`src/engine/useStepEngine.ts`) handles navigation, transitions, and state. Beats are data plus content, never custom navigation logic.
 - Each beat is one file in `src/beats/`, registered in order in `src/beats/index.ts`. Adding a beat = one file + one line. A beat with a bespoke animated visual may add its visual in `src/visuals/`.
 - Shared primitives in `src/components/`: Card (all three variants), Statement, BeginRow, VisualFrame (+ VideoVisual), Overlay, Placeholder, Reveal, and in-card visuals (DataTable, Comparison, StatBlock, PullQuote, TagRow, Caption, StatusTag).
+- `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes (21% opacity, 3D tilt, faded top and bottom edges). Swap its children for real imagery; drop `placeholderLabel` when it's real.
 - Coded visuals in `src/visuals/` use `useVisualPlayback` (play, finish, reset) and keep a `TIMING` block at the top for tuning.
 - Color and type values live as tokens (`src/styles/tokens.css`, motion in `src/engine/motion.ts`). Never hardcode them in a beat.
 - Assets go in `public/assets/<beat-slug>/`. Video: muted, playsinline, no controls, H.264 mp4 with a poster frame (use `VideoVisual`). Only the current and adjacent steps mount their visual. The overlay auto trigger keys off the video's end or the animation's completion (`onComplete`).
@@ -82,13 +83,18 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-23: Beat 1 is not a card. It's the decks' hero (Kyle: "using the word card was a bad move"), with no bkmn logo since the Framer frame has one. The hero fades fully on exit (deck stops at 0.1) so it doesn't ghost behind frameless statements.
 - 2026-10-23: Statement variant built as a reusable card type for emphasis beats, per Kyle. Its kicker uses in-card key presses (`cardSteps`).
 - 2026-10-23: Kyle's narrative plan: hero lightly describing what's being solved, then the problem statement, then the first story beat (how he came across the problem). No visual after the hero. The empty-to-populated Attribution resolve (`src/visuals/AttributionResolve.tsx`, timing approved) is kept unregistered; it shows the outcome, so it may fit a later results beat.
+- 2026-10-23: Hero gets a pushed-back visual like Kyle's case study heroes, supporting weight rather than the subject. Placeholder imagery is the populated Attribution page (`AttributionPage`, static), labeled as a placeholder.
 - 2026-10-23: Hero centered and enlarged after the case study hero; no instruction text. Problem kicker restyled as a centered italic spotlight (research: editorial pull statements set in a true italic between hairline rules; Figtree has a true italic, so the one typeface rule holds).
 
 ## Beats
 | # | Slug | Steps | Visual | Status |
 |---|------|-------|--------|--------|
-| 1 | title | hero (centered) | None (visual removed per Kyle) | Revised 2026-10-23, awaiting Kyle's review |
+| 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
 | 2 | problem | statement (2 presses: body, then spotlight kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
+
+## Up next and open notes
+- The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
+- Beat 3 is the first story beat and uses the deck card. It starts the story of how Kyle noticed this was a problem. Wait for his copy.
 
 ### Beat 1 copy (verbatim)
 - Title: Diagnosing the problem, not the symptom

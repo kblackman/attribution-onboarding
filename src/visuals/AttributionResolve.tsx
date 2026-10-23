@@ -35,14 +35,24 @@ export function AttributionResolve(props: VisualProps) {
   const { reducedMotion } = props
   const mode = useVisualPlayback(props, reducedMotion ? TIMING.reducedHold + TIMING.reducedFade : TOTAL)
 
-  const ctx: ResolveCtx = { mode, reduced: reducedMotion }
-
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
       <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
         <PlaceholderBadge>Placeholder widgets, real Attribution screens to come</PlaceholderBadge>
       </div>
-      <Screen>
+      <AttributionPage mode={mode} reduced={reducedMotion} />
+    </div>
+  )
+}
+
+/**
+ * The placeholder Attribution page on its own, at 16:10. mode 'done' renders it populated and static,
+ * e.g. as hero backdrop imagery. width defaults to fitting the full-screen visual frame.
+ */
+export function AttributionPage({ mode, reduced, width }: { mode: Mode; reduced: boolean; width?: string }) {
+  const ctx: ResolveCtx = { mode, reduced }
+  return (
+      <Screen width={width}>
         <div className="flex h-full flex-col">
           <TopBar ctx={ctx} />
           <div className="flex min-h-0 flex-1">
@@ -68,7 +78,6 @@ export function AttributionResolve(props: VisualProps) {
           </div>
         </div>
       </Screen>
-    </div>
   )
 }
 
@@ -87,12 +96,12 @@ function tr(ctx: ResolveCtx, order: number, extra = 0, duration = TIMING.resolve
 const isFilled = (ctx: ResolveCtx) => ctx.mode !== 'empty'
 
 /** The product screen at its final 16:10 ratio, sized to fit, with container units for everything inside. */
-function Screen({ children }: { children: ReactNode }) {
+function Screen({ children, width }: { children: ReactNode; width?: string }) {
   return (
     <div
       className="relative overflow-hidden rounded-[clamp(8px,1.2cqw,16px)] bg-surface text-ink shadow-[0_24px_60px_rgba(0,0,0,0.45),0_2px_8px_rgba(0,0,0,0.2)]"
       style={{
-        width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))',
+        width: width ?? 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))',
         aspectRatio: '16 / 10',
         containerType: 'size',
       }}
