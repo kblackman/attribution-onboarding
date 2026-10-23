@@ -78,7 +78,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 ## Beats
 | # | Slug | Steps | Visual | Status |
 |---|------|-------|--------|--------|
-| 1 | title | card, visual | Attribution page resolving from empty-state widgets to populated, built from placeholder shapes (`src/visuals/AttributionResolve.tsx`, timing in `TIMING`). Real screens to come. | Built, timing awaiting Kyle's review |
+| 1 | title | card, visual | Attribution page resolving from empty-state widgets to populated, built from placeholder shapes (`src/visuals/AttributionResolve.tsx`, timing in `TIMING`). Real screens to come. | Done, timing approved 2026-10-23 |
 
 ### Beat 1 copy (verbatim)
 - Title: Diagnosing the problem, not the symptom
