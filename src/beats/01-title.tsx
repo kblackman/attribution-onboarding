@@ -20,7 +20,7 @@ const beat: Beat = {
         <span className="block text-balance">Diagnosing the problem,</span>
         <span className="block text-balance text-accent">not the symptom</span>
       </Reveal>
-      <Reveal as="p" order={1} className="m-0 mt-[clamp(24px,calc(var(--u)*3),52px)] max-w-[44ch] text-lead text-fg-muted text-balance">
+      <Reveal as="p" order={1} className="m-0 mt-[clamp(24px,calc(var(--u)*3),52px)] max-w-[44ch] text-lead text-fg text-balance">
         How a few offhand moments on customer calls led to an onboarding framework at Freshpaint.
       </Reveal>
       <Reveal order={2} className="mt-[clamp(24px,calc(var(--u)*3),48px)]">

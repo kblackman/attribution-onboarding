@@ -34,7 +34,7 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - One step engine (`src/engine/useStepEngine.ts`) handles navigation, transitions, and state. Beats are data plus content, never custom navigation logic.
 - Each beat is one file in `src/beats/`, registered in order in `src/beats/index.ts`. Adding a beat = one file + one line. A beat with a bespoke animated visual may add its visual in `src/visuals/`.
 - Shared primitives in `src/components/`: Card (all three variants), Statement, BeginRow, VisualFrame (+ VideoVisual), Overlay, Placeholder, Reveal, and in-card visuals (DataTable, Comparison, StatBlock, PullQuote, TagRow, Caption, StatusTag).
-- `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes (21% opacity, 3D tilt, faded top and bottom edges). Swap its children for real imagery; drop `placeholderLabel` when it's real.
+- `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes: 21% opacity, centered behind the text, tilted straight back (top away, bottom nearest the viewer), bottom faded into the page. Swap its children for real imagery; drop `placeholderLabel` when it's real.
 - Coded visuals in `src/visuals/` use `useVisualPlayback` (play, finish, reset) and keep a `TIMING` block at the top for tuning.
 - Color and type values live as tokens (`src/styles/tokens.css`, motion in `src/engine/motion.ts`). Never hardcode them in a beat.
 - Assets go in `public/assets/<beat-slug>/`. Video: muted, playsinline, no controls, H.264 mp4 with a poster frame (use `VideoVisual`). Only the current and adjacent steps mount their visual. The overlay auto trigger keys off the video's end or the animation's completion (`onComplete`).
@@ -79,6 +79,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-23: Vite + React + Motion instead of the decks' build.py + vanilla JS. Deck CSS values and card transforms are ported exactly.
 - 2026-10-23: Card exit = the deck's recede transform plus a fade to 0, so the full-screen visual owns the screen. Card followed directly by another card keeps the deck behavior (stays dimmed behind). The deck's brightness filter is dropped to keep motion to transform, opacity, and blur.
 - 2026-10-23: Two case study colors added as tokens: shipped `#61BF50`, caption `#AAB0B6`. Both pass AA on the page and card.
+- 2026-10-24: Hero intro text is white (fg), per Kyle. Backdrop re-tilted straight back and centered, per Kyle (the earlier version leaned left).
 - 2026-10-24: Skill pills copied exactly from the case study's Role Pills, per Kyle: `#232324` fill (`pill`), 1px inside border at 15% white (`pill-border`), 7px radius, 4px 8px padding, 14px regular in accent, 10px gap. Fixed size, not viewport-scaled. Accent on the fill is about 10:1.
 - 2026-10-23: Performance windowing (one beat either side mounted), per Kyle.
 - 2026-10-23: Beat 1 is not a card. It's the decks' hero (Kyle: "using the word card was a bad move"), with no bkmn logo since the Framer frame has one. The hero fades fully on exit (deck stops at 0.1) so it doesn't ghost behind frameless statements.
