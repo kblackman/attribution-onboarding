@@ -112,7 +112,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 
 ### Beat 2 copy (verbatim)
 - Headline: The problem
-- Body: Freshpaint's healthcare marketing analytics platform was powerful, but it didn't help customers reach the value they'd paid for. Setup flows were confusing and offered little to no guidance. Getting set up correctly meant reading dense documentation or booking a call with CS or an account manager.
+- Body: Freshpaint's healthcare marketing analytics platform was powerful, but it had no self-serve system in place to help customers reach the value they'd paid for. Setup flows were confusing and offered little to no guidance. Getting set up correctly meant reading dense documentation or booking a call with CS or an account manager.
 - Kicker (next key press, spotlight): Everyone knew it was a problem. Nobody prioritized fixing it. (Updated by Kyle 2026-10-23.)
 - Visual labels: Documentation, CS call, Account manager
 - Overlay: none
