@@ -43,6 +43,13 @@
   --color-product-mint: #9EDFCB;
   --color-product-tint: #E4F5EF;
 
+  /*
+    ---- color: annotation (2026-10-24) ----
+    Kyle's markup on top of visuals (hand-drawn circles, and any arrows or highlights later).
+    Never a brand or product color. 3.5:1 on white, 4.3:1 on the page: clears 3:1 for graphics on both.
+  */
+  --color-annotation: #FF2E93;
+
   /* ---- color: case study (approved 2026-10-23) ---- */
   --color-shipped: #61BF50;
   --color-caption: #AAB0B6;

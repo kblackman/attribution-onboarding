@@ -34,7 +34,7 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - One step engine (`src/engine/useStepEngine.ts`) handles navigation, transitions, and state. Beats are data plus content, never custom navigation logic.
 - Each beat is one file in `src/beats/`, registered in order in `src/beats/index.ts`. Adding a beat = one file + one line. A beat with a bespoke animated visual may add its visual in `src/visuals/`.
 - Shared primitives in `src/components/`: Card (all three variants), Statement, BeginRow, VisualFrame (+ VideoVisual), Overlay, Placeholder, Reveal, and in-card visuals (DataTable, Comparison, StatBlock, PullQuote, TagRow, Caption, StatusTag).
-- `HandCircle` is a crude hand-drawn circle in accent that marks empty areas. It draws clockwise with a rotating-mask sweep (transform only), fades under reduced motion, and has a few shape variants so repeats don't look stamped. Beat 3 uses it; Beat 4's empty-state montage should reuse it.
+- `HandCircle` is a crude hand-drawn circle in the annotation color that marks empty areas. It draws clockwise with a rotating-mask sweep (transform only), fades under reduced motion, and has a few shape variants so repeats don't look stamped. Beat 3 uses it; Beat 4's empty-state montage should reuse it.
 - `text-reading` is the body size for text-heavy cards (a step below the decks' card body) so they fit without scrolling.
 - `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes: 21% opacity, centered behind the text, tilted straight back (top away, bottom nearest the viewer), bottom faded into the page. Swap its children for real imagery; drop `placeholderLabel` when it's real.
 - Coded visuals in `src/visuals/` use `useVisualPlayback` (play, finish, reset) and keep a `TIMING` block at the top for tuning.
@@ -83,6 +83,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-23: Two case study colors added as tokens: shipped `#61BF50`, caption `#AAB0B6`. Both pass AA on the page and card.
 - 2026-10-24: Hero intro text is white (fg), per Kyle. Backdrop re-tilted straight back and centered, per Kyle (the earlier version leaned left).
 - 2026-10-24: Placeholder product UI never uses Kyle's brand colors, per Kyle. It uses its own `product-*` palette (deep teal ink, teal, mint, tint), vaguely Freshpaint (whose site uses deep teal `#032126`, teal `#016653`, mint `#85D7BF`) but not copied. Use these tokens for any mock product screen.
+- 2026-10-24: Annotation color is vibrant magenta `#FF2E93` (`annotation` token), per Kyle. All markup on visuals (circles, future arrows or highlights) uses it, never brand or product colors.
 - 2026-10-24: Skill pills copied exactly from the case study's Role Pills, per Kyle: `#232324` fill (`pill`), 1px inside border at 15% white (`pill-border`), 7px radius, 4px 8px padding, 14px regular in accent, 10px gap. Fixed size, not viewport-scaled. Accent on the fill is about 10:1.
 - 2026-10-23: Performance windowing (one beat either side mounted), per Kyle.
 - 2026-10-23: Beat 1 is not a card. It's the decks' hero (Kyle: "using the word card was a bad move"), with no bkmn logo since the Framer frame has one. The hero fades fully on exit (deck stops at 0.1) so it doesn't ghost behind frameless statements.

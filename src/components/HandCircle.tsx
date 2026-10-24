@@ -2,7 +2,7 @@ import { useId } from 'react'
 import { motion } from 'motion/react'
 
 /*
-  A crude hand-drawn circle, the kind you'd scribble on a screenshot to say "look here".
+  A crude hand-drawn circle in the annotation color, the kind you'd scribble on a screenshot to say "look here".
   Used to mark empty areas (Beat 3's session grid, Beat 4's empty-state montage).
 
   It "draws" clockwise from 12 o'clock with transforms only: two half-plane masks rotate
@@ -105,5 +105,5 @@ const HalfDisc = () => (
 )
 
 const Stroke = ({ d }: { d: string }) => (
-  <path d={d} fill="none" stroke="var(--color-accent)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+  <path d={d} fill="none" stroke="var(--color-annotation)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
 )
