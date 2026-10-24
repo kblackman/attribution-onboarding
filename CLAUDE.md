@@ -34,6 +34,8 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - One step engine (`src/engine/useStepEngine.ts`) handles navigation, transitions, and state. Beats are data plus content, never custom navigation logic.
 - Each beat is one file in `src/beats/`, registered in order in `src/beats/index.ts`. Adding a beat = one file + one line. A beat with a bespoke animated visual may add its visual in `src/visuals/`.
 - Shared primitives in `src/components/`: Card (all three variants), Statement, BeginRow, VisualFrame (+ VideoVisual), Overlay, Placeholder, Reveal, and in-card visuals (DataTable, Comparison, StatBlock, PullQuote, TagRow, Caption, StatusTag).
+- `HandCircle` is a crude hand-drawn circle in accent that marks empty areas. It draws clockwise with a rotating-mask sweep (transform only), fades under reduced motion, and has a few shape variants so repeats don't look stamped. Beat 3 uses it; Beat 4's empty-state montage should reuse it.
+- `text-reading` is the body size for text-heavy cards (a step below the decks' card body) so they fit without scrolling.
 - `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes: 21% opacity, centered behind the text, tilted straight back (top away, bottom nearest the viewer), bottom faded into the page. Swap its children for real imagery; drop `placeholderLabel` when it's real.
 - Coded visuals in `src/visuals/` use `useVisualPlayback` (play, finish, reset) and keep a `TIMING` block at the top for tuning.
 - Color and type values live as tokens (`src/styles/tokens.css`, motion in `src/engine/motion.ts`). Never hardcode them in a beat.
@@ -93,11 +95,12 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | # | Slug | Steps | Visual | Status |
 |---|------|-------|--------|--------|
 | 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
+| 3 | pattern | card, visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
 | 2 | problem | statement (2 presses: body, then spotlight kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
-- Beat 3 is the first story beat and uses the deck card. It starts the story of how Kyle noticed this was a problem. Wait for his copy.
+- Beat 4 is an empty-state montage that reuses `HandCircle`. Wait for Kyle's copy.
 
 ### Beat 1 copy (verbatim)
 - Title: Diagnosing the problem, not the symptom
@@ -111,4 +114,12 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Body: Freshpaint's healthcare marketing analytics platform was powerful, but it didn't help customers reach the value they'd paid for. Setup flows were confusing and offered little to no guidance. Getting set up correctly meant reading dense documentation or booking a call with CS or an account manager.
 - Kicker (next key press, spotlight): Everyone knew it was a problem. Nobody prioritized fixing it. (Updated by Kyle 2026-10-23.)
 - Visual labels: Documentation, CS call, Account manager
+- Overlay: none
+
+### Beat 3 copy (verbatim)
+- Headline: A pattern was emerging
+- Body 1: We held regular research sessions with a pool of customer accounts. In most of them, customers shared their screen, whether to try a new feature, show us a bug, or walk us through how they used something we'd already released.
+- Body 2: Over two days, I sat in on four of these sessions. Each time a customer shared their screen, their Attribution dashboard was only half set up. Some hadn't connected their ad sources, so their spend data never appeared. Others hadn't enabled AI, so Recommendation Cards never showed up. The thread was the same: customers paying for a feature they weren't getting full value from.
+- Closing question (own paragraph, accent, extra space above): Was it a coincidence, or a pattern?
+- Visual labels: Day 1, Day 1, Day 2, Day 2; New feature, Bug walkthrough, Adoption check-in, New feature
 - Overlay: none
