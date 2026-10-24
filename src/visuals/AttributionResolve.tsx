@@ -119,14 +119,14 @@ const Sk = ({ w, h = 0.9, className = '' }: { w: number | string; h?: number; cl
 function TopBar({ ctx }: { ctx: ResolveCtx }) {
   return (
     <div className="flex h-[4.5cqw] flex-none items-center gap-[1.2cqw] border-b border-line px-[2cqw]">
-      <span className="block h-[2cqw] w-[2cqw] rounded-[0.5cqw] bg-ink" />
+      <span className="block h-[2cqw] w-[2cqw] rounded-[0.5cqw] bg-product-ink" />
       <span className="text-[1.35cqw] font-bold tracking-[-0.01em]">Attribution</span>
       <div className="ml-auto flex items-center gap-[1cqw]">
         {/* page health dot: neutral while empty, positive once populated */}
         <span className="relative block h-[0.8cqw] w-[0.8cqw]">
           <span className="absolute inset-0 rounded-full bg-skeleton" />
           <motion.span
-            className="absolute inset-0 rounded-full bg-positive"
+            className="absolute inset-0 rounded-full bg-product"
             initial={false}
             animate={{ opacity: isFilled(ctx) ? 1 : 0 }}
             transition={tr(ctx, LAST_ORDER, TIMING.resolve)}
@@ -143,7 +143,7 @@ function SideNav() {
   return (
     <div className="flex w-[14cqw] flex-none flex-col gap-[1.3cqw] border-r border-line bg-surface-2 px-[1.6cqw] py-[2cqw]">
       {[70, 55, 80, 60, 50, 65].map((w, i) => (
-        <Sk key={i} w={w} h={0.8} className={i === 2 ? 'bg-[color-mix(in_srgb,var(--color-accent)_45%,var(--color-skeleton))]' : ''} />
+        <Sk key={i} w={w} h={0.8} className={i === 2 ? 'bg-product-mint' : ''} />
       ))}
     </div>
   )
@@ -191,14 +191,14 @@ function Kpi({ ctx, order }: { ctx: ResolveCtx; order: number }) {
   return (
     <div className="flex h-full flex-col justify-end gap-[0.7cqw]">
       <motion.span
-        className="block h-[2.2cqw] origin-left rounded-[0.4cqw] bg-ink"
+        className="block h-[2.2cqw] origin-left rounded-[0.4cqw] bg-product-ink"
         style={{ width: `${[64, 52, 72, 58][order]}%` }}
         initial={false}
         animate={{ scaleX: filled || ctx.reduced ? 1 : 0 }}
         transition={tr(ctx, order, 0.15, TIMING.data)}
       />
       <span className="flex items-center gap-[0.5cqw]">
-        <span className="block h-[1.3cqw] w-[4cqw] rounded-full bg-positive-tint" />
+        <span className="block h-[1.3cqw] w-[4cqw] rounded-full bg-product-tint" />
         <Sk w="30%" h={0.6} />
       </span>
     </div>
@@ -216,8 +216,8 @@ function LineChart({ ctx, order }: { ctx: ResolveCtx; order: number }) {
         {[25, 50, 75].map((y) => (
           <line key={y} x1="0" x2="300" y1={y} y2={y} stroke="var(--color-line)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
         ))}
-        <path d={`${LINE} L300,100 L0,100 Z`} fill="var(--color-accent)" opacity="0.14" />
-        <path d={LINE} fill="none" stroke="var(--color-accent-deep)" strokeWidth="2.2" vectorEffect="non-scaling-stroke" />
+        <path d={`${LINE} L300,100 L0,100 Z`} fill="var(--color-product-mint)" opacity="0.35" />
+        <path d={LINE} fill="none" stroke="var(--color-product)" strokeWidth="2.2" vectorEffect="non-scaling-stroke" />
       </svg>
       {/* draws the line left to right: a surface-colored cover slides away (transform only) */}
       <motion.div
@@ -240,7 +240,7 @@ function Bars({ ctx, order }: { ctx: ResolveCtx; order: number }) {
         <motion.span
           key={i}
           className="block flex-1 origin-bottom rounded-t-[0.3cqw]"
-          style={{ height: `${h}%`, background: i === BARS.length - 1 ? 'var(--color-accent-deep)' : 'color-mix(in srgb, var(--color-accent) 55%, var(--color-surface))' }}
+          style={{ height: `${h}%`, background: i === BARS.length - 1 ? 'var(--color-product)' : 'var(--color-product-mint)' }}
           initial={false}
           animate={{ scaleY: filled || ctx.reduced ? 1 : 0 }}
           transition={tr(ctx, order, 0.12 + i * 0.05, TIMING.data)}
@@ -269,7 +269,7 @@ function Rows({ ctx, order }: { ctx: ResolveCtx; order: number }) {
           <Sk w={[60, 45, 52, 40][r]} h={0.7} />
           <Sk w={[50, 58, 40, 46][r]} h={0.7} />
           <span className="block h-[0.8cqw] overflow-hidden rounded-full bg-surface-2">
-            <span className="block h-full rounded-full bg-accent-deep" style={{ width: `${[86, 72, 64, 51][r]}%` }} />
+            <span className="block h-full rounded-full bg-product" style={{ width: `${[86, 72, 64, 51][r]}%` }} />
           </span>
         </motion.div>
       ))}

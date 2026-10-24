@@ -80,6 +80,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-23: Card exit = the deck's recede transform plus a fade to 0, so the full-screen visual owns the screen. Card followed directly by another card keeps the deck behavior (stays dimmed behind). The deck's brightness filter is dropped to keep motion to transform, opacity, and blur.
 - 2026-10-23: Two case study colors added as tokens: shipped `#61BF50`, caption `#AAB0B6`. Both pass AA on the page and card.
 - 2026-10-24: Hero intro text is white (fg), per Kyle. Backdrop re-tilted straight back and centered, per Kyle (the earlier version leaned left).
+- 2026-10-24: Placeholder product UI never uses Kyle's brand colors, per Kyle. It uses its own `product-*` palette (deep teal ink, teal, mint, tint), vaguely Freshpaint (whose site uses deep teal `#032126`, teal `#016653`, mint `#85D7BF`) but not copied. Use these tokens for any mock product screen.
 - 2026-10-24: Skill pills copied exactly from the case study's Role Pills, per Kyle: `#232324` fill (`pill`), 1px inside border at 15% white (`pill-border`), 7px radius, 4px 8px padding, 14px regular in accent, 10px gap. Fixed size, not viewport-scaled. Accent on the fill is about 10:1.
 - 2026-10-23: Performance windowing (one beat either side mounted), per Kyle.
 - 2026-10-23: Beat 1 is not a card. It's the decks' hero (Kyle: "using the word card was a bad move"), with no bkmn logo since the Framer frame has one. The hero fades fully on exit (deck stops at 0.1) so it doesn't ghost behind frameless statements.

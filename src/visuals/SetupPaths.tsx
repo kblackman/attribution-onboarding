@@ -123,7 +123,7 @@ export function SetupPaths(props: VisualProps) {
           >
             <rect x={p.x} y={p.y} width={p.w} height={p.h} rx="18" fill="var(--color-surface)" />
             <line x1={p.x} x2={p.x + p.w} y1={p.y + 48} y2={p.y + 48} stroke="var(--color-line)" strokeWidth="2" />
-            <rect x={p.x + 24} y={p.y + 16} width="18" height="18" rx="5" fill="var(--color-ink)" />
+            <rect x={p.x + 24} y={p.y + 16} width="18" height="18" rx="5" fill="var(--color-product-ink)" />
             <rect x={p.x + 54} y={p.y + 20} width="110" height="10" rx="5" fill="var(--color-skeleton-strong)" />
             <rect x={p.x + 24} y={p.y + 76} width={p.w * 0.42} height="14" rx="6" fill="var(--color-skeleton-strong)" />
             <rect x={p.x + 24} y={p.y + 106} width={p.w * 0.3} height="10" rx="5" fill="var(--color-skeleton)" />
