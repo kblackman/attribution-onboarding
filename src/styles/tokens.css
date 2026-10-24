@@ -36,6 +36,9 @@
   /* ---- color: case study (approved 2026-10-23) ---- */
   --color-shipped: #61BF50;
   --color-caption: #AAB0B6;
+  /* skill pill, copied from the case study (approved 2026-10-24) */
+  --color-pill: #232324;
+  --color-pill-border: rgb(255 255 255 / 0.15);
 
   /* ---- type scale (deck sizes, keyed to the --u viewport unit) ---- */
   --text-display: clamp(32px, calc(var(--u) * 5.4), 100px);
@@ -70,6 +73,7 @@
   --text-stat--letter-spacing: -0.02em;
 
   --radius-card: 16px;
+  --radius-pill-tag: 7px;
 }
 
 :root {
