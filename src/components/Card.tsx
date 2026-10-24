@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { DUR, cardVariants, cardVariantsReduced, heroVariants, statementVariants } from '../engine/motion'
+import { cardVariants, cardVariantsReduced, heroVariants, statementVariants } from '../engine/motion'
 import { RevealContext } from './Reveal'
 
 export type CardStatus = 'below' | 'active' | 'behind' | 'gone'
@@ -28,7 +28,7 @@ interface CardProps {
 export function Card({ status, variant = 'card', align = 'left', dense = false, revealed, revealLead, sub, glow, reducedMotion, label, zIndex, children }: CardProps) {
   const active = status === 'active'
   const statement = variant === 'statement'
-  const className = variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? 'deck-statement' : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
+  const className = variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? `deck-statement${dense ? ' is-dense' : ''}` : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
   const variants = reducedMotion ? cardVariantsReduced : variant === 'hero' ? heroVariants : statement ? statementVariants : cardVariants
   return (
     <motion.section
@@ -42,7 +42,7 @@ export function Card({ status, variant = 'card', align = 'left', dense = false, 
       initial={false}
       animate={status}
     >
-      <RevealContext.Provider value={{ revealed, lead: statement && revealLead > 0 ? DUR.statementLead : revealLead, sub }}>{children}</RevealContext.Provider>
+      <RevealContext.Provider value={{ revealed, lead: revealLead, sub, still: statement }}>{children}</RevealContext.Provider>
     </motion.section>
   )
 }

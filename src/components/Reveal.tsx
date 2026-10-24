@@ -5,9 +5,10 @@ import { DUR, EASE_DECK } from '../engine/motion'
 
 /**
  * Set by the Card: whether its content has revealed, how long to wait for the card to land first,
- * and which of the card's own key presses it's on (sub).
+ * which of the card's own key presses it's on (sub), and whether first-press content arrives with the
+ * container's own motion instead of rising separately (still: statements, whose zoom is the entrance).
  */
-export const RevealContext = createContext<{ revealed: boolean; lead: number; sub: number }>({ revealed: true, lead: 0, sub: 0 })
+export const RevealContext = createContext<{ revealed: boolean; lead: number; sub: number; still?: boolean }>({ revealed: true, lead: 0, sub: 0 })
 
 interface RevealProps {
   /** Stagger position, as the deck's data-delay (each step is 280ms). */
@@ -21,10 +22,10 @@ interface RevealProps {
 
 /** Deck content reveal: rises 26px and fades in, once per card, staggered by order. */
 export function Reveal({ order = 0, step = 0, className, children, as = 'div' }: RevealProps) {
-  const { revealed, lead, sub } = useContext(RevealContext)
+  const { revealed, lead, sub, still } = useContext(RevealContext)
   const reduce = usePrefersReducedMotion()
   const Tag = motion[as]
-  const shown = revealed && sub >= step
+  const shown = (revealed || (still && step === 0)) && sub >= step
   // content that lands on a later key press waits for the press, not for the card
   const delay = shown ? (step === 0 ? lead : 0) + order * DUR.revealStep : 0
   const el = (
@@ -33,7 +34,7 @@ export function Reveal({ order = 0, step = 0, className, children, as = 'div' }:
       initial={false}
       aria-hidden={step > 0 ? true : undefined}
       animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 26 }}
-      transition={reduce ? { duration: DUR.reduced } : { duration: shown ? DUR.reveal : DUR.reduced, ease: EASE_DECK, delay }}
+      transition={still && step === 0 ? { duration: 0 } : reduce ? { duration: DUR.reduced } : { duration: shown ? DUR.reveal : DUR.reduced, ease: EASE_DECK, delay }}
     >
       {children}
     </Tag>

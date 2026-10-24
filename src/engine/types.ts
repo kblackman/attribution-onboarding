@@ -37,7 +37,7 @@ export interface Beat {
   align?: 'left' | 'center'
   /** Adds a soft accent glow to the card, as on the deck's title and divider cards. */
   cardGlow?: boolean
-  /** Card only: the decks' tighter top and bottom padding (their sub-slides), for text-heavy cards set large. */
+  /** Card or statement: the decks' tighter top and bottom padding (their sub-slides), for text-heavy beats set large. */
   cardDense?: boolean
   /**
    * Key presses the card takes before moving on (default 1). Content wrapped in <Reveal step={n}>

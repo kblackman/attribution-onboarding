@@ -18,8 +18,8 @@ A standalone, keyboard-driven case study presentation, embedded in Kyle's Framer
 ## The beat model
 A beat is up to three steps. Right arrow advances one step, left arrow reverses it.
 1. Card. Tells part of the story, in one of three variants (`Beat.variant`):
-   - `card`: the deck card frame. On advance it recedes up and back, then fades (see Decisions).
-   - `statement`: no container, larger type set directly on the background, for problem statements and other emphasis beats. Content via `<Statement headline body kicker kickerStyle />`. `kickerStyle: 'spotlight'` steps the headline and body back and centers the kicker in Figtree italic between two short accent rules (an editorial pull statement); `<em>` marks the accent line.
+   - `card`: the deck card frame. Reserved for beats that hold an artifact (table, stat block, before/after, pull quote), so the frame reads as evidence. On advance it recedes up and back, then fades (see Decisions).
+   - `statement`: no container, larger type set directly on the background. The default for narrative beats (Kyle, 2026-10-24). Motion is a zoom through depth: it arrives from in front of the screen (larger, blurred) and settles; moving on, it shrinks, blurs, and fades away; reverse plays it backward. Its text arrives with the zoom, with no separate rise. Content via `<Statement headline body kicker kickerStyle />`. `kickerStyle: 'spotlight'` steps the headline and body back and centers the kicker in Figtree italic between two short accent rules (an editorial pull statement); `<em>` marks the accent line.
    - `hero`: the opening title screen, full-bleed, no logo (Framer's frame carries bkmn), with a Begin button and no hint text. `align: 'center'` centers it like the case study pages (Beat 1 uses this, at the larger `text-hero` size); default is the decks' left layout. Recedes into depth and fades fully on exit.
    A card can take extra key presses before moving on (`cardSteps`); content wrapped in `<Reveal step={n}>` lands on press n (e.g. a kicker).
 2. Full-screen visual (optional). A visual or animation takes over the whole screen, not bound by the card.
@@ -35,7 +35,7 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - Each beat is one file in `src/beats/`, registered in order in `src/beats/index.ts`. Adding a beat = one file + one line. A beat with a bespoke animated visual may add its visual in `src/visuals/`.
 - Shared primitives in `src/components/`: Card (all three variants), Statement, BeginRow, VisualFrame (+ VideoVisual), Overlay, Placeholder, Reveal, and in-card visuals (DataTable, Comparison, StatBlock, PullQuote, TagRow, Caption, StatusTag).
 - `HandCircle` is a crude hand-drawn circle in the annotation color that marks empty areas. It draws clockwise with a rotating-mask sweep (transform only), fades under reduced motion, and has a few shape variants so repeats don't look stamped. Beat 3 uses it; Beat 4's empty-state montage should reuse it.
-- Story cards set their body at the statement size (`text-statement`), per Kyle. Text-heavy cards add `cardDense: true` (the decks' tighter sub-slide padding) and a ~64ch measure on the body itself, and must fit without scrolling at 1920x1080, 1440x900, 1280x720, and a 375x812 phone.
+- Story beats set their body at the statement size (`text-statement`), per Kyle. Text-heavy cards add `cardDense: true` (the decks' tighter sub-slide padding) and a ~64ch measure on the body itself, and must fit without scrolling at 1920x1080, 1440x900, 1280x720, and a 375x812 phone.
 - `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes: 21% opacity, centered behind the text, tilted straight back (top away, bottom nearest the viewer), bottom faded into the page. Swap its children for real imagery; drop `placeholderLabel` when it's real.
 - Coded visuals in `src/visuals/` use `useVisualPlayback` (play, finish, reset) and keep a `TIMING` block at the top for tuning.
 - Color and type values live as tokens (`src/styles/tokens.css`, motion in `src/engine/motion.ts`). Never hardcode them in a beat.
@@ -85,6 +85,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: Placeholder product UI never uses Kyle's brand colors, per Kyle. It uses its own `product-*` palette (deep teal ink, teal, mint, tint), vaguely Freshpaint (whose site uses deep teal `#032126`, teal `#016653`, mint `#85D7BF`) but not copied. Use these tokens for any mock product screen.
 - 2026-10-24: Annotation color is vibrant magenta `#FF2E93` (`annotation` token), per Kyle. All markup on visuals (circles, future arrows or highlights) uses it, never brand or product colors.
 - 2026-10-24: Beat 3 body raised to the problem statement's size, per Kyle (the smaller reading size was too small). Added `cardDense`.
+- 2026-10-24: Beat 3 is frameless (statement), per Kyle: the card "takes me out of it". Frameless is the default for narrative beats; the card is saved for beats holding an artifact. Statements now zoom through depth (in from larger, out to smaller, reversible), per Kyle.
 - 2026-10-24: Skill pills copied exactly from the case study's Role Pills, per Kyle: `#232324` fill (`pill`), 1px inside border at 15% white (`pill-border`), 7px radius, 4px 8px padding, 14px regular in accent, 10px gap. Fixed size, not viewport-scaled. Accent on the fill is about 10:1.
 - 2026-10-23: Performance windowing (one beat either side mounted), per Kyle.
 - 2026-10-23: Beat 1 is not a card. It's the decks' hero (Kyle: "using the word card was a bad move"), with no bkmn logo since the Framer frame has one. The hero fades fully on exit (deck stops at 0.1) so it doesn't ghost behind frameless statements.
@@ -97,7 +98,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | # | Slug | Steps | Visual | Status |
 |---|------|-------|--------|--------|
 | 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
-| 3 | pattern | card, visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
+| 3 | pattern | statement (dense), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
 | 2 | problem | statement (2 presses: body, then spotlight kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes

@@ -38,7 +38,7 @@ body {
 }
 .deck-card.has-glow { background: var(--card-glow), var(--card-gradient); }
 /* deck sub-slide padding: tighter top and bottom for text-heavy cards */
-.deck-card.is-dense { padding-top: clamp(28px, calc(var(--u) * 3.6), 90px); padding-bottom: clamp(28px, calc(var(--u) * 3.6), 90px); }
+.deck-card.is-dense, .deck-statement.is-dense { padding-top: clamp(28px, calc(var(--u) * 3.6), 90px); padding-bottom: clamp(28px, calc(var(--u) * 3.6), 90px); }
 
 /* statement variant: the card's footprint and padding, no frame, so text lines up with card content */
 .deck-statement {
@@ -119,7 +119,7 @@ body {
     overflow-y: auto;
   }
   .deck-hero, .deck-hero.is-centered { padding: 0 24px; overflow-y: auto; }
-  .deck-card.is-dense { padding-top: 20px; padding-bottom: 20px; }
+  .deck-card.is-dense, .deck-statement.is-dense { padding-top: 20px; padding-bottom: 20px; }
   .deck-statement {
     top: 56px;
     height: calc(100vh - 124px);

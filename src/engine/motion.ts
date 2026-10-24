@@ -11,7 +11,6 @@ export const DUR = {
   revealStep: 0.28, // deck data-delay step
   revealLead: 0.45, // deck: content starts 450ms after a card begins to land
   reduced: 0.3, // crossfade used for every transition under reduced motion
-  statementLead: 0.3, // statement text waits for the outgoing visual to clear
 } as const
 
 const deck = (duration: number, delay = 0): Transition => ({ duration, delay, ease: EASE_DECK })
@@ -39,14 +38,16 @@ export const cardVariantsReduced: Variants = {
 }
 
 /*
-  Statement states. With no container to carry it, a statement arrives as a fade and lets its
-  text do the rising (Reveal), then leaves with the same recede as a card.
+  Statement states: a zoom through depth. A statement arrives from in front of the screen (larger, soft)
+  and settles into place; moving on, it keeps travelling away (smaller, soft) and fades. Stepping back
+  plays both halves in reverse: the current one returns toward the viewer, the previous one comes forward.
+  The incoming statement starts a beat after the outgoing one, so they don't collide.
 */
 export const statementVariants: Variants = {
-  below: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: { duration: DUR.reduced, ease: 'easeOut' } },
-  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card) },
-  behind: { y: '-2.4vh', scale: 0.92, opacity: 0, filter: 'blur(1.6px)', transition: deck(DUR.card) },
-  gone: { y: '-2.4vh', scale: 0.92, opacity: 0, filter: 'blur(1.6px)', transition: deck(DUR.card) },
+  below: { y: 0, scale: 1.14, opacity: 0, filter: 'blur(14px)', transition: deck(DUR.card) },
+  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card, 0.15) },
+  behind: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card) },
+  gone: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card) },
 }
 
 /*

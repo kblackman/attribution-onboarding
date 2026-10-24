@@ -5,7 +5,8 @@ import { SessionGrid } from '../visuals/SessionGrid'
 const beat: Beat = {
   slug: 'pattern',
   title: 'A pattern was emerging',
-  cardDense: true, // statement-size body on a card: the decks' tighter sub-slide padding gives it room
+  variant: 'statement',
+  cardDense: true, // text-heavy: tighter top and bottom padding so it fits without scrolling
   card: (
     <div>
       <Reveal as="h2" className="m-0 text-headline font-bold">
