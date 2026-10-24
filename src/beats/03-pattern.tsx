@@ -4,13 +4,13 @@ import { SessionGrid } from '../visuals/SessionGrid'
 
 const beat: Beat = {
   slug: 'pattern',
-  title: 'A pattern was emerging',
+  title: 'How this all started',
   variant: 'statement',
   cardDense: true, // text-heavy: tighter top and bottom padding so it fits without scrolling
   card: (
     <div>
       <Reveal as="h2" className="m-0 text-headline font-bold">
-        A pattern was emerging
+        How this all started
       </Reveal>
       <Reveal order={1} className="mt-[clamp(18px,calc(var(--u)*2.2),36px)] flex max-w-[64ch] flex-col gap-[0.65em] sm:gap-[0.8em] text-statement text-fg-muted text-pretty">
         <p className="m-0">

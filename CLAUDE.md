@@ -120,7 +120,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Overlay: none
 
 ### Beat 3 copy (verbatim)
-- Headline: A pattern was emerging
+- Headline: How this all started (was "A pattern was emerging", changed by Kyle 2026-10-24)
 - Body 1: We held regular research sessions with a pool of customer accounts. In most of them, customers shared their screen, whether to try a new feature, show us a bug, or walk us through how they used something we'd already released.
 - Body 2: Over two days, I sat in on four of these sessions. Each time a customer shared their screen, their Attribution dashboard was only half set up. Some hadn't connected their ad sources, so their spend data never appeared. Others hadn't enabled AI, so Recommendation Cards never showed up. The thread was the same: customers paying for a feature they weren't getting full value from.
 - Closing question (own paragraph, accent, extra space above): Was it a coincidence, or a pattern?
