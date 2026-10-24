@@ -68,8 +68,6 @@
   --text-lead--line-height: 1.5;
   --text-body: clamp(15px, calc(var(--u) * 1.3), 26px);
   --text-body--line-height: 1.6;
-  --text-reading: clamp(15px, calc(var(--u) * 1.15), 22px); /* text-heavy cards */
-  --text-reading--line-height: 1.6;
   --text-ui: clamp(13px, calc(var(--u) * 1.05), 18px);
   --text-ui--line-height: 1.3;
   --text-label: clamp(11px, calc(var(--u) * 0.95), 18px);

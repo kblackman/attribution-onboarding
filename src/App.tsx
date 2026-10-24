@@ -117,6 +117,7 @@ export function App() {
                 status={cardStatus}
                 variant={beat.variant}
                 align={beat.align}
+                dense={beat.cardDense}
                 sub={sub}
                 revealed={revealed.has(b)}
                 revealLead={b === 0 ? 0 : DUR.revealLead}

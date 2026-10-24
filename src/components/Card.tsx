@@ -16,6 +16,7 @@ interface CardProps {
   /** Which of the card's own key presses is current. */
   sub: number
   glow?: boolean
+  dense?: boolean
   align?: 'left' | 'center'
   reducedMotion: boolean
   label: string
@@ -24,10 +25,10 @@ interface CardProps {
 }
 
 /** The deck card. Rises from below, recedes up and back when the story moves on. */
-export function Card({ status, variant = 'card', align = 'left', revealed, revealLead, sub, glow, reducedMotion, label, zIndex, children }: CardProps) {
+export function Card({ status, variant = 'card', align = 'left', dense = false, revealed, revealLead, sub, glow, reducedMotion, label, zIndex, children }: CardProps) {
   const active = status === 'active'
   const statement = variant === 'statement'
-  const className = variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? 'deck-statement' : `deck-card${glow ? ' has-glow' : ''}`
+  const className = variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? 'deck-statement' : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
   const variants = reducedMotion ? cardVariantsReduced : variant === 'hero' ? heroVariants : statement ? statementVariants : cardVariants
   return (
     <motion.section
