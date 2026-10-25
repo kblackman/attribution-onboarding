@@ -490,7 +490,7 @@ function Drawer({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; redu
           </Field>
           <Field label="CSS selector" required>
             <div className="flex gap-[10px]">
-              <Input t="selector" value={ui.selector} focus={ui.focus === 'selector'} placeholder="e.g. button[data-action=”book”]" />
+              <Input t="selector" grow value={ui.selector} focus={ui.focus === 'selector'} placeholder="e.g. button[data-action=”book”]" />
               <span className="flex h-[40px] flex-none items-center rounded-[8px] bg-fp-tagger px-[12px] text-[12px] font-semibold">Use Visual Tagger</span>
             </div>
           </Field>
@@ -551,11 +551,12 @@ function Field({ label, required, aside, children }: { label: string; required?:
   )
 }
 
-function Input({ t, value, focus, placeholder }: { t: string; value: string; focus: boolean; placeholder: string }) {
+/** A drawer text field, 40px tall. `grow` fills a row beside another control (flex-1 in a column would collapse its height). */
+function Input({ t, value, focus, placeholder, grow = false }: { t: string; value: string; focus: boolean; placeholder: string; grow?: boolean }) {
   return (
     <div
       data-t={t}
-      className={`flex h-[40px] min-w-0 flex-1 items-center rounded-[8px] border px-[12px] text-[12px] transition-[border-color,box-shadow] duration-200 ${focus ? 'border-fp-indigo shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-fp-indigo)_15%,transparent)]' : 'border-fp-input'}`}
+      className={`flex h-[40px] ${grow ? 'min-w-0 flex-1' : 'w-full flex-none'} items-center rounded-[8px] border px-[12px] text-[12px] transition-[border-color,box-shadow] duration-200 ${focus ? 'border-fp-indigo shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-fp-indigo)_15%,transparent)]' : 'border-fp-input'}`}
     >
       <span className={`truncate ${value ? 'text-fp-ink' : 'text-fp-faint'}`}>{value || (focus ? '' : placeholder)}</span>
       {focus && <span className="ml-[1px] block h-[15px] w-[1.5px] animate-pulse bg-fp-ink" />}
