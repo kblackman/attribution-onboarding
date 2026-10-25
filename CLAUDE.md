@@ -13,6 +13,7 @@ A standalone, keyboard-driven case study presentation, embedded in Kyle's Framer
 
 ## Typography and color
 - Figtree for everything. A deliberate type scale (tokens in `src/styles/tokens.css`), not many weights.
+- Exception (Kyle, 2026-10-25): annotations, meaning Kyle's handwritten markup on visuals, use Caveat (`--font-hand`). Nothing else does.
 - Colors: the deck tokens exactly. Don't introduce new colors without asking Kyle.
 
 ## System (read before building any beat)
@@ -53,6 +54,7 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - Each beat is one file in `src/beats/`, registered in order in `src/beats/index.ts`. Adding a beat = one file + one line. A beat with a bespoke animated visual may add its visual in `src/visuals/`.
 - Shared primitives in `src/components/`: Card (all three variants), Statement, BeginRow, VisualFrame (+ VideoVisual), Overlay, Placeholder, Reveal, and in-card visuals (DataTable, Comparison, StatBlock, PullQuote, TagRow, Caption, StatusTag).
 - `ChatThread` is a reusable generic team chat (channel, role avatars, timestamps, reactions; no real product's look) whose messages arrive one at a time when its card reveals. `text-with-aside` (with `.twa-main`, `.twa-aside`, `.twa-rest`) puts an artifact beside a card's first paragraph and stacks it after that paragraph on phones.
+- `Annotation` is Kyle's markup on a screenshot: a hand-drawn circle around a zone, a handwritten label (Caveat), and a hand-drawn arrow from the label to the circle's edge, all in the annotation color. Zones and label spots are percent of the image, so it holds for any screenshot size. Use it for any circled callout.
 - `HandCircle` is a crude hand-drawn circle in the annotation color that marks empty areas. It draws clockwise with a rotating-mask sweep (transform only), fades under reduced motion, and has a few shape variants so repeats don't look stamped. `dashed` marks one circle as different (Beat 4's "Waiting on data", which a later beat calls back to). Beat 3 uses it; Beat 4's empty-state montage should reuse it.
 - Story beats set their body at the statement size (`text-statement`), per Kyle. Text-heavy cards add `cardDense: true` (the decks' tighter sub-slide padding) and a ~64ch measure on the body itself, and must fit without scrolling at 1920x1080, 1440x900, 1280x720, and a 375x812 phone.
 - `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes: 21% opacity, centered behind the text, tilted straight back (top away, bottom nearest the viewer), bottom faded into the page. Swap its children for real imagery; drop `placeholderLabel` when it's real.
@@ -132,13 +134,14 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
 | 2a | section-discovery | section title sequence | None | Reworked 2026-10-25, awaiting Kyle's review |
 | 3 | pattern | statement (dense, wide), card overlay (question), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
-| 4 | hunch | card (Evidence: chat thread beside the text), visual, overlay (auto, holds for a key press) | Empty-state montage as a falling stack: one large dummy dashboard at a time lands on the last, its empty area circled and labeled, covered ones dimming; the first six at reading pace ("Waiting on data" dashed with a question mark), then more keep coming faster and faster until it holds (`src/visuals/EmptyStateMontage.tsx`, timing in `TIMING`, about 17s). Reduced motion: same order as crossfades. Placeholder shapes. | Built, awaiting Kyle's review |
+| 4 | hunch | card (Evidence: chat thread beside the text), visual, overlay (auto, holds for a key press) | Empty-state montage as a falling stack: one large screenshot at a time (fitted to 80 by 52 cqw, own proportions) lands on the last, its empty area annotated (circle, handwritten label, arrow), covered ones dimming; the first six at reading pace ("Waiting on data" dashed with a question mark), then more keep coming faster and faster until it holds (`src/visuals/EmptyStateMontage.tsx`, timing in `TIMING`, about 17s). Reduced motion: same order as crossfades. Placeholder shapes. | Built, awaiting Kyle's review |
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
 - Beat 4 is built (Checking the hunch). Kyle feels the card plus chat reads crammed; he may revisit it later (not now).
-- Beat 4's montage became a falling stack, per Kyle; the pile-and-lines ending was dropped. The 02 Diagnosis section card comes next, then Diagnosis beats.
+- Beat 4's montage became a falling stack, per Kyle; the pile-and-lines ending was dropped. Screenshots are bigger, annotations handwritten with arrows (per Kyle).
+- To swap real screenshots into Beat 4: drop files in `public/assets/hunch/`, then in `SHOTS` (top of `src/visuals/EmptyStateMontage.tsx`) set `src` and `aspect` (width / height), and measure `empty` (percent of the image) on the real screenshot. Any size or shape works; `labelAt` moves a label if needed. Repeats in the fast cascade reuse these automatically. The 02 Diagnosis section card comes next, then Diagnosis beats.
 - (Kept for reference) Beat 4 brief context: where Kyle realized customers had a real problem, conferred with his team, and investigated on his own. Waiting on his copy.
 - When Kyle asks for them ("ask me the Beat 4 questions", or similar), ask all of these again, in full:
   1. Conferring with the team: who did you bring it to (PM, engineering, CS, account managers), and what came back? Did they recognize it, push back, or say it was a known issue nobody owned? Any real quotes to use?

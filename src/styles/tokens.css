@@ -7,6 +7,8 @@
 
 @theme {
   --font-sans: Figtree, system-ui, sans-serif;
+  /* annotations only (Kyle's handwritten markup on visuals), approved 2026-10-25; everything else is Figtree */
+  --font-hand: Caveat, 'Bradley Hand', cursive;
 
   /* ---- color: deck ---- */
   --color-page: #272727;

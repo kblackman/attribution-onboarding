@@ -1,40 +1,41 @@
-import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { useVisualPlayback } from '../engine/useVisualPlayback'
-import { HandCircle } from '../components/HandCircle'
+import { Annotation, type Zone } from '../components/Annotation'
 import { PlaceholderBadge } from '../components/Placeholder'
 
 /*
-  Beat 4 visual: the empty-state montage, as a stack of screengrabs on a table. One large dummy dashboard
-  falls and lands slightly askew; its empty area gets a hand-drawn magenta circle and a short label. The
-  next falls on top, a little offset, and the one beneath dims as it's covered. The first six land slowly
-  enough to read; "Waiting on data" is marked differently (dashed circle, question mark) because a later
-  beat calls back to it. Then more keep coming, faster and faster, circled without labels, until the stack
-  holds. Dummy dashboards only. Tune the timing here (seconds).
+  Beat 4 visual: the empty-state montage, as a stack of screenshots on a table. One large screenshot falls
+  and lands slightly askew; its empty area gets a hand-drawn magenta circle, a handwritten label, and an
+  arrow. The next falls on top, a little offset, and the one beneath dims as it's covered. The first six
+  land slowly enough to read; "Waiting on data" is marked differently (dashed circle, question mark)
+  because a later beat calls back to it. Then more keep coming, faster and faster, until the stack holds.
+
+  SWAPPING IN REAL SCREENSHOTS: put the file in public/assets/hunch/, then on its entry in SHOTS set
+  `src` to its filename and `aspect` to its width / height. `empty` is the empty area in percent of the
+  image, so measure it on the real screenshot. Screenshots can be any size or shape: each is fitted
+  inside the stage keeping its own proportions, and the circle, label, and arrow follow it.
+  `labelAt` (percent of the image) moves a label if the automatic spot doesn't suit.
 */
-export const TIMING = {
-  start: 0.5,
-  sixGap: 1.7, // between the first six, slow enough to read each label
-  fall: 0.55,
-  circleAfter: 0.45, // circle starts this long after its grab begins to fall
-  circleDraw: 0.6,
-  labelAfter: 0.95,
-  dupCount: 12, // after the six: more keep coming
-  dupFirstGap: 0.8, // first gap after the six, then each gap shrinks
-  dupAccel: 0.8, // each gap is this fraction of the one before
-  dupMinGap: 0.16,
-  dupCircleAfter: 0.25,
-  dupCircleDraw: 0.35,
-  hold: 0.9, // the stack holds before the overlay
-  coverDim: 0.5, // how dark a covered grab gets
+export interface Shot {
+  label: string
+  /** The empty area to circle, in percent of the image. */
+  empty: Zone
+  /** File in public/assets/hunch/. Leave out to show the placeholder dashboard. */
+  src?: string
+  /** Image width / height. Placeholders are 16 / 10. */
+  aspect?: number
+  /** Which placeholder dashboard to draw while there's no src. */
+  placeholder?: Kind
+  labelAt?: { x: number; y: number }
+  /** Mark as different from the rest (dashed circle and question mark). */
+  question?: boolean
 }
 
 type Kind = 'no-events' | 'events-undefined' | 'no-ad-sources' | 'ai-off' | 'ai-no-events' | 'waiting'
-type Zone = { x: number; y: number; w: number; h: number } // percent of a grab
 
-// zones of the mock dashboard, in percent of the grab
+// zones of the placeholder dashboard, in percent of the image
 const Z = {
   kpis: { x: 4, y: 17, w: 92, h: 17 },
   chart: { x: 4, y: 38, w: 58, h: 32 },
@@ -42,40 +43,54 @@ const Z = {
   bottom: { x: 4, y: 74, w: 92, h: 20 },
   body: { x: 4, y: 17, w: 92, h: 77 },
 }
-const EMPTY_ZONE: Record<Kind, Zone> = {
-  'no-events': Z.chart,
-  'events-undefined': Z.kpis,
-  'no-ad-sources': Z.side,
-  'ai-off': Z.bottom,
-  'ai-no-events': Z.bottom,
-  waiting: Z.body,
+
+/** The six, in order. Swap in real screenshots here (see above). */
+export const SHOTS: Shot[] = [
+  { label: 'No events', placeholder: 'no-events', empty: Z.chart },
+  { label: 'Events not defined', placeholder: 'events-undefined', empty: Z.kpis },
+  { label: 'No ad sources', placeholder: 'no-ad-sources', empty: Z.side },
+  { label: 'AI off', placeholder: 'ai-off', empty: Z.bottom },
+  { label: 'AI on, no events', placeholder: 'ai-no-events', empty: Z.bottom },
+  { label: 'Waiting on data', placeholder: 'waiting', empty: Z.body, question: true, labelAt: { x: 70, y: 8 } },
+]
+
+export const TIMING = {
+  start: 0.5,
+  sixGap: 1.9, // between the first six, slow enough to read each label
+  fall: 0.55,
+  circleAfter: 0.45, // circle starts this long after its screenshot begins to fall
+  circleDraw: 0.6,
+  dupCount: 12, // after the six: more keep coming (the same screenshots again)
+  dupFirstGap: 0.8, // first gap after the six, then each gap shrinks
+  dupAccel: 0.8, // each gap is this fraction of the one before
+  dupMinGap: 0.16,
+  dupCircleAfter: 0.25,
+  dupCircleDraw: 0.35,
+  hold: 0.9, // the stack holds before the overlay
+  coverDim: 0.5, // how dark a covered screenshot gets
 }
 
-const SIX: { kind: Kind; label: string }[] = [
-  { kind: 'no-events', label: 'No events' },
-  { kind: 'events-undefined', label: 'Events not defined' },
-  { kind: 'no-ad-sources', label: 'No ad sources' },
-  { kind: 'ai-off', label: 'AI off' },
-  { kind: 'ai-no-events', label: 'AI on, no events' },
-  { kind: 'waiting', label: 'Waiting on data' },
-]
-const GRAB_W = 58 // cqw: one large screengrab at a time
+// the stage: each screenshot fits inside this box (cqw of the frame), keeping its own proportions
+const MAX_W = 80
+const MAX_H = 52
 
-// the whole stack: the six, then duplicates; each with a deterministic resting offset and tilt
+const asset = (file: string) => `${import.meta.env.BASE_URL}assets/hunch/${file}`
+
+// the whole stack: the six, then repeats of the first five (no labels), each with a resting offset and tilt
 const STACK = (() => {
   let seed = 11
   const rand = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280)
-  const dupKinds: Kind[] = ['no-events', 'events-undefined', 'no-ad-sources', 'ai-off', 'ai-no-events']
-  const items: { kind: Kind; label?: string; at: number; dx: number; dy: number; r: number; quick: boolean }[] = []
-  SIX.forEach((g, i) => items.push({ ...g, at: TIMING.start + i * TIMING.sixGap, dx: 0, dy: 0, r: 0, quick: false }))
+  const items: { shot: Shot; at: number; quick: boolean; dx: number; dy: number; r: number }[] = []
+  SHOTS.forEach((shot, i) => items.push({ shot, at: TIMING.start + i * TIMING.sixGap, quick: false, dx: 0, dy: 0, r: 0 }))
   let t = TIMING.start + 5 * TIMING.sixGap
-  let gap = TIMING.dupFirstGap + TIMING.labelAfter
+  let gap = TIMING.dupFirstGap + 1.2
+  const repeats = SHOTS.filter((s) => !s.question)
   for (let i = 0; i < TIMING.dupCount; i++) {
     t += gap
-    items.push({ kind: dupKinds[i % dupKinds.length], at: t, dx: 0, dy: 0, r: 0, quick: true })
+    items.push({ shot: repeats[i % repeats.length], at: t, quick: true, dx: 0, dy: 0, r: 0 })
     gap = Math.max(TIMING.dupMinGap, (i === 0 ? TIMING.dupFirstGap : gap) * TIMING.dupAccel)
   }
-  return items.map((it) => ({ ...it, dx: -5 + rand() * 10, dy: -3 + rand() * 6, r: -6 + rand() * 12 }))
+  return items.map((it) => ({ ...it, dx: -4 + rand() * 8, dy: -2.5 + rand() * 5, r: -5 + rand() * 10 }))
 })()
 const LAST = STACK[STACK.length - 1]
 const TOTAL = LAST.at + TIMING.fall + TIMING.dupCircleAfter + TIMING.dupCircleDraw + TIMING.hold
@@ -99,59 +114,54 @@ export function EmptyStateMontage(props: VisualProps) {
         style={{ aspectRatio: '16 / 10', width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))', containerType: 'size' }}
         aria-hidden="true"
       >
-        {STACK.map((g, i) => {
+        {STACK.map((item, i) => {
+          const { shot } = item
+          const aspect = shot.aspect ?? 16 / 10
           const next = STACK[i + 1]
-          const waiting = g.kind === 'waiting'
           return (
             <div
               key={i}
               className="absolute left-1/2 top-1/2"
-              style={{ width: `${GRAB_W}cqw`, zIndex: i + 1, transform: `translate(calc(-50% + ${g.dx}cqw), calc(-50% + ${g.dy}cqw)) rotate(${g.r}deg)` }}
+              style={{
+                width: `min(${MAX_W}cqw, ${MAX_H * aspect}cqw)`,
+                zIndex: i + 1,
+                transform: `translate(calc(-50% + ${item.dx}cqw), calc(-50% + ${item.dy}cqw)) rotate(${item.r}deg)`,
+              }}
             >
               <motion.div
                 className="relative"
+                style={{ aspectRatio: `${aspect}`, containerType: 'inline-size' }}
                 initial={false}
-                animate={on ? { opacity: 1, scale: 1, y: '0cqw', filter: 'blur(0px)' } : { opacity: 0, scale: reduced ? 1 : 1.35, y: reduced ? '0cqw' : '-5cqw', filter: reduced ? 'blur(0px)' : 'blur(6px)' }}
-                transition={at(g.at, TIMING.fall)}
+                animate={on ? { opacity: 1, scale: 1, y: '0%', filter: 'blur(0px)' } : { opacity: 0, scale: reduced ? 1 : 1.3, y: reduced ? '0%' : '-8%', filter: reduced ? 'blur(0px)' : 'blur(6px)' }}
+                transition={at(item.at, TIMING.fall)}
               >
-                <Grab kind={g.kind} />
-                <CircleBox zone={EMPTY_ZONE[g.kind]}>
-                  <HandCircle
-                    show={on}
-                    instant={!playing}
-                    reducedMotion={reduced}
-                    delay={g.at + (g.quick ? TIMING.dupCircleAfter : TIMING.circleAfter)}
-                    duration={g.quick ? TIMING.dupCircleDraw : TIMING.circleDraw}
-                    variant={i}
-                    dashed={waiting}
-                    className="inset-0 h-full w-full"
+                {shot.src ? (
+                  <img
+                    src={asset(shot.src)}
+                    alt=""
+                    draggable={false}
+                    className="block h-full w-full rounded-[1.2cqw] object-cover shadow-[0_18px_40px_rgba(0,0,0,0.45)]"
                   />
-                  {waiting && (
-                    <motion.span
-                      className="absolute inset-0 grid place-items-center text-[8cqw] font-bold italic leading-none text-annotation"
-                      initial={false}
-                      animate={on ? { opacity: 1, scale: 1, rotate: 8 } : { opacity: 0, scale: reduced ? 1 : 0.6, rotate: 8 }}
-                      transition={at(g.at + TIMING.circleAfter + TIMING.circleDraw * 0.6, 0.45)}
-                    >
-                      ?
-                    </motion.span>
-                  )}
-                  {g.label && (
-                    <motion.span
-                      className="absolute bottom-[calc(100%+0.6cqw)] left-[2%] whitespace-nowrap rounded-[0.4cqw] bg-surface/90 px-[0.6cqw] text-[clamp(11px,2.3cqw,32px)] font-semibold italic text-annotation"
-                      style={{ rotate: -3 }}
-                      initial={false}
-                      animate={{ opacity: on ? 1 : 0 }}
-                      transition={at(g.at + TIMING.labelAfter, 0.45)}
-                    >
-                      {g.label}
-                    </motion.span>
-                  )}
-                </CircleBox>
-                {/* dims once the next grab lands on top of it */}
+                ) : (
+                  <Grab kind={shot.placeholder ?? 'no-events'} />
+                )}
+                <Annotation
+                  zone={shot.empty}
+                  aspect={aspect}
+                  label={item.quick ? undefined : shot.label}
+                  labelAt={shot.labelAt}
+                  question={!item.quick && shot.question}
+                  show={on}
+                  instant={!playing}
+                  reducedMotion={reduced}
+                  delay={item.at + (item.quick ? TIMING.dupCircleAfter : TIMING.circleAfter)}
+                  circleDuration={item.quick ? TIMING.dupCircleDraw : TIMING.circleDraw}
+                  variant={i}
+                />
+                {/* dims once the next screenshot lands on top of it */}
                 {next && (
                   <motion.div
-                    className="pointer-events-none absolute inset-0 rounded-[0.6cqw] bg-card-to"
+                    className="pointer-events-none absolute inset-0 rounded-[1.2cqw] bg-card-to"
                     initial={false}
                     animate={{ opacity: on ? TIMING.coverDim : 0 }}
                     transition={at(next.at + TIMING.fall * 0.6, 0.4)}
@@ -166,25 +176,25 @@ export function EmptyStateMontage(props: VisualProps) {
   )
 }
 
-/** A box over a grab's empty zone, padded so the circle sits just outside it. */
-function CircleBox({ zone, children }: { zone: Zone; children: ReactNode }) {
-  const pad = 5
-  return (
-    <div className="pointer-events-none absolute" style={{ left: `${zone.x - pad}%`, top: `${zone.y - pad}%`, width: `${zone.w + pad * 2}%`, height: `${zone.h + pad * 2}%` }}>
-      {children}
-    </div>
-  )
+/** Which zone each placeholder leaves empty (ai-no-events and waiting draw their own states). */
+const PLACEHOLDER_EMPTY: Record<Kind, keyof typeof Z | null> = {
+  'no-events': 'chart',
+  'events-undefined': 'kpis',
+  'no-ad-sources': 'side',
+  'ai-off': 'bottom',
+  'ai-no-events': null,
+  waiting: null,
 }
 
 /** A dummy Attribution screengrab with one area empty (or, for "waiting", everything still loading). */
 function Grab({ kind }: { kind: Kind }) {
-  const empty = (z: keyof typeof Z) => EMPTY_ZONE[kind] === Z[z] && kind !== 'ai-no-events' && kind !== 'waiting'
+  const empty = (z: keyof typeof Z) => PLACEHOLDER_EMPTY[kind] === z
   const waiting = kind === 'waiting'
   const box = (z: Zone) => ({ left: `${z.x}%`, top: `${z.y}%`, width: `${z.w}%`, height: `${z.h}%` })
   const dashed = 'rounded-[4%] border border-dashed border-line-strong bg-surface-2'
   const sk = 'rounded-[3px] bg-skeleton'
   return (
-    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[0.6cqw] bg-surface shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
+    <div className="relative h-full w-full overflow-hidden rounded-[1.2cqw] bg-surface shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
       <div className="absolute inset-x-0 top-0 flex h-[11%] items-center gap-[3%] border-b border-line px-[3%]">
         <span className="block aspect-square h-[46%] rounded-[20%] bg-product-ink" />
         <span className={`block h-[26%] w-[20%] rounded-full ${waiting ? 'bg-skeleton' : 'bg-skeleton-strong'}`} />
