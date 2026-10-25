@@ -902,7 +902,7 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
 
 /**
  * AI recommendations while the first ones are generated (Kyle's reference). Hide collapses it to a slim bar
- * with Show (the collapsed look is ours). Its height animates so the page below moves up smoothly: a deliberate
+ * with Show (the collapsed look is ours, approved by Kyle). Its height animates so the page below moves up smoothly: a deliberate
  * exception to transform-and-opacity-only motion, for this one element of mock UI (transforms would misplace
  * the content under the stage's scale).
  */
