@@ -14,7 +14,7 @@ const beat: Beat = {
       body={
         <>
           <p>
-            I took a screenshot of every empty state I found. Every time I thought I'd seen them all, another one turned up. Some looked nearly identical. Some seemed to come from the same missing step, and I couldn't tell why.
+            I took a screenshot of every empty state I found. Every time I thought I'd seen them all, another one turned up. A single widget could have several empty states, depending on what was missing. Some seemed to come from the same missing step, and I couldn't tell why.
           </p>
           <p>
             I knew my team could explain it, but first I wanted to understand it myself. In FigJam, I used the screenshots as anchor points and mapped the setup flow from start to finish. I filled the space between them with the steps that led there, like Event Creation, linked everything with arrows, and annotated why each point occurred. Anywhere I saw friction, I called it out.
