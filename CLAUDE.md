@@ -264,7 +264,7 @@ Showing my work (headline chosen by Kyle 2026-10-25; split from Two moments, per
 Bringing it to the team (closes 03 Approach)
 - With the prototype done, I had more than an idea to pitch. I had something the team could see and react to. I'd built it to sell the solution, not just to test it.
 - Instead of dropping a link in Slack, I asked for a meeting. I wanted our PM, front-end and back-end engineers, and eng lead on the same call, so I could walk them through it and answer their questions live.
-- Thread (#team-indigo, a bookend to Beat 4): the last two Beat 4 messages dimmed, using Beat 4's approved wording ("Got it. Are there any plans to address this in the near future?" / "Not right now."; Kyle's brief quoted the first as "Is fixing it on the roadmap anywhere?"), then a "Later" divider, then:
+- Thread (#team-indigo, a bookend to Beat 4): the last two Beat 4 messages dimmed, using Beat 4's approved wording ("Got it. Are there any plans to address this in the near future?" / "Not right now."; Kyle confirmed Beat 4's wording over the brief's "Is fixing it on the roadmap anywhere?"), then a "Later" divider, then:
   - Kyle Blackman: **UPDATE:** Okay, I've finished the prototype for the Onboarding Flow. Instead of spilling out the details here and sharing a link, I think it would be more productive to go through it together on Zoom. (Reactions 🎉 3, 👀 2.)
   - Front-end Eng: Ooo! Exciting!
   - PM: Sounds good! I'll put something on our calendars.
