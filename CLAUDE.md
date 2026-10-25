@@ -280,7 +280,7 @@ Bringing it to the team (closes 03 Approach)
 - Next: the 04 Solution section card (its tagline now covers phasing), then the prototype walkthrough, framed as what Kyle presented in this meeting.
 
 ### 04 Solution copy (verbatim)
-Section card: 04 Solution. Tagline: A guided setup flow, reusable for every feature after it. (Kyle, 2026-10-25; replaced "Getting users set up before they ever reach Attribution.", since users set up from inside Attribution)
+Section card: 04 Solution. Tagline: A guided setup flow framework, reusable for every feature after it. (Kyle, 2026-10-25; replaced "Getting users set up before they ever reach Attribution.", since users set up from inside Attribution)
 
 Showing the team
 - I went into that meeting proud of what I'd built, and a little nervous. I hoped the team would see the same value in it that I did.
