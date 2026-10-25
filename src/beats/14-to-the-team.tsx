@@ -5,6 +5,9 @@ import { TEAM_THREAD } from '../visuals/TeamChat'
 
 // Evidence tier: a card, because it holds an artifact (the team thread). A bookend to "Checking the hunch":
 // same channel, its last two messages dimmed at the top, then the new ones land one at a time.
+// seconds: a pause after the card lands, so the dimmed callback reads first, then one message at a time
+const TIMING = { start: 2, stagger: 1 }
+
 const MESSAGES: ChatMessage[] = [
   {
     author: 'Kyle Blackman',
@@ -47,7 +50,7 @@ const beat: Beat = {
           </p>
         </Reveal>
         <Reveal order={2} className="twa-aside">
-          <ChatThread channel="team-indigo" earlier={EARLIER} divider="Later" messages={MESSAGES} compact start={0.5} stagger={1} />
+          <ChatThread channel="team-indigo" earlier={EARLIER} divider="Later" messages={MESSAGES} compact start={TIMING.start} stagger={TIMING.stagger} />
         </Reveal>
       </div>
     </div>
