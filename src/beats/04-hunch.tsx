@@ -9,7 +9,15 @@ const beat: Beat = {
   card: (
     <Statement
       headline="Checking the hunch"
-      body="I brought it up with the team to see if anyone else had noticed. They had. PM and Eng both knew customers struggled to get fully set up. So I asked whether anything was planned to address it. Nothing was."
+      body={
+        <>
+          <p>
+            I brought it up with the team to see if anyone else had noticed. They had. PM and Eng both knew customers struggled to get fully set up. So I asked whether anything was planned to address it.
+          </p>
+          {/* the turn gets its own line so it can't be read past */}
+          <p>Nothing was.</p>
+        </>
+      }
     />
   ),
   visual: {

@@ -178,7 +178,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 
 ### Beat 4 copy (verbatim): Checking the hunch
 - Headline: Checking the hunch
-- Body: I brought it up with the team to see if anyone else had noticed. They had. PM and Eng both knew customers struggled to get fully set up. So I asked whether anything was planned to address it. Nothing was. (rewritten by Kyle 2026-10-25)
+- Body: I brought it up with the team to see if anyone else had noticed. They had. PM and Eng both knew customers struggled to get fully set up. So I asked whether anything was planned to address it. / Nothing was. (rewritten by Kyle 2026-10-25; "Nothing was." on its own line, per Kyle)
 - Chat (#team-indigo, divider "After the research sessions"):
   - Kyle Blackman: Noticed something over these past few customer sessions. Seems like almost everyone we spoke to had an Attribution dashboard that was only half set up. Am I crazy? (approved)
   - PM: You're not crazy. Setup has been a known pain point. Even our CEO has called it out. (approved)
