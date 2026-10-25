@@ -14,13 +14,13 @@ const GOALS: { lead: string; text: string }[] = [
 
 const beat: Beat = {
   slug: 'three-goals',
-  title: 'Three goals, one flow',
+  title: 'Three goals, one solution',
   variant: 'statement',
   cardDense: true,
   card: (
     <Statement
       wide
-      headline="Three goals, one flow"
+      headline="Three goals, one solution"
       body={
         <>
           <p>This effort had three goals.</p>
