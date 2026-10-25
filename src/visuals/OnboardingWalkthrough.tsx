@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { PlaceholderBadge } from '../components/Placeholder'
-import { EVENT_NAME, EVENT_SELECTOR, FlowScreen, type FlowUI } from './onboarding-screens'
+import { ASSETS, EVENT_NAME, EVENT_SELECTOR, FONTS, FlowScreen, asset, type FlowUI } from './onboarding-screens'
 
 /*
   04 Solution opens on this: an automated walkthrough of the new setup flow.
@@ -128,7 +128,18 @@ const W = 1440
 const OFFSCREEN = { x: 1500, y: 960 }
 const H = 900
 
+// fetch the product fonts and every icon once, as soon as the walkthrough mounts (a step before it shows),
+// so nothing swaps or pops in on screen
+let preloaded = false
+function preload() {
+  if (preloaded) return
+  preloaded = true
+  for (const f of FONTS) document.fonts?.load(f).catch(() => {})
+  for (const name of ASSETS) new Image().src = asset(name)
+}
+
 export function OnboardingWalkthrough({ active, startFinished, reducedMotion: reduced, sub, requestNext }: VisualProps) {
+  useEffect(preload, [])
   const step = Math.min(sub, WALK_STEPS - 1)
   const script = SCRIPTS[step]
   // Did we reach this step going forward? Decided once per step change, as derived state (a ref read on every

@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import { HandCircle } from '../components/HandCircle'
 
@@ -46,7 +46,7 @@ export const DASHBOARD_SCROLL = 7
 
 const STEPS = ['Create an event', 'Define conversion events', 'Connect ad sources', 'Enable AI']
 const PAGE_H = 900 - 65 // the main area under the header
-const asset = (name: string) => `${import.meta.env.BASE_URL}assets/showing-team/${name}.svg`
+export const asset = (name: string) => `${import.meta.env.BASE_URL}assets/showing-team/${name}.svg`
 const Img = ({ name, size, className = '' }: { name: string; size: number; className?: string }) => (
   <img src={asset(name)} alt="" width={size} height={size} className={`block flex-none ${className}`} draggable={false} />
 )
@@ -55,6 +55,24 @@ const fade = (reduced: boolean) => ({
   animate: { opacity: 1, y: 0 },
   transition: { duration: reduced ? 0.15 : 0.35, ease: EASE_DECK },
 })
+// screen and step changes: the old one stays in place under the new one while they crossfade (opacity only,
+// both in the same grid cell), so there is never a blank frame or a shift
+const cross = (reduced: boolean) => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: reduced ? 0.15 : 0.28, ease: 'easeOut' as const },
+})
+const STACK = '[grid-area:1/1]'
+
+/** Every image the screens use, so the walkthrough can fetch them before they're on screen. */
+export const ASSETS = [
+  'logo', 'nav-collapse', 'nav-env', 'chevron-env', 'nav-ai', 'nav-ai-mask', 'nav-ai-spark', 'nav-sources', 'nav-events',
+  'chevron-down', 'nav-destinations', 'nav-insights', 'chevron-up', 'nav-audiences', 'nav-consent', 'nav-short-links',
+  'nav-internal-tools', 'step-done', 'google-ads', 'plug', 'meta', 'bing-tile', 'arrow-right', 'close', 'plus', 'triangle-alert',
+]
+/** The product fonts, for the same reason (the page loads them with display=swap). */
+export const FONTS = ['400 14px Inter', '500 14px Inter', '600 14px Inter', '700 14px Inter', '400 14px Roboto', '500 14px Roboto', '700 14px Roboto']
 
 export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; reduced: boolean }) {
   return (
@@ -62,28 +80,36 @@ export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string |
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="relative z-10 h-[65px] flex-none border-b border-fp-line bg-white" />
-        <div className="relative flex-1 overflow-hidden">
-          {ui.screen === 'setup' && (
-            <div className="mx-auto w-[700px] pt-[65px]">
-              <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo-soft">SETUP GUIDE</p>
-              <h3 className="m-0 mt-[4px] text-[32px] font-semibold leading-normal tracking-[-0.64px]">Getting started with Attribution</h3>
-              <Progress phase={ui.phase} reduced={reduced} />
-              <motion.div key={`${ui.phase}-${ui.events}`} {...fade(reduced)}>
-                <SetupStep ui={ui} hover={hover} reduced={reduced} />
+        <div className="relative grid flex-1 overflow-hidden">
+          <AnimatePresence initial={false}>
+            {ui.screen === 'setup' && (
+              <motion.div key="setup" className={`${STACK} relative bg-fp-bg`} {...cross(reduced)}>
+                <div className="mx-auto w-[700px] pt-[65px]">
+                  <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo-soft">SETUP GUIDE</p>
+                  <h3 className="m-0 mt-[4px] text-[32px] font-semibold leading-normal tracking-[-0.64px]">Getting started with Attribution</h3>
+                  <Progress phase={ui.phase} reduced={reduced} />
+                  <div className="grid">
+                    <AnimatePresence initial={false}>
+                      <motion.div key={ui.phase} className={STACK} {...cross(reduced)}>
+                        <SetupStep ui={ui} hover={hover} reduced={reduced} />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </div>
               </motion.div>
-            </div>
-          )}
-          {ui.screen === 'waiting' && (
-            <motion.div key="waiting" {...fade(reduced)}>
-              <WaitingRoom reduced={reduced} />
-            </motion.div>
-          )}
-          {ui.screen === 'waiting' && <WaitingNote show={ui.note} reduced={reduced} />}
-          {ui.screen === 'dashboard' && (
-            <motion.div key="dashboard" {...fade(reduced)}>
-              <Dashboard scroll={ui.scroll} reduced={reduced} />
-            </motion.div>
-          )}
+            )}
+            {ui.screen === 'waiting' && (
+              <motion.div key="waiting" className={`${STACK} relative bg-fp-bg`} {...cross(reduced)}>
+                <WaitingRoom reduced={reduced} />
+                <WaitingNote show={ui.note} reduced={reduced} />
+              </motion.div>
+            )}
+            {ui.screen === 'dashboard' && (
+              <motion.div key="dashboard" className={`${STACK} relative bg-fp-bg`} {...cross(reduced)}>
+                <Dashboard scroll={ui.scroll} reduced={reduced} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
       <Drawer ui={ui} hover={hover} reduced={reduced} />
