@@ -5,13 +5,13 @@ import { SessionGrid } from '../visuals/SessionGrid'
 
 const beat: Beat = {
   slug: 'pattern',
-  title: 'How this all started',
+  title: 'How it all started',
   variant: 'statement',
   cardDense: true, // text-heavy: tighter top and bottom padding so it fits without scrolling
   card: (
     <Statement
       wide
-      headline="How this all started"
+      headline="How it all started"
       body={
         <>
           <p>
