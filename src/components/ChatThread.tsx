@@ -5,7 +5,7 @@ import { usePrefersReducedMotion } from '../engine/reducedMotion'
 import { RevealContext } from './Reveal'
 
 export interface ChatMessage {
-  /** A role, not a name (e.g. "PM", "Eng", "Design"). */
+  /** Who posted: a role ("PM", "Eng") for teammates, or a name. */
   author: string
   text: string
   time?: string
@@ -22,6 +22,12 @@ interface ChatThreadProps {
   /** Small note under the thread while the wording is a placeholder. Omit once it's real. */
   placeholderNote?: string
   className?: string
+}
+
+/** "Kyle Blackman" becomes "KB"; a single word keeps its first two letters ("PM", "En"). */
+const initials = (author: string) => {
+  const words = author.trim().split(/\s+/)
+  return words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : author.slice(0, 2)
 }
 
 /**
@@ -61,7 +67,7 @@ export function ChatThread({ channel, messages, start = 0.4, stagger = 1.1, plac
                 className="row-span-3 grid h-[2.2em] w-[2.2em] place-items-center rounded-[0.5em] bg-white/[0.1] text-[0.78em] font-bold text-fg-muted"
                 aria-hidden="true"
               >
-                {m.author.slice(0, 2)}
+                {initials(m.author)}
               </span>
               <span className="flex items-baseline gap-[0.6em]">
                 <b className="font-bold text-fg">{m.author}</b>

@@ -7,28 +7,28 @@ import { HandCircle } from '../components/HandCircle'
 import { PlaceholderBadge } from '../components/Placeholder'
 
 /*
-  Beat 4 visual: the empty-state montage. Six dashboard screengrabs drop onto the surface one at a time,
-  each circled (magenta, hand-drawn) around its empty area with a short handwritten-style label.
-  "Waiting on data" is marked differently (dashed circle and a question mark) because a later beat calls
-  back to it. Then duplicates rain into a pile, the pile stops dead and holds, and six lines draw from the
-  six circles to a single point beside the pile. Dummy dashboards only. Tune the timing here (seconds).
+  Beat 4 visual: the empty-state montage, as a stack of screengrabs on a table. One large dummy dashboard
+  falls and lands slightly askew; its empty area gets a hand-drawn magenta circle and a short label. The
+  next falls on top, a little offset, and the one beneath dims as it's covered. The first six land slowly
+  enough to read; "Waiting on data" is marked differently (dashed circle, question mark) because a later
+  beat calls back to it. Then more keep coming, faster and faster, circled without labels, until the stack
+  holds. Dummy dashboards only. Tune the timing here (seconds).
 */
 export const TIMING = {
-  start: 0.6,
-  sixGap: 1.5, // between the first six, slow enough to read each label
-  drop: 0.6,
-  circleAfter: 0.45, // circle starts this long after its grab
-  circleDraw: 0.7,
-  labelAfter: 1.0, // label appears this long after its grab
-  pileAfter: 1.4, // after the sixth grab lands
-  dupCount: 18,
-  dupGap: 0.1, // duplicates fall much faster
-  dupDrop: 0.35,
-  hold: 1.2, // the pile stops abruptly and holds
-  lineGap: 0.12,
-  lineDraw: 0.8,
-  reducedHold: 0.3,
-  reducedFade: 0.6,
+  start: 0.5,
+  sixGap: 1.7, // between the first six, slow enough to read each label
+  fall: 0.55,
+  circleAfter: 0.45, // circle starts this long after its grab begins to fall
+  circleDraw: 0.6,
+  labelAfter: 0.95,
+  dupCount: 12, // after the six: more keep coming
+  dupFirstGap: 0.8, // first gap after the six, then each gap shrinks
+  dupAccel: 0.8, // each gap is this fraction of the one before
+  dupMinGap: 0.16,
+  dupCircleAfter: 0.25,
+  dupCircleDraw: 0.35,
+  hold: 0.9, // the stack holds before the overlay
+  coverDim: 0.5, // how dark a covered grab gets
 }
 
 type Kind = 'no-events' | 'events-undefined' | 'no-ad-sources' | 'ai-off' | 'ai-no-events' | 'waiting'
@@ -51,55 +51,43 @@ const EMPTY_ZONE: Record<Kind, Zone> = {
   waiting: Z.body,
 }
 
-// the six, in order, placed around the edges so the pile can form in the middle
-const SIX: { kind: Kind; label: string; x: number; y: number; r: number }[] = [
-  { kind: 'no-events', label: 'No events', x: 17, y: 22, r: -4 },
-  { kind: 'events-undefined', label: 'Events not defined', x: 50, y: 20, r: 2 },
-  { kind: 'no-ad-sources', label: 'No ad sources', x: 83, y: 22, r: -3 },
-  { kind: 'ai-off', label: 'AI off', x: 17, y: 76, r: 3 },
-  { kind: 'ai-no-events', label: 'AI on, no events', x: 50, y: 78, r: -2 },
-  { kind: 'waiting', label: 'Waiting on data', x: 83, y: 76, r: 4 },
+const SIX: { kind: Kind; label: string }[] = [
+  { kind: 'no-events', label: 'No events' },
+  { kind: 'events-undefined', label: 'Events not defined' },
+  { kind: 'no-ad-sources', label: 'No ad sources' },
+  { kind: 'ai-off', label: 'AI off' },
+  { kind: 'ai-no-events', label: 'AI on, no events' },
+  { kind: 'waiting', label: 'Waiting on data' },
 ]
-const GRAB_W = 22 // cqw; a grab is 16:10, so its height is 22% of the frame's height
-const POINT = { x: 91, y: 49 } // where the six lines meet, beside the pile
+const GRAB_W = 58 // cqw: one large screengrab at a time
 
-// duplicates: deterministic scatter across the middle band
-const DUPES = (() => {
-  let seed = 7
+// the whole stack: the six, then duplicates; each with a deterministic resting offset and tilt
+const STACK = (() => {
+  let seed = 11
   const rand = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280)
-  const kinds: Kind[] = ['no-events', 'events-undefined', 'no-ad-sources', 'ai-off', 'ai-no-events']
-  return Array.from({ length: TIMING.dupCount }, (_, i) => ({
-    kind: kinds[i % kinds.length],
-    x: 30 + rand() * 40,
-    y: 41 + rand() * 18,
-    r: -10 + rand() * 20,
-  }))
+  const dupKinds: Kind[] = ['no-events', 'events-undefined', 'no-ad-sources', 'ai-off', 'ai-no-events']
+  const items: { kind: Kind; label?: string; at: number; dx: number; dy: number; r: number; quick: boolean }[] = []
+  SIX.forEach((g, i) => items.push({ ...g, at: TIMING.start + i * TIMING.sixGap, dx: 0, dy: 0, r: 0, quick: false }))
+  let t = TIMING.start + 5 * TIMING.sixGap
+  let gap = TIMING.dupFirstGap + TIMING.labelAfter
+  for (let i = 0; i < TIMING.dupCount; i++) {
+    t += gap
+    items.push({ kind: dupKinds[i % dupKinds.length], at: t, dx: 0, dy: 0, r: 0, quick: true })
+    gap = Math.max(TIMING.dupMinGap, (i === 0 ? TIMING.dupFirstGap : gap) * TIMING.dupAccel)
+  }
+  return items.map((it) => ({ ...it, dx: -5 + rand() * 10, dy: -3 + rand() * 6, r: -6 + rand() * 12 }))
 })()
-
-const sixAt = (i: number) => TIMING.start + i * TIMING.sixGap
-const PILE_AT = sixAt(5) + TIMING.pileAfter
-const LINES_AT = PILE_AT + (TIMING.dupCount - 1) * TIMING.dupGap + TIMING.dupDrop + TIMING.hold
-const TOTAL = LINES_AT + 5 * TIMING.lineGap + TIMING.lineDraw + 0.2
-
-/** Where a grab's circle sits, in frame percent (rotation ignored; it's small). */
-function circleCenter(g: (typeof SIX)[number]) {
-  const z = EMPTY_ZONE[g.kind]
-  return { x: g.x + ((z.x + z.w / 2 - 50) / 100) * GRAB_W, y: g.y + ((z.y + z.h / 2 - 50) / 100) * 22 }
-}
+const LAST = STACK[STACK.length - 1]
+const TOTAL = LAST.at + TIMING.fall + TIMING.dupCircleAfter + TIMING.dupCircleDraw + TIMING.hold
 
 export function EmptyStateMontage(props: VisualProps) {
   const { reducedMotion: reduced } = props
-  const mode = useVisualPlayback(props, reduced ? TIMING.reducedHold + TIMING.reducedFade : TOTAL)
+  const mode = useVisualPlayback(props, TOTAL)
   const on = mode !== 'empty'
+  const playing = mode === 'play'
 
-  // one timing helper: staggered when playing, instant when stepping back in, one fade when reduced
-  const at = (delay: number, duration: number) =>
-    mode !== 'play' ? { duration: 0 } : reduced ? { duration: TIMING.reducedFade, delay: TIMING.reducedHold } : { duration, delay, ease: EASE_DECK }
-  const drop = (delay: number, duration: number) => ({
-    initial: false as const,
-    animate: on ? { opacity: 1, scale: 1, y: '0cqw' } : { opacity: 0, scale: reduced ? 1 : 1.25, y: reduced ? '0cqw' : '-3cqw' },
-    transition: at(delay, duration),
-  })
+  // same timeline with or without reduced motion; reduced just drops the fall (opacity only)
+  const at = (delay: number, duration: number) => (playing ? { duration: reduced ? 0.3 : duration, delay, ease: EASE_DECK } : { duration: 0 })
 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
@@ -111,100 +99,69 @@ export function EmptyStateMontage(props: VisualProps) {
         style={{ aspectRatio: '16 / 10', width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))', containerType: 'size' }}
         aria-hidden="true"
       >
-        {/* the pile, under the six */}
-        {DUPES.map((d, i) => (
-          <Placed key={`d${i}`} x={d.x} y={d.y} r={d.r} w={16}>
-            <motion.div {...drop(PILE_AT + i * TIMING.dupGap, TIMING.dupDrop)}>
-              <Grab kind={d.kind} />
-            </motion.div>
-          </Placed>
-        ))}
-
-        {/* the six, each circled and labeled */}
-        {SIX.map((g, i) => {
-          const z = EMPTY_ZONE[g.kind]
+        {STACK.map((g, i) => {
+          const next = STACK[i + 1]
           const waiting = g.kind === 'waiting'
-          const top = g.y < 50
-          return (
-            <Placed key={g.kind} x={g.x} y={g.y} r={g.r} w={GRAB_W} z={10}>
-              <motion.div {...drop(sixAt(i), TIMING.drop)}>
-                <Grab kind={g.kind} />
-              </motion.div>
-              {/* circle sized to the empty zone, slightly larger */}
-              <CircleBox zone={z}>
-                <HandCircle
-                  show={on}
-                  instant={mode !== 'play'}
-                  reducedMotion={reduced}
-                  delay={sixAt(i) + TIMING.circleAfter}
-                  duration={TIMING.circleDraw}
-                  variant={i}
-                  dashed={waiting}
-                  className="inset-0 h-full w-full"
-                />
-                {waiting && (
-                  <motion.span
-                    className="absolute inset-0 grid place-items-center text-[5cqw] font-bold italic leading-none text-annotation"
-                    initial={false}
-                    animate={on ? { opacity: 1, scale: 1, rotate: 8 } : { opacity: 0, scale: reduced ? 1 : 0.6, rotate: 8 }}
-                    transition={at(sixAt(i) + TIMING.circleAfter + TIMING.circleDraw * 0.6, 0.5)}
-                  >
-                    ?
-                  </motion.span>
-                )}
-              </CircleBox>
-              <motion.span
-                className={`absolute left-1/2 whitespace-nowrap text-[clamp(10px,1.55cqw,22px)] font-semibold italic text-annotation ${top ? 'bottom-[calc(100%+0.8cqw)]' : 'top-[calc(100%+0.8cqw)]'}`}
-                style={{ x: '-50%', rotate: -3 }}
-                initial={false}
-                animate={{ opacity: on ? 1 : 0 }}
-                transition={at(sixAt(i) + TIMING.labelAfter, 0.5)}
-              >
-                {g.label}
-              </motion.span>
-            </Placed>
-          )
-        })}
-
-        {/* six lines to one point */}
-        {SIX.map((g, i) => {
-          const c = circleCenter(g)
-          const dx = POINT.x - c.x
-          const dy = (POINT.y - c.y) * 0.625 // frame height is 62.5cqw
-          const len = Math.hypot(dx, dy)
-          const angle = (Math.atan2(dy, dx) * 180) / Math.PI
           return (
             <div
-              key={`l${i}`}
-              className="absolute z-20 h-[2px] origin-left"
-              style={{ left: `${c.x}%`, top: `${c.y}%`, width: `${len}cqw`, transform: `rotate(${angle}deg)` }}
+              key={i}
+              className="absolute left-1/2 top-1/2"
+              style={{ width: `${GRAB_W}cqw`, zIndex: i + 1, transform: `translate(calc(-50% + ${g.dx}cqw), calc(-50% + ${g.dy}cqw)) rotate(${g.r}deg)` }}
             >
-              <motion.span
-                className="block h-full w-full origin-left rounded-full bg-annotation"
+              <motion.div
+                className="relative"
                 initial={false}
-                animate={{ scaleX: on ? 1 : reduced ? 1 : 0, opacity: on ? 1 : 0 }}
-                transition={at(LINES_AT + i * TIMING.lineGap, TIMING.lineDraw)}
-              />
+                animate={on ? { opacity: 1, scale: 1, y: '0cqw', filter: 'blur(0px)' } : { opacity: 0, scale: reduced ? 1 : 1.35, y: reduced ? '0cqw' : '-5cqw', filter: reduced ? 'blur(0px)' : 'blur(6px)' }}
+                transition={at(g.at, TIMING.fall)}
+              >
+                <Grab kind={g.kind} />
+                <CircleBox zone={EMPTY_ZONE[g.kind]}>
+                  <HandCircle
+                    show={on}
+                    instant={!playing}
+                    reducedMotion={reduced}
+                    delay={g.at + (g.quick ? TIMING.dupCircleAfter : TIMING.circleAfter)}
+                    duration={g.quick ? TIMING.dupCircleDraw : TIMING.circleDraw}
+                    variant={i}
+                    dashed={waiting}
+                    className="inset-0 h-full w-full"
+                  />
+                  {waiting && (
+                    <motion.span
+                      className="absolute inset-0 grid place-items-center text-[8cqw] font-bold italic leading-none text-annotation"
+                      initial={false}
+                      animate={on ? { opacity: 1, scale: 1, rotate: 8 } : { opacity: 0, scale: reduced ? 1 : 0.6, rotate: 8 }}
+                      transition={at(g.at + TIMING.circleAfter + TIMING.circleDraw * 0.6, 0.45)}
+                    >
+                      ?
+                    </motion.span>
+                  )}
+                  {g.label && (
+                    <motion.span
+                      className="absolute bottom-[calc(100%+0.6cqw)] left-[2%] whitespace-nowrap rounded-[0.4cqw] bg-surface/90 px-[0.6cqw] text-[clamp(11px,2.3cqw,32px)] font-semibold italic text-annotation"
+                      style={{ rotate: -3 }}
+                      initial={false}
+                      animate={{ opacity: on ? 1 : 0 }}
+                      transition={at(g.at + TIMING.labelAfter, 0.45)}
+                    >
+                      {g.label}
+                    </motion.span>
+                  )}
+                </CircleBox>
+                {/* dims once the next grab lands on top of it */}
+                {next && (
+                  <motion.div
+                    className="pointer-events-none absolute inset-0 rounded-[0.6cqw] bg-card-to"
+                    initial={false}
+                    animate={{ opacity: on ? TIMING.coverDim : 0 }}
+                    transition={at(next.at + TIMING.fall * 0.6, 0.4)}
+                  />
+                )}
+              </motion.div>
             </div>
           )
         })}
-        <motion.span
-          className="absolute z-20 block h-[1.4cqw] w-[1.4cqw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-annotation shadow-[0_0_0_0.6cqw_color-mix(in_srgb,var(--color-annotation)_25%,transparent)]"
-          style={{ left: `${POINT.x}%`, top: `${POINT.y}%` }}
-          initial={false}
-          animate={on ? { opacity: 1, scale: 1 } : { opacity: 0, scale: reduced ? 1 : 0.4 }}
-          transition={at(LINES_AT + TIMING.lineDraw * 0.7, 0.4)}
-        />
       </div>
-    </div>
-  )
-}
-
-/** Positions something by its center in frame percent, with a resting rotation. */
-function Placed({ x, y, r, w, z = 1, children }: { x: number; y: number; r: number; w: number; z?: number; children: ReactNode }) {
-  return (
-    <div className="absolute" style={{ left: `${x}%`, top: `${y}%`, width: `${w}cqw`, zIndex: z, transform: `translate(-50%, -50%) rotate(${r}deg)` }}>
-      {children}
     </div>
   )
 }

@@ -25,10 +25,10 @@ const beat: Beat = {
           channel="team-indigo"
           placeholderNote="Placeholder messages, final wording to come"
           messages={[
-            { author: 'Design', time: '10:42 AM', text: "Noticed something across this week's research sessions. Almost every customer's Attribution dashboard was only half set up. Missing ad sources, AI not enabled.", reactions: [{ emoji: '👀', count: 2 }] },
+            { author: 'Kyle Blackman', time: '10:42 AM', text: "Noticed something across this week's research sessions. Almost every customer's Attribution dashboard was only half set up. Missing ad sources, AI not enabled.", reactions: [{ emoji: '👀', count: 2 }] },
             { author: 'PM', time: '10:44 AM', text: "Yeah, we've seen that. Setup has been a known pain point." },
             { author: 'Eng', time: '10:45 AM', text: "Agreed. The flow doesn't really guide anyone through it.", reactions: [{ emoji: '👍', count: 1 }] },
-            { author: 'Design', time: '10:47 AM', text: 'Is fixing it on the roadmap anywhere?' },
+            { author: 'Kyle Blackman', time: '10:47 AM', text: 'Is fixing it on the roadmap anywhere?' },
             { author: 'PM', time: '10:48 AM', text: 'Not right now.' },
           ]}
         />
@@ -49,7 +49,7 @@ const beat: Beat = {
   visual: {
     component: EmptyStateMontage,
     description:
-      'Dashboard screengrabs drop onto a surface one at a time. Six are circled by hand and labeled: No events. Events not defined. No ad sources. AI off. AI on, no events. Waiting on data, which is marked differently, with a dashed circle and a question mark. Then many duplicates fall faster and pile up, the pile stops, and six lines draw from the six circles to a single point beside the pile. Dummy dashboards only. Placeholder shapes stand in for the final screens.',
+      'Large dashboard screengrabs fall onto a table one at a time, each landing on top of the last. Each has its empty area circled by hand and labeled: No events. Events not defined. No ad sources. AI off. AI on, no events. Waiting on data, which is marked differently, with a dashed circle and a question mark. Then more keep falling, faster and faster, each circled, until the stack stops. Dummy dashboards only. Placeholder shapes stand in for the final screens.',
   },
   overlay: {
     trigger: 'auto',
