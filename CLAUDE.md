@@ -26,6 +26,7 @@ Every screen belongs to one of three tiers. A new beat picks its tier first and 
 | Evidence | Full-screen visuals; cards holding an artifact (table, stat block, before/after, pull quote) | Full-bleed, or the deck card | Visuals enter from depth; cards keep the deck rise | Same placeholder badge, same frame |
 
 Rules:
+- Rhythm: each beat runs Story, then Evidence, then (optionally) a Moment. Text sets it up, a visual proves it, an overlay lands it. Don't put two full-screen visuals back to back, and don't lead a beat with its visual.
 - A beat's punchline is never inline: it's a Moment, as a `cardOverlay` with `SpotlightLine` (italic, centered, horizon line beneath, the point in `<em>`). The statement pushes back behind it.
 - Yellow means "the point". One yellow moment per screen: the horizon line plus the emphasized line. Chrome (Next, Begin, progress line) and Kyle's case study pills are the only other yellow. Incidental labels, stamps, dots, and badges are neutral.
 - Annotation (Kyle's markup on visuals) is magenta, never yellow.
@@ -117,6 +118,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: The problem statement sits on a left-aligned deck card with the accent glow, per Kyle. Its kicker moved off the card into a full-screen `cardOverlay` (card pushes back behind it), per Kyle.
 - 2026-10-24: Section card type and section-aware progress (`01 · 2/3`), per Kyle. Sections live in one data file so they're cheap to change. 01 Discovery opens before Beat 3.
 - 2026-10-24: A card stays dimmed behind the next beat (deck behavior) only when the next beat is framed too; a frameless statement after a card gets a clean slate.
+- 2026-10-25: Beat 4 split in two, per Kyle: "Checking the hunch" (statement, then the team chat as a full-screen visual) and "How widespread was it?" (statement, then the montage and overlay). The crowded card is gone. Context for the chat lives in its own UI (a date divider), not a title on the visual. Chat wording updated and approved; teammates appear by role, the CEO as "our CEO".
 - 2026-10-25: Cards and statements use `justify-content: safe center`, so content taller than the screen (phones) top-aligns instead of being cut off; cards also reset to their top when they become current.
 - 2026-10-25: Unified the presentation into three tiers (Moments, Story, Evidence), per Kyle ("starting to feel a little disjointed"). Problem back to a frameless story statement; one story headline size; every punchline is a full-screen overlay with the horizon line (Beat 3's question moved to an overlay); the hero introduces the horizon line; incidental yellow went neutral. See System.
 - 2026-10-25: Section cards became a cinematic title sequence (frameless, letter-by-letter rise from behind a horizon line, glow, giant outlined numeral, chapter row), per Kyle: "more cinematic title card reveal instead of a traditional PowerPoint section". The pie motif and card frame were dropped.
@@ -134,7 +136,8 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
 | 2a | section-discovery | section title sequence | None | Reworked 2026-10-25, awaiting Kyle's review |
 | 3 | pattern | statement (dense, wide), card overlay (question), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
-| 4 | hunch | card (Evidence: chat thread beside the text), visual, overlay (auto, holds for a key press) | Empty-state montage as a falling stack: one large screenshot at a time (fitted to 80 by 52 cqw, own proportions) lands on the last, its empty area annotated (circle, handwritten label, arrow), covered ones dimming; the first six at reading pace ("Waiting on data" dashed with a question mark), then more keep coming faster and faster until it holds (`src/visuals/EmptyStateMontage.tsx`, timing in `TIMING`, about 17s). Reduced motion: same order as crossfades. Placeholder shapes. | Built, awaiting Kyle's review |
+| 4 | hunch | statement, visual | Full-screen team chat (#team-indigo, "After the research sessions" divider), messages landing one at a time (`src/visuals/TeamChat.tsx`). | Built 2026-10-25, awaiting Kyle's review |
+| 5 | widespread | statement (wide), visual, overlay (auto, holds for a key press) | Empty-state montage as a falling stack with handwritten annotations (`src/visuals/EmptyStateMontage.tsx`, swappable `SHOTS`). | Built 2026-10-25, awaiting Kyle's review |
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
@@ -173,11 +176,19 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Visual labels: Day 1, Day 1, Day 2, Day 2; New feature, Bug walkthrough, Adoption check-in, New feature
 - Overlay: none
 
-### Beat 4 copy (verbatim)
+### Beat 4 copy (verbatim): Checking the hunch
 - Headline: Checking the hunch
-- Body 1: I brought it up with the team. PM and Eng both agreed it was a problem. When I asked where it sat on the roadmap, the answer was that it didn't.
-- Body 2: Before pushing further, I wanted to know how widespread it was. Our masquerade tool let us see the product exactly as a customer saw it, so I used it to look inside roughly 20 of our 200+ customer accounts. I didn't have to dig. Almost every account was either half set up or not set up at all. The fully configured ones were outliers.
+- Body: I brought it up with the team. PM and Eng both agreed it was a problem. When I asked where it sat on the roadmap, the answer was that it didn't.
+- Chat (#team-indigo, divider "After the research sessions"):
+  - Kyle Blackman: Noticed something over these past few customer sessions. Seems like almost everyone we spoke to had an Attribution dashboard that was only half set up. Am I crazy? (approved)
+  - PM: You're not crazy. Setup has been a known pain point. Even our CEO has called it out. (approved)
+  - Eng: Agreed. The flow doesn't really guide anyone through it. (placeholder)
+  - Kyle Blackman: Is fixing it on the roadmap anywhere? (placeholder)
+  - PM: Not right now. (placeholder)
+
+### Beat 5 copy (verbatim): How widespread was it?
+- Headline: How widespread was it? (chosen by Kyle)
+- Body: Before pushing further, I wanted to know how widespread it was. Our masquerade tool let us see the product exactly as a customer saw it, so I used it to look inside roughly 20 of our 200+ customer accounts. I didn't have to dig. Almost every account was either half set up or not set up at all. The fully configured ones were outliers.
 - Closing line (own paragraph, accent): And it wasn't one empty state. It was many.
-- Chat (#team-indigo, placeholder wording): teammates shown by role (PM, Eng); Kyle shown as "Kyle Blackman", per Kyle. Five messages as briefed.
 - Montage labels, in order: No events. Events not defined. No ad sources. AI off. AI on, no events. Waiting on data.
-- Overlay (auto after the lines, holds for a key press): Six different empty states. Were they six problems, or one?
+- Overlay (auto after the stack, holds for a key press): Six different empty states. Were they six problems, or one?
