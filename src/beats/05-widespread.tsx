@@ -14,7 +14,7 @@ const beat: Beat = {
       body={
         <>
           <p>
-            Before pushing further, I wanted to know how widespread it was. Our masquerade tool let us see the product exactly as a customer saw it, so I used it to look inside roughly 20 of our 200+ customer accounts. I didn't have to dig. Almost every account was either half set up or not set up at all. The fully configured ones were outliers.
+            Before pushing further, I wanted to know how widespread it was. Our masquerade tool let us see a customer's actual account, populated with their own data, so I used it to look inside roughly 20 of our 200+ customer accounts. I didn't have to dig. Almost every account was either half set up or not set up at all. The fully configured ones were outliers.
           </p>
           {/* hands off to the montage: this screen's one yellow line */}
           <p className="mt-[0.3em] text-kicker font-semibold text-accent">And it wasn't one empty state. It was many.</p>
