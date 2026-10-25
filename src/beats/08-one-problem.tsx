@@ -13,7 +13,7 @@ const beat: Beat = {
       <Reveal as="h2" className="m-0 text-display font-extrabold">
         One problem, <span className="text-accent">not six</span>
       </Reveal>
-      <div className="text-with-aside is-mid mt-[clamp(16px,calc(var(--u)*2.2),40px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
+      <div className="text-with-aside is-mid mt-[clamp(14px,calc(var(--u)*1.6),30px)] gap-y-[0.7em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-lead">
           <p className="m-0">
             The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.
@@ -29,7 +29,7 @@ const beat: Beat = {
         </Reveal>
         <Reveal order={3} className="twa-rest">
           <p className="m-0">
-            That pointed to the fix: front-load setup before users ever see the dashboard. Required steps first, explained clearly. Optional steps last, with the choice to skip them and an easy way back later.
+            That pointed to the fix: front-load setup before users ever see the dashboard. Required steps first, explained clearly. Optional steps last, with the choice to skip them and an easy way back later. And once setup was done, tell users their data was on its way instead of showing them an empty page.
           </p>
         </Reveal>
       </div>

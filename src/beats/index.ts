@@ -9,6 +9,8 @@ import checking from './07-checking'
 import oneProblem from './08-one-problem'
 import beforePrototyping from './09-before-prototyping'
 import codeTold from './10-code-told'
+import realNumbers from './11-real-numbers'
+import twoMoments from './12-two-moments'
 import { sectionCard } from '../components/SectionCard'
 
 // The presentation, in order. Adding a beat: add its file in this folder, then one line here.
@@ -27,4 +29,6 @@ export const beats: Beat[] = [
   sectionCard('approach'),
   beforePrototyping,
   codeTold,
+  realNumbers,
+  twoMoments,
 ]

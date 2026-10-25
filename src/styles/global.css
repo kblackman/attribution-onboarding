@@ -49,6 +49,8 @@ body {
 }
 /* deck sub-slide padding: tighter top and bottom for text-heavy cards */
 .deck-card.is-dense, .deck-statement.is-dense { padding-top: clamp(28px, calc(var(--u) * 3.6), 90px); padding-bottom: clamp(28px, calc(var(--u) * 3.6), 90px); }
+/* short laptop screens (1280x720): a little less vertical padding so the longest dense cards still fit */
+@media (max-height: 760px) and (min-width: 721px) { .deck-card.is-dense, .deck-statement.is-dense { padding-top: 24px; padding-bottom: 24px; } }
 
 /* statement variant: the card's footprint and padding, no frame, so text lines up with card content */
 .deck-statement {

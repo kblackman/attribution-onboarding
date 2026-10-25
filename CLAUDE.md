@@ -124,6 +124,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: Section card type and section-aware progress (`01 · 2/3`), per Kyle. Sections live in one data file so they're cheap to change. 01 Discovery opens before Beat 3.
 - 2026-10-24: A card stays dimmed behind the next beat (deck behavior) only when the next beat is framed too; a frameless statement after a card gets a clean slate.
 - 2026-10-25: Map nodes outside Attribution (pages and drawers) now share the screenshots' shell (radius, header bar, shadow), per Kyle: the drawer shape read as an error. "Sketching" changed to "prototyping" (Kyle mapped in FigJam, then prototyped in Claude Code). The terminal now looks like a classic Claude Code session (Kyle approved Claude's coral `#D97757` as the `coral` token, for that visual only); its tool-call lines and later elapsed times are generic placeholders.
+- 2026-10-25: "Designing for real numbers" is a card (it holds the ranges table, header row hidden visually but kept for screen readers via `DataTable hideHeader`). "Two moments, two patterns" is a frameless statement per the System, followed by the prototype visual. `TweaksPanel` (`src/components/TweaksPanel.tsx`) is reusable for any prototype that switches states; on phones it sits below the window. Dense cards trim vertical padding on short laptop screens (max-height 760px) so the longest ones fit at 1280x720.
 - 2026-10-25: Started 03 Approach. Per the System, "Checking before prototyping" is a frameless statement followed by a 4-press terminal visual (one press per exchange, forward-only auto-advance, longer first search); "What the code told me" is a card holding the v1 status list.
 - 2026-10-25: Built 02 Diagnosis (section card plus three beats). Placed after "How widespread was it?" rather than after "Checking the hunch", since its beats reuse that montage and answer its overlay. Per the System, "Connecting the dots" and "Checking my work" are frameless statements (no artifact); "One problem, not six" is a card (it holds the Required / Optional split). Its headline is display size with "not six" in accent, echoing the title's two-tone device. Diagnosis tagline updated to Kyle's: "Mapping the flow to see the shape of the problem."
 - 2026-10-25: Added the section index (jump anywhere), same mechanism as the Tiled feature pitch deck, per Kyle.
@@ -152,11 +153,13 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 8 | one-problem | card (Evidence: Required / Optional beside the second paragraph) | None | Built 2026-10-25, awaiting Kyle's review |
 | 9 | before-prototyping | statement (wide), visual (4 presses) | Reconstructed Claude Code session (Claude Code styling, coral accent), one exchange per press (`src/visuals/CodeConversation.tsx`). | Built 2026-10-25, awaiting Kyle's review |
 | 10 | code-told | card (Evidence: v1 status list beside the text) | None | Built 2026-10-25, awaiting Kyle's review |
+| 11 | real-numbers | card (Evidence: ranges table beside the second paragraph, caption "Approximate ranges.") | None | Built 2026-10-25, awaiting Kyle's review |
+| 12 | two-moments | statement (wide, dense), visual (4 presses) | Prototype with a reusable `TweaksPanel` (Data load: Low 1, Average 2, High 15, Outlier 22). Low and Average show the setup list; High and Outlier the waiting-room grid, wrapping after four. Rows animate in and reflow (`src/visuals/LoadPrototype.tsx`). Auto-advances every ~2s, forward only. Mock event names. | Built 2026-10-25, awaiting Kyle's review |
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
-- 02 Diagnosis is built. 03 Approach has its section card and two beats (Checking before prototyping, What the code told me); more Approach beats to come, wait for Kyle's copy.
+- 02 Diagnosis is built. 03 Approach has its section card and four beats (Checking before prototyping, What the code told me, Designing for real numbers, Two moments, two patterns); more Approach beats to come, wait for Kyle's copy.
 - Beat 4 is built (Checking the hunch). Kyle feels the card plus chat reads crammed; he may revisit it later (not now).
 - Beat 4's montage became a falling stack, per Kyle; the pile-and-lines ending was dropped. Screenshots are bigger, annotations handwritten with arrows (per Kyle).
 - To swap real screenshots into Beat 4: drop files in `public/assets/hunch/`, then in `SHOTS` (top of `src/visuals/EmptyStateMontage.tsx`) set `src` and `aspect` (width / height), and measure `empty` (percent of the image) on the real screenshot. Any size or shape works; `labelAt` moves a label if needed. Repeats in the fast cascade reuse these automatically. The 02 Diagnosis section card comes next, then Diagnosis beats.
@@ -225,11 +228,11 @@ Checking my work
 One problem, not six
 - The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.
 - The map also showed what was required and what wasn't. Event Creation and Event Definition (marking events as mid or low funnel) were the only steps needed to see anything, and Attribution only needed a single low-funnel event to work. Connecting ad sources and enabling AI added value, but they were optional.
-- That pointed to the fix: front-load setup before users ever see the dashboard. Required steps first, explained clearly. Optional steps last, with the choice to skip them and an easy way back later.
+- That pointed to the fix: front-load setup before users ever see the dashboard. Required steps first, explained clearly. Optional steps last, with the choice to skip them and an easy way back later. And once setup was done, tell users their data was on its way instead of showing them an empty page. (updated by Kyle 2026-10-25)
 - Split: Required (Event Creation, Event Definition). Optional (Connect ad sources, Enable AI).
 
 ### 03 Approach copy (verbatim)
-Section card: 03 Approach. Tagline: Scoping, reusing, and shipping in pieces.
+Section card: 03 Approach. Tagline: Scoping, reusing, testing, and shipping in pieces. (updated 2026-10-25)
 
 Checking before prototyping
 - Front-loading setup meant pulling every required step into one guided flow. Whether that was possible would decide how simple the flow could be, so I checked before prototyping anything. ("sketching" changed to "prototyping" by Kyle 2026-10-25: he mapped in FigJam, then went straight to a prototype in Claude Code)
@@ -240,3 +243,15 @@ What the code told me
 - The drawer was fully self-contained. It had no dependency on the Events page, so surfacing it in Attribution's new setup flow took only a few lines of code, and it could stay in Events for anyone used to creating events there. The investigation also showed that only two fields were required, event name and CSS selector, something the drawer itself never made clear.
 - Moving the AI toggle into the flow was also a light lift, so it came along too. Connecting ad sources was heavier and stayed out of v1. Instead, I added an automatic redirect back to Attribution after the OAuth flow finished, so users no longer had to find their way back on their own.
 - Status list: Event Creation, moved into the flow (done). Enable AI, moved into the flow (done). Connect ad sources, auto-redirect back (full move planned later) (partial).
+
+Designing for real numbers
+- Bringing Event Creation into the flow raised a new problem. Once users created events, they needed a list to review and define them. How long would that list get? I couldn't just design for the happy path.
+- All of Freshpaint's data lived in Snowflake, which had an agent layer that let me query it in plain language. I asked how many events users created at three points: during initial setup, after 24 hours, and after 30 days. I looked past day one because of the waiting room, the screen I designed to tell users their data was on its way. It lists every defined event, and some users might not reach it until weeks into setup. I asked for percentiles instead of an average, since an average would hide the edge cases.
+- Table: Initial setup and 24 hours / Mostly 1 to 2 events, occasionally a few more. 30 days / Some around 15, outliers 20+. Caption: Approximate ranges.
+
+Two moments, two patterns
+- Most users created only one or two events during initial setup, with no sign of anyone creating them in bulk. A simple list covered the majority and could still stretch if needed.
+- The waiting room told a different story. The 24-hour numbers barely changed, but by 30 days, users had created more events. For anyone reaching the waiting room weeks into setup, a list would get bulky. So I designed a grid that wraps to a new row after every four events.
+- Then I stress-tested both. I built a tweaks panel into the prototype that swapped between real customer data loads and updated the UI on the fly. I knew Eng would ask how it scaled, and I wanted to show my work. The panel later became part of our shared prototyping skill, so every new prototype came with one.
+- Tweaks panel options: Low (1 event, list), Average (2, list), High (15, grid), Outlier (22, grid). Event names are mock.
+- Kyle may split the last paragraph into its own beat paired with the prototype if it reads too long.
