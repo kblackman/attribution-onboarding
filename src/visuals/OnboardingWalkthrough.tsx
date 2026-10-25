@@ -36,7 +36,7 @@ const selDone = typed(nameDone + 1.2, EVENT_SELECTOR)
 // Kyle's eight steps
 const SCRIPTS: Script[] = [
   // 1. entry: the setup flow, progress at step 1
-  { frames: [{ at: 0.5, to: 'create' }] },
+  { frames: [{ at: 0.6, to: 'create' }] },
   // 2. Event Creation: the drawer slides in, name and CSS selector are filled, then Create
   {
     frames: [
@@ -122,6 +122,8 @@ SCRIPTS.reduce(
 )
 
 const W = 1440
+// where the cursor waits before its first move: just past the frame's bottom-right corner
+const OFFSCREEN = { x: 1500, y: 960 }
 const H = 900
 
 export function OnboardingWalkthrough({ active, startFinished, reducedMotion: reduced, sub, requestNext }: VisualProps) {
@@ -186,9 +188,14 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
   }, [])
 
   // place the cursor on its target, measured in the screen's own pixels
-  const [pos, setPos] = useState({ x: 1100, y: 720 })
+  // before its first target the cursor waits off the frame (bottom right), so it glides in on the first step
+  const [pos, setPos] = useState({ ...OFFSCREEN, jump: true })
   useLayoutEffect(() => {
-    if (!target || !stageRef.current || !scale) return
+    if (!target) {
+      setPos({ ...OFFSCREEN, jump: true })
+      return
+    }
+    if (!stageRef.current || !scale) return
     const stage = stageRef.current
     const el = stage.querySelector<HTMLElement>(`[data-t="${target}"]`)
     if (!el) return
@@ -202,7 +209,7 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
       y += n.offsetTop
       n = n.offsetParent as HTMLElement | null
     }
-    if (n === stage) setPos({ x, y })
+    if (n === stage) setPos({ x, y, jump: false })
   }, [target, scale, step, played])
 
   return (
@@ -218,7 +225,7 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
         <div ref={frameRef} className="relative w-full overflow-hidden rounded-[1.2cqw] shadow-[0_24px_60px_rgba(0,0,0,0.45)]" style={{ aspectRatio: `${W} / ${H}` }}>
           <div ref={stageRef} className="absolute left-0 top-0 origin-top-left" style={{ width: W, height: H, transform: `scale(${scale})` }}>
             <FlowScreen ui={ui} hover={ui.cursor ? hover : null} reduced={reduced} />
-            <Cursor x={pos.x} y={pos.y} visible={ui.cursor} reduced={reduced} clickKey={lastClick >= 0 && play ? `${step}-${lastClick}` : null} />
+            <Cursor x={pos.x} y={pos.y} jump={pos.jump} visible={ui.cursor} reduced={reduced} clickKey={lastClick >= 0 && play ? `${step}-${lastClick}` : null} />
           </div>
         </div>
       </div>
@@ -227,13 +234,13 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
 }
 
 /** A simulated pointer, with a ring that pulses out on each click. */
-function Cursor({ x, y, visible, reduced, clickKey }: { x: number; y: number; visible: boolean; reduced: boolean; clickKey: string | null }) {
+function Cursor({ x, y, jump, visible, reduced, clickKey }: { x: number; y: number; jump: boolean; visible: boolean; reduced: boolean; clickKey: string | null }) {
   return (
     <motion.div
       className="pointer-events-none absolute left-0 top-0 z-20"
       initial={false}
       animate={{ x, y, opacity: visible ? 1 : 0 }}
-      transition={reduced ? { duration: 0 } : { x: { duration: TIMING.move, ease: EASE_DECK }, y: { duration: TIMING.move, ease: EASE_DECK }, opacity: { duration: 0.3 } }}
+      transition={reduced || jump ? { duration: 0 } : { x: { duration: TIMING.move, ease: EASE_DECK }, y: { duration: TIMING.move, ease: EASE_DECK }, opacity: { duration: 0.3 } }}
     >
       {clickKey && (
         <motion.span
