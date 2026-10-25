@@ -116,7 +116,14 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 
 ## Up next and open notes
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
-- Beat 4 is an empty-state montage that reuses `HandCircle`. Wait for Kyle's copy.
+- Beat 4 is next: where Kyle realized customers had a real problem, conferred with his team, and investigated on his own. Waiting on his copy.
+- When Kyle asks for them ("ask me the Beat 4 questions", or similar), ask all of these again, in full:
+  1. Conferring with the team: who did you bring it to (PM, engineering, CS, account managers), and what came back? Did they recognize it, push back, or say it was a known issue nobody owned? Any real quotes to use?
+  2. Your own investigation: what did you actually do (codebase, product data, support tickets, walking the setup flow yourself), and what did you find? This is where the "Codebase Investigation" and "Data-Informed Design" tags pay off.
+  3. Numbers: any real counts, percentages, or time frames to show? None get used unless Kyle gives them.
+  4. Where it ends: does it land on "the pattern was real" and close out 01 Discovery, or bridge into 02 Diagnosis?
+  5. Visual: Beat 3's brief said Beat 4 would be an empty-state montage reusing the hand-drawn circles. Is this that beat, or does the montage belong in 02 Diagnosis ("Tracing every empty state back to its source")?
+  Suggested structure to offer again: two beats (the team conversation, then digging in himself, the first ending on what made him start investigating), or one statement beat with two short paragraphs and the investigation finding as a full-screen card overlay like the problem kicker.
 
 ### Beat 1 copy (verbatim)
 - Title: Diagnosing the problem, not the symptom
@@ -128,7 +135,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 ### Beat 2 copy (verbatim)
 - Headline: The problem
 - Body: Freshpaint's healthcare marketing analytics platform was powerful, but it had no self-serve system in place to help customers reach the value they'd paid for. Setup flows were confusing and offered little to no guidance. Getting set up correctly meant reading dense documentation or booking a call with CS or an account manager.
-- Kicker (next key press, full-screen card overlay): Everyone knew it was a problem. Nobody prioritized fixing it. (Updated by Kyle 2026-10-23.)
+- Kicker (next key press, full-screen card overlay): Everyone knew it was an issue. Nobody prioritized fixing it. (Updated by Kyle 2026-10-25.)
 - Visual labels: Documentation, CS call, Account manager
 - Overlay: none
 

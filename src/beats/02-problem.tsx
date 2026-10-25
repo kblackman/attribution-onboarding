@@ -16,7 +16,7 @@ const beat: Beat = {
   // lands on the next press: the card pushes back and this takes the screen
   cardOverlay: (
     <SpotlightLine>
-      <span>Everyone knew it was a problem. </span>
+      <span>Everyone knew it was an issue. </span>
       <span><em>Nobody prioritized fixing it.</em></span>
     </SpotlightLine>
   ),
