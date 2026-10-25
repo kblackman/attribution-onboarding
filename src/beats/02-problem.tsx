@@ -6,7 +6,7 @@ import { SetupPaths } from '../visuals/SetupPaths'
 const beat: Beat = {
   slug: 'problem',
   title: 'The problem',
-  cardGlow: true,
+  variant: 'statement',
   card: (
     <Statement
       headline="The problem"

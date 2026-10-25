@@ -1,17 +1,18 @@
 import type { ReactNode } from 'react'
+import { HorizonLine } from './HorizonLine'
 
 /**
- * An editorial pull statement for overlays: large Figtree italic between two short accent rules.
- * Pass each line as its own element to set the break, and wrap the line to emphasize in <em> (accent).
+ * A punchline, Moments tier: large Figtree italic, centered, with the horizon line drawing out beneath it
+ * (the same signature as the hero and section titles). Pass each line as its own element to set the
+ * break, and wrap the line that's the point in <em> (accent). Use as a beat's cardOverlay.
  */
 export function SpotlightLine({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col items-center text-center">
-      <span className="block h-px w-[clamp(36px,calc(var(--u)*4),72px)] bg-accent" aria-hidden="true" />
-      <p className="spotlight m-0 my-[clamp(22px,calc(var(--u)*3),48px)] max-w-[30ch] text-spotlight font-light italic text-fg text-balance">
+      <p className="spotlight m-0 mb-[clamp(22px,calc(var(--u)*3),48px)] max-w-[30ch] text-spotlight font-light italic text-fg text-balance">
         {children}
       </p>
-      <span className="block h-px w-[clamp(36px,calc(var(--u)*4),72px)] bg-accent" aria-hidden="true" />
+      <HorizonLine width="min(40vw, 480px)" delay={0.35} />
     </div>
   )
 }

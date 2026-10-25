@@ -5,6 +5,7 @@ import { EASE_DECK } from '../engine/motion'
 import { usePrefersReducedMotion } from '../engine/reducedMotion'
 import { SECTIONS, getSection, sectionNumber } from '../sections'
 import { RevealContext } from './Reveal'
+import { HorizonLine } from './HorizonLine'
 
 /**
  * Opens a section. Usage in src/beats/index.ts: `sectionCard('discovery')`.
@@ -96,7 +97,7 @@ function SectionTitle({ number, label, tagline, index }: TitleProps) {
 
       <div className="relative flex flex-col items-center px-6 text-center">
         <motion.span
-          className="mb-[clamp(10px,calc(var(--u)*1.4),24px)] text-label uppercase text-accent"
+          className="mb-[clamp(10px,calc(var(--u)*1.4),24px)] text-label uppercase text-fg-soft"
           initial={false}
           animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: reduce ? 0 : 10 }}
           transition={stage(TIMING.number, 0.9)}
@@ -122,13 +123,7 @@ function SectionTitle({ number, label, tagline, index }: TitleProps) {
           </span>
         </h2>
 
-        <motion.span
-          className="block h-px w-[min(56vw,720px)] origin-center bg-accent"
-          aria-hidden="true"
-          initial={false}
-          animate={revealed ? { scaleX: 1, opacity: 1 } : { scaleX: reduce ? 1 : 0, opacity: 0 }}
-          transition={stage(TIMING.line, TIMING.lineDur)}
-        />
+        <HorizonLine show={revealed} delay={reduce ? 0 : t0 + TIMING.line} duration={TIMING.lineDur} width="min(56vw, 720px)" />
 
         {tagline && (
           <motion.p
@@ -155,7 +150,7 @@ function SectionTitle({ number, label, tagline, index }: TitleProps) {
             <span
               key={s.id}
               aria-hidden="true"
-              className={`border-b pb-1 ${i === index ? 'border-accent text-accent' : 'border-transparent text-fg-soft'} ${i > index ? 'opacity-50' : ''}`}
+              className={`border-b pb-1 ${i === index ? 'border-accent text-fg' : 'border-transparent text-fg-soft'} ${i > index ? 'opacity-50' : ''}`}
             >
               {sectionNumber(s.id)}
             </span>

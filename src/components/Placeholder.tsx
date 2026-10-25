@@ -19,7 +19,7 @@ export function Placeholder({ label, description, ratio, className = '', childre
       style={{ aspectRatio: ratio }}
     >
       {children}
-      <span className="text-label uppercase text-accent">{label}</span>
+      <span className="text-label uppercase text-fg-muted">{label}</span>
       <span className="max-w-[46ch]">{description}</span>
     </div>
   )
@@ -29,7 +29,7 @@ export function Placeholder({ label, description, ratio, className = '', childre
 export function PlaceholderBadge({ children }: { children: ReactNode }) {
   return (
     <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-dashed border-hairline-strong bg-page/80 px-3 py-1.5 text-label uppercase text-fg-soft max-[720px]:rounded-xl max-[720px]:tracking-[0.1em]">
-      <span className="block h-1.5 w-1.5 flex-none rounded-full bg-accent" aria-hidden="true" />
+      <span className="block h-1.5 w-1.5 flex-none rounded-full bg-fg-soft" aria-hidden="true" />
       {children}
     </span>
   )

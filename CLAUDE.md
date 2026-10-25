@@ -15,6 +15,22 @@ A standalone, keyboard-driven case study presentation, embedded in Kyle's Framer
 - Figtree for everything. A deliberate type scale (tokens in `src/styles/tokens.css`), not many weights.
 - Colors: the deck tokens exactly. Don't introduce new colors without asking Kyle.
 
+## System (read before building any beat)
+Every screen belongs to one of three tiers. A new beat picks its tier first and follows that tier's rules. Don't invent a new treatment per beat; extend a tier instead, and only with Kyle's OK.
+
+| Tier | Used for | Layout | Motion | Signature |
+|---|---|---|---|---|
+| Moments | Hero, section titles, punchline overlays | Centered | Rise from behind / with the horizon line | `HorizonLine`, the thin accent line that draws out from center |
+| Story | Every narrative beat (variant `statement`, content via `Statement`) | Left-aligned, frameless, `text-story` headline, `text-statement` body | Zoom through depth (in from larger, out to smaller) | None. Type does the work. |
+| Evidence | Full-screen visuals; cards holding an artifact (table, stat block, before/after, pull quote) | Full-bleed, or the deck card | Visuals enter from depth; cards keep the deck rise | Same placeholder badge, same frame |
+
+Rules:
+- A beat's punchline is never inline: it's a Moment, as a `cardOverlay` with `SpotlightLine` (italic, centered, horizon line beneath, the point in `<em>`). The statement pushes back behind it.
+- Yellow means "the point". One yellow moment per screen: the horizon line plus the emphasized line. Chrome (Next, Begin, progress line) and Kyle's case study pills are the only other yellow. Incidental labels, stamps, dots, and badges are neutral.
+- Annotation (Kyle's markup on visuals) is magenta, never yellow.
+- Mock product UI uses the `product-*` palette only.
+- One headline size for all story beats (`text-story`). Text-heavy beats add `Statement wide` and `cardDense`.
+
 ## The beat model
 A beat is up to three steps. Right arrow advances one step, left arrow reverses it.
 1. Card. Tells part of the story, in one of three variants (`Beat.variant`):
@@ -98,6 +114,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: The problem statement sits on a left-aligned deck card with the accent glow, per Kyle. Its kicker moved off the card into a full-screen `cardOverlay` (card pushes back behind it), per Kyle.
 - 2026-10-24: Section card type and section-aware progress (`01 · 2/3`), per Kyle. Sections live in one data file so they're cheap to change. 01 Discovery opens before Beat 3.
 - 2026-10-24: A card stays dimmed behind the next beat (deck behavior) only when the next beat is framed too; a frameless statement after a card gets a clean slate.
+- 2026-10-25: Unified the presentation into three tiers (Moments, Story, Evidence), per Kyle ("starting to feel a little disjointed"). Problem back to a frameless story statement; one story headline size; every punchline is a full-screen overlay with the horizon line (Beat 3's question moved to an overlay); the hero introduces the horizon line; incidental yellow went neutral. See System.
 - 2026-10-25: Section cards became a cinematic title sequence (frameless, letter-by-letter rise from behind a horizon line, glow, giant outlined numeral, chapter row), per Kyle: "more cinematic title card reveal instead of a traditional PowerPoint section". The pie motif and card frame were dropped.
 - 2026-10-24: Skill pills copied exactly from the case study's Role Pills, per Kyle: `#232324` fill (`pill`), 1px inside border at 15% white (`pill-border`), 7px radius, 4px 8px padding, 14px regular in accent, 10px gap. Fixed size, not viewport-scaled. Accent on the fill is about 10:1.
 - 2026-10-23: Performance windowing (one beat either side mounted), per Kyle.
@@ -112,8 +129,8 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 |---|------|-------|--------|--------|
 | 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
 | 2a | section-discovery | section title sequence | None | Reworked 2026-10-25, awaiting Kyle's review |
-| 3 | pattern | statement (dense), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
-| 2 | problem | card with glow, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
+| 3 | pattern | statement (dense, wide), card overlay (question), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
+| 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
@@ -144,6 +161,6 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Headline: How this all started (was "A pattern was emerging", changed by Kyle 2026-10-24)
 - Body 1: We held regular research sessions with a pool of customer accounts. In most of them, customers shared their screen, whether to try a new feature, show us a bug, or walk us through how they used something we'd already released.
 - Body 2: Over two days, I sat in on four of these sessions. Each time a customer shared their screen, their Attribution dashboard was only half set up. Some hadn't connected their ad sources, so their spend data never appeared. Others hadn't enabled AI, so Recommendation Cards never showed up. The thread was the same: customers paying for a feature they weren't getting full value from.
-- Closing question (own paragraph, accent, extra space above): Was it a coincidence, or a pattern?
+- Closing question (full-screen overlay, "or a pattern?" emphasized): Was it a coincidence, or a pattern?
 - Visual labels: Day 1, Day 1, Day 2, Day 2; New feature, Bug walkthrough, Adoption check-in, New feature
 - Overlay: none

@@ -120,7 +120,7 @@ function Tile({ day, purpose, circle }: { day: string; purpose: string; circle: 
     <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[12px] border border-hairline bg-card-to" style={{ containerType: 'size' }}>
       {/* in flow, so on small tiles the labels push the screen down instead of covering it */}
       <div className="flex flex-none flex-wrap items-center gap-x-[1.6cqw] gap-y-1 px-[3cqw] pb-[2.2cqw] pt-[2.6cqw] text-[clamp(9px,2.3cqw,16px)] leading-none">
-        <span className="rounded-full border border-accent/55 px-[0.7em] py-[0.35em] font-semibold uppercase tracking-[0.12em] text-accent">{day}</span>
+        <span className="rounded-full border border-hairline-strong px-[0.7em] py-[0.35em] font-semibold uppercase tracking-[0.12em] text-fg-muted">{day}</span>
         <span className="text-fg-soft">{purpose}</span>
       </div>
 

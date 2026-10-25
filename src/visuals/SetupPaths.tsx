@@ -110,7 +110,7 @@ export function SetupPaths(props: VisualProps) {
               transition={tr(TIMING.paths + i * TIMING.pathStagger, 0.2)}
             >
               <path d={L.path(L.origin, e)} fill="none" stroke="var(--color-hairline-strong)" strokeWidth="3" strokeDasharray="2 12" strokeLinecap="round" />
-              <circle cx={e[0]} cy={e[1]} r="7" fill="var(--color-accent)" />
+              <circle cx={e[0]} cy={e[1]} r="7" fill="var(--color-fg-soft)" />
             </motion.g>
           ))}
 

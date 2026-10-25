@@ -61,6 +61,9 @@
   --text-display: clamp(32px, calc(var(--u) * 5.4), 100px);
   --text-display--line-height: 1.06;
   --text-display--letter-spacing: -0.03em;
+  --text-story: clamp(28px, calc(var(--u) * 4.4), 84px); /* every story beat's headline */
+  --text-story--line-height: 1.06;
+  --text-story--letter-spacing: -0.03em;
   --text-headline: clamp(24px, calc(var(--u) * 3.4), 68px);
   --text-headline--line-height: 1.1;
   --text-headline--letter-spacing: -0.025em;
