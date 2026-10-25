@@ -184,7 +184,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
   - PM: You're not crazy. Setup has been a known pain point. Even our CEO has called it out. (approved)
   - Eng: Yeah, not surprised honestly. There are a bunch of things that have to be configured before that page shows anything useful. (approved)
   - Kyle Blackman: Got it. Are there any plans to address this in the near future? (approved)
-  - PM: Not right now. (placeholder)
+  - PM: Not right now. (approved)
 
 ### Beat 5 copy (verbatim): How widespread was it?
 - Headline: How widespread was it? (chosen by Kyle)

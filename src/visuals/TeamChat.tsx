@@ -3,8 +3,7 @@ import { useVisualPlayback } from '../engine/useVisualPlayback'
 import { ChatThread, type ChatMessage } from '../components/ChatThread'
 
 /*
-  Beat 4 visual: the team thread, full screen. Kyle's messages and the PM and Eng replies are Kyle's approved
-  wording; the PM's last reply is still his placeholder. Messages land one at a time,
+  Beat 4 visual: the team thread, full screen. every message is Kyle's approved wording. Messages land one at a time,
   slowly enough to read at this size. Tune the timing here (seconds).
 */
 export const TIMING = {
@@ -36,7 +35,6 @@ export function TeamChat(props: VisualProps) {
         className="w-[min(100%,980px)]"
         channel="team-indigo"
         divider="After the research sessions"
-        placeholderNote="Last message is a placeholder, final wording to come"
         messages={MESSAGES}
         shown={mode !== 'empty'}
         instant={mode === 'done'}
