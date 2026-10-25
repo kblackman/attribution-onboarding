@@ -32,7 +32,7 @@ const beat: Beat = {
     content: (
       <SpotlightLine>
         <span>Six different empty states. </span>
-        <span><em>Were they six problems, or one?</em></span>
+        <span><em>Were they evidence of six problems, or just one?</em></span>
       </SpotlightLine>
     ),
   },

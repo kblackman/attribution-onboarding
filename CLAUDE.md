@@ -192,4 +192,4 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Body: Before pushing further, I wanted to know how widespread it was. Our masquerade tool let us see the product exactly as a customer saw it, so I used it to look inside roughly 20 of our 200+ customer accounts. I didn't have to dig. Almost every account was either half set up or not set up at all. The fully configured ones were outliers.
 - Closing line (own paragraph, accent): And it wasn't one empty state. It was many.
 - Montage labels, in order: No events. Events not defined. No ad sources. AI off. AI on, no events. Waiting on data.
-- Overlay (auto after the stack, holds for a key press): Six different empty states. Were they six problems, or one?
+- Overlay (auto after the stack, holds for a key press): Six different empty states. Were they evidence of six problems, or just one? (updated by Kyle 2026-10-25)
