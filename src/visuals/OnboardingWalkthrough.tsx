@@ -101,10 +101,11 @@ const SCRIPTS: Script[] = [
   {
     frames: [
       { at: 0.8, set: { screen: 'dashboard' } },
-      { at: 1.6, to: 'hide', set: { cursor: true } },
-      { at: 2.5, click: true, set: { aiCollapsed: true } },
-      { at: 3.1, set: { cursor: false } },
-      { at: 3.4, set: { scroll: true } },
+      // a beat to read the AI card before the cursor comes for it
+      { at: 3.0, to: 'hide', set: { cursor: true } },
+      { at: 3.9, click: true, set: { aiCollapsed: true } },
+      { at: 4.5, set: { cursor: false } },
+      { at: 4.8, set: { scroll: true } },
     ],
   },
 ]
