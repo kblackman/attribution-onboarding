@@ -285,5 +285,6 @@ Section card: 04 Solution. Tagline: Getting users set up before they ever reach 
 Showing the team
 - I went into that meeting proud of what I'd built, and a little nervous. I hoped the team would see the same value in it that I did.
 - The flow would get new users fully set up on their own, without a call to CS. It would also give us something we'd never had: an onboarding framework we could reuse across other parts of the app.
+- Waiting room note (handwritten, magenta, approved by Kyle 2026-10-25): The waiting room: setup's done, data is on its way
 - Walkthrough copy is the Figma designs' own. The expanded checklist frame (`1:23438`) is not in this walkthrough; it's for a later beat on existing users.
 

@@ -28,7 +28,7 @@ const typing = (field: 'name' | 'selector', text: string, start: number): Frame[
   Array.from(text, (_, i) => ({ at: start + i * TIMING.type, set: { [field]: text.slice(0, i + 1) } }))
 const typed = (start: number, text: string) => start + text.length * TIMING.type
 
-const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, low: false, error: false, later: false, ai: false, scroll: false, cursor: true }
+const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, low: false, error: false, later: false, ai: false, note: false, scroll: false, cursor: true }
 
 const nameDone = typed(1.6, EVENT_NAME)
 const selDone = typed(nameDone + 1.2, EVENT_SELECTOR)
@@ -91,6 +91,8 @@ const SCRIPTS: Script[] = [
     frames: [
       { at: 0.15, click: true, set: { screen: 'waiting' } },
       { at: 0.7, set: { cursor: false } },
+      { at: 1.3, set: { note: true } },
+      { at: 3.2 }, // time to read the note before moving on
     ],
   },
   // 8. resolve: the full Attribution dashboard, then a scroll down the whole page

@@ -31,6 +31,8 @@ export interface FlowUI {
   /** The hand-drawn circle around "You can always set this up later". */
   later: boolean
   ai: boolean
+  /** Kyle's handwritten note on the waiting room. */
+  note: boolean
   /** The dashboard scrolls down the whole page. */
   scroll: boolean
   cursor: boolean
@@ -75,6 +77,7 @@ export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string |
               <WaitingRoom reduced={reduced} />
             </motion.div>
           )}
+          {ui.screen === 'waiting' && <WaitingNote show={ui.note} reduced={reduced} />}
           {ui.screen === 'dashboard' && (
             <motion.div key="dashboard" {...fade(reduced)}>
               <Dashboard scroll={ui.scroll} reduced={reduced} />
@@ -607,6 +610,45 @@ function WaitingRoom({ reduced }: { reduced: boolean }) {
           {EVENT_NAME}
         </span>
       </div>
+    </div>
+  )
+}
+
+/**
+ * Kyle's handwritten note on the waiting room (approved wording), in the annotation style: Caveat, magenta,
+ * a slight tilt, and a hand-drawn arrow to the card. Sits in the margin right of the 700px column
+ * (main-area coordinates: the card's right edge is at x 950).
+ */
+function WaitingNote({ show, reduced }: { show: boolean; reduced: boolean }) {
+  const tr = (delay: number) => ({ duration: reduced ? 0.3 : 0.45, delay: show && !reduced ? delay : 0 })
+  return (
+    <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      <motion.svg
+        className="absolute left-0 top-0 overflow-visible"
+        width="1200"
+        height="835"
+        initial={false}
+        animate={{ opacity: show ? 1 : 0 }}
+        transition={tr(0.35)}
+      >
+        <g fill="none" stroke="var(--color-annotation)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M990,246 C976,236 966,222 960,196" />
+          <path d="M951,207 L960,194 L969,206" />
+        </g>
+      </motion.svg>
+      <motion.p
+        className="absolute left-[982px] top-[252px] m-0 font-[family-name:var(--font-hand)] text-[34px] font-bold leading-[1.02] text-annotation"
+        style={{ rotate: -4 }}
+        initial={false}
+        animate={{ opacity: show ? 1 : 0, y: show || reduced ? 0 : 6 }}
+        transition={tr(0)}
+      >
+        The waiting room:
+        <br />
+        setup's done, data
+        <br />
+        is on its way
+      </motion.p>
     </div>
   )
 }
