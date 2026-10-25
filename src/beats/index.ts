@@ -7,6 +7,8 @@ import widespread from './05-widespread'
 import dots from './06-dots'
 import checking from './07-checking'
 import oneProblem from './08-one-problem'
+import beforeSketching from './09-before-sketching'
+import codeTold from './10-code-told'
 import { sectionCard } from '../components/SectionCard'
 
 // The presentation, in order. Adding a beat: add its file in this folder, then one line here.
@@ -22,4 +24,7 @@ export const beats: Beat[] = [
   dots,
   checking,
   oneProblem,
+  sectionCard('approach'),
+  beforeSketching,
+  codeTold,
 ]

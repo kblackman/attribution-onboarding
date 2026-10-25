@@ -26,9 +26,10 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
   const at = Math.min(sub, PATH.length - 1)
   const prev = useRef(-1)
   const forward = prev.current === sub - 1
+  // only count steps taken while this visual is on screen; before that, the first active step is an arrival
   useEffect(() => {
-    prev.current = sub
-  }, [sub])
+    prev.current = active ? sub : -1
+  }, [sub, active])
 
   // auto-advance, forward only; on the zoomed-out map, hand over to the overlay once it settles
   useEffect(() => {
