@@ -12,7 +12,8 @@ export const TIMING = {
   settle: 1.2, // after the last message, before the visual counts as finished
 }
 
-const MESSAGES: ChatMessage[] = [
+// exported: "Bringing it to the team" shows the end of this thread as its bookend
+export const TEAM_THREAD: ChatMessage[] = [
   {
     author: 'Kyle Blackman',
     time: '10:42 AM',
@@ -24,7 +25,7 @@ const MESSAGES: ChatMessage[] = [
   { author: 'Kyle Blackman', time: '10:47 AM', text: 'Got it. Are there any plans to address this in the near future?' },
   { author: 'PM', time: '10:48 AM', text: 'Not right now.' },
 ]
-const TOTAL = TIMING.start + (MESSAGES.length - 1) * TIMING.stagger + 0.6 + TIMING.settle
+const TOTAL = TIMING.start + (TEAM_THREAD.length - 1) * TIMING.stagger + 0.6 + TIMING.settle
 
 export function TeamChat(props: VisualProps) {
   const mode = useVisualPlayback(props, props.reducedMotion ? 0.6 : TOTAL)
@@ -35,7 +36,7 @@ export function TeamChat(props: VisualProps) {
         className="w-[min(100%,980px)]"
         channel="team-indigo"
         divider="After the research sessions"
-        messages={MESSAGES}
+        messages={TEAM_THREAD}
         shown={mode !== 'empty'}
         instant={mode === 'done'}
         start={TIMING.start}

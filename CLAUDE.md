@@ -125,6 +125,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: A card stays dimmed behind the next beat (deck behavior) only when the next beat is framed too; a frameless statement after a card gets a clean slate.
 - 2026-10-25: Map nodes outside Attribution (pages and drawers) now share the screenshots' shell (radius, header bar, shadow), per Kyle: the drawer shape read as an error. "Sketching" changed to "prototyping" (Kyle mapped in FigJam, then prototyped in Claude Code). The terminal now looks like a classic Claude Code session (Kyle approved Claude's coral `#D97757` as the `coral` token, for that visual only); its tool-call lines and later elapsed times are generic placeholders.
 - 2026-10-25: "Designing for real numbers" is a card (it holds the ranges table, header row hidden visually but kept for screen readers via `DataTable hideHeader`). "Two moments, two patterns" is a frameless statement. Its stress-test paragraph became its own beat, "Showing my work" (Kyle: "it's a new idea"), a frameless statement followed by the prototype visual. `TweaksPanel` (`src/components/TweaksPanel.tsx`) is reusable for any prototype that switches states; on phones it sits below the window. Dense cards trim vertical padding on short laptop screens (max-height 760px) so the longest ones fit at 1280x720.
+- 2026-10-25: "Bringing it to the team" is a dense card holding the #team-indigo thread as a bookend to Beat 4. `ChatThread` gained `earlier` (old messages shown dimmed above the divider, dimmed by dropping text to `fg-soft` rather than opacity, to keep AA), rich-text messages (the bold UPDATE), and `compact` spacing. A `text-with-aside is-chat` variant gives the thread the wider column.
 - 2026-10-25: Started 03 Approach. Per the System, "Checking before prototyping" is a frameless statement followed by a 4-press terminal visual (one press per exchange, forward-only auto-advance, longer first search); "What the code told me" is a card holding the v1 status list.
 - 2026-10-25: Built 02 Diagnosis (section card plus three beats). Placed after "How widespread was it?" rather than after "Checking the hunch", since its beats reuse that montage and answer its overlay. Per the System, "Connecting the dots" and "Checking my work" are frameless statements (no artifact); "One problem, not six" is a card (it holds the Required / Optional split). Its headline is display size with "not six" in accent, echoing the title's two-tone device. Diagnosis tagline updated to Kyle's: "Mapping the flow to see the shape of the problem."
 - 2026-10-25: Added the section index (jump anywhere), same mechanism as the Tiled feature pitch deck, per Kyle.
@@ -156,12 +157,13 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 11 | real-numbers | card (Evidence: ranges table beside the second paragraph, caption "Approximate ranges.") | None | Built 2026-10-25, awaiting Kyle's review |
 | 12 | two-moments | statement (wide, dense) | None | Built 2026-10-25, awaiting Kyle's review |
 | 13 | showing-work | statement (wide), visual (4 presses) | Prototype with a reusable `TweaksPanel` (Data load: Low 1, Average 2, High 15, Outlier 22). Low and Average show the setup list; High and Outlier the waiting-room grid, wrapping after four. Rows animate in and reflow (`src/visuals/LoadPrototype.tsx`). Auto-advances every ~2s, forward only. Mock event names. | Built 2026-10-25, awaiting Kyle's review |
+| 14 | to-the-team | card (Evidence: team thread beside the text, dense) | None. In-card `ChatThread` (#team-indigo): the last two Beat 4 messages dimmed, a "Later" divider, then five new messages landing one at a time. Closes 03 Approach. | Built 2026-10-25, awaiting Kyle's review |
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
 - Length is a standing concern (Kyle, 2026-10-25): the live talk must run 15 to 20 minutes. Flag beats that run long as the rest gets built, and suggest trims (never rewrite silently). Parked idea, not built: a discreet present mode (one key, e.g. T, global, no visible control) that swaps long beats to Kyle-approved TLDR copy (headline plus one to three short lines, set larger); full copy stays the default for portfolio readers. A speaker-notes window (full copy on a second screen) was also floated. Build only when Kyle asks.
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
-- 02 Diagnosis is built. 03 Approach has its section card and five beats (Checking before prototyping, What the code told me, Designing for real numbers, Two moments, two patterns, Showing my work); more Approach beats to come, wait for Kyle's copy.
+- 02 Diagnosis is built. 03 Approach has its section card and six beats and is complete, ending on "Bringing it to the team". 04 Solution comes next (section card, then the prototype walkthrough as presented in that meeting); wait for Kyle's copy.
 - Beat 4 is built (Checking the hunch). Kyle feels the card plus chat reads crammed; he may revisit it later (not now).
 - Beat 4's montage became a falling stack, per Kyle; the pile-and-lines ending was dropped. Screenshots are bigger, annotations handwritten with arrows (per Kyle).
 - To swap real screenshots into Beat 4: drop files in `public/assets/hunch/`, then in `SHOTS` (top of `src/visuals/EmptyStateMontage.tsx`) set `src` and `aspect` (width / height), and measure `empty` (percent of the image) on the real screenshot. Any size or shape works; `labelAt` moves a label if needed. Repeats in the fast cascade reuse these automatically. The 02 Diagnosis section card comes next, then Diagnosis beats.
@@ -234,7 +236,7 @@ One problem, not six
 - Split: Required (Event Creation, Event Definition). Optional (Connect ad sources, Enable AI).
 
 ### 03 Approach copy (verbatim)
-Section card: 03 Approach. Tagline: Scoping, reusing, testing, and shipping in pieces. (updated 2026-10-25)
+Section card: 03 Approach. Tagline: Scoping, reusing, and testing. (updated again 2026-10-25; phasing, "shipping in pieces", moved to 04 Solution)
 
 Checking before prototyping
 - Front-loading setup meant pulling every required step into one guided flow. Whether that was possible would decide how simple the flow could be, so I checked before prototyping anything. ("sketching" changed to "prototyping" by Kyle 2026-10-25: he mapped in FigJam, then went straight to a prototype in Claude Code)
@@ -258,3 +260,15 @@ Two moments, two patterns
 Showing my work (headline chosen by Kyle 2026-10-25; split from Two moments, per Kyle)
 - Then I stress-tested both. I built a tweaks panel into the prototype that swapped between real customer data loads and updated the UI on the fly. I knew Eng would ask how it scaled, and I wanted to show my work. The panel later became part of our shared prototyping skill, so every new prototype came with one.
 - Tweaks panel options: Low (1 event, list), Average (2, list), High (15, grid), Outlier (22, grid). Event names are mock.
+
+Bringing it to the team (closes 03 Approach)
+- With the prototype done, I had more than an idea to pitch. I had something the team could see and react to. I'd built it to sell the solution, not just to test it.
+- Instead of dropping a link in Slack, I asked for a meeting. I wanted our PM, front-end and back-end engineers, and eng lead on the same call, so I could walk them through it and answer their questions live.
+- Thread (#team-indigo, a bookend to Beat 4): the last two Beat 4 messages dimmed, using Beat 4's approved wording ("Got it. Are there any plans to address this in the near future?" / "Not right now."; Kyle's brief quoted the first as "Is fixing it on the roadmap anywhere?"), then a "Later" divider, then:
+  - Kyle Blackman: **UPDATE:** Okay, I've finished the prototype for the Onboarding Flow. Instead of spilling out the details here and sharing a link, I think it would be more productive to go through it together on Zoom. (Reactions 🎉 3, 👀 2.)
+  - Front-end Eng: Ooo! Exciting!
+  - PM: Sounds good! I'll put something on our calendars.
+  - Eng Lead: Add me to the invite please.
+  - Back-end Eng: Same!
+- No timestamps in this thread (none were given), so the dimmed Beat 4 messages drop theirs here.
+- Next: the 04 Solution section card (its tagline now covers phasing), then the prototype walkthrough, framed as what Kyle presented in this meeting.

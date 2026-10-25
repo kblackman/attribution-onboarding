@@ -226,6 +226,9 @@ body {
 /* variant: the artifact sits beside the second paragraph; the first and the rest run full width */
 .text-with-aside.is-mid { grid-template-areas: "lead lead" "main aside" "rest rest"; grid-template-rows: auto auto auto; align-items: center; }
 .twa-lead { grid-area: lead; }
+/* variant: a chat thread as the artifact, given the wider column */
+.text-with-aside.is-chat { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
+@media (max-width: 720px) { .text-with-aside.is-chat { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 720px) {
   .text-with-aside.is-mid { grid-template-areas: "lead" "main" "aside" "rest"; }
 }
