@@ -162,7 +162,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 12 | two-moments | statement (wide, dense) | None | Built 2026-10-25, awaiting Kyle's review |
 | 13 | showing-work | statement (wide), visual (4 presses) | Prototype with a reusable `TweaksPanel` (Data load: Low 1, Average 2, High 15, Outlier 22). Low and Average show the setup list; High and Outlier the waiting-room grid, wrapping after four. Rows animate in and reflow (`src/visuals/LoadPrototype.tsx`). Auto-advances every ~2s, forward only. Mock event names. | Built 2026-10-25, awaiting Kyle's review |
 | 14 | to-the-team | card (Evidence: team thread beside the text, dense) | None. In-card `ChatThread` (#team-indigo): the last two Beat 4 messages dimmed, a "Later" divider, then five new messages landing one at a time. Closes 03 Approach. | Built 2026-10-25, awaiting Kyle's review |
-| 4a | section-solution | section title sequence | None | Built 2026-10-25, tagline under revision (Kyle) |
+| 4a | section-solution | section title sequence | None | Built 2026-10-25, awaiting Kyle's review |
 | 15 | showing-team | statement (wide), visual (8 presses) | Automated walkthrough of the new setup flow, rebuilt from Kyle's Figma (`src/visuals/OnboardingWalkthrough.tsx`, screens in `onboarding-screens.tsx`, assets in `public/assets/showing-team/`): a simulated cursor creates an event in the drawer, hits the No Low Funnel error and marks it low funnel, circles "You can always set this up later" and clicks Skip for now, turns on AI, then the waiting room, then the full Attribution page scrolling top to bottom. Buttons show hover states under the cursor. Auto-advances ~1.8s after each step's script, forward only. | Revised 2026-10-25, awaiting Kyle's review |
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
@@ -280,7 +280,7 @@ Bringing it to the team (closes 03 Approach)
 - Next: the 04 Solution section card (its tagline now covers phasing), then the prototype walkthrough, framed as what Kyle presented in this meeting.
 
 ### 04 Solution copy (verbatim)
-Section card: 04 Solution. Tagline: Getting users set up before they ever reach Attribution. (Kyle, 2026-10-25: needs to change, since users are inside Attribution while setting up; it should speak to the onboarding flow and the reusable onboarding framework. Waiting on his wording.)
+Section card: 04 Solution. Tagline: A guided setup flow, reusable for every feature after it. (Kyle, 2026-10-25; replaced "Getting users set up before they ever reach Attribution.", since users set up from inside Attribution)
 
 Showing the team
 - I went into that meeting proud of what I'd built, and a little nervous. I hoped the team would see the same value in it that I did.

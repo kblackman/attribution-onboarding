@@ -18,7 +18,7 @@ export const SECTIONS: Section[] = [
   { id: 'discovery', label: 'Discovery', tagline: 'From a hunch to a pattern.' },
   { id: 'diagnosis', label: 'Diagnosis', tagline: 'Mapping the flow to see the shape of the problem.' },
   { id: 'approach', label: 'Approach', tagline: 'Scoping, reusing, and testing.' },
-  { id: 'solution', label: 'Solution', tagline: 'Getting users set up before they ever reach Attribution.' },
+  { id: 'solution', label: 'Solution', tagline: 'A guided setup flow, reusable for every feature after it.' },
   { id: 'impact', label: 'Impact', tagline: 'What changed, and what the team kept using.' },
 ]
 
