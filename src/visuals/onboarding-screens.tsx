@@ -809,24 +809,31 @@ function Dashboard({ scroll, reduced }: { scroll: boolean; reduced: boolean }) {
         </div>
       </div>
 
-      {/* unlock spend: the way back to the skipped step */}
-      <div className="mx-[20px] mt-[36px] flex items-center gap-[16px] rounded-[10px] bg-fp-indigo px-[22px] py-[18px] text-white">
-        <span className="grid h-[34px] w-[34px] flex-none place-items-center rounded-full bg-white/15">
-          <Lock />
+      {/* unlock spend: the way back to the skipped step (after Kyle's reference: gradient, caret pointing at the table) */}
+      <div className="relative mt-[36px] flex items-center gap-[8px] rounded-[12px] bg-linear-to-r from-fp-indigo to-fp-indigo-soft px-[20px] py-[20px] text-white">
+        <span className="grid h-[38px] w-[38px] flex-none place-items-center rounded-full bg-white/25">
+          <Lock size={18} />
         </span>
-        <span className="flex flex-1 flex-col gap-[4px]">
-          <span className="text-[14px] font-semibold">Unlock spend & CPA on your ad sources</span>
-          <span className="text-[11.5px] leading-[16px] text-white/85">
-            Connecting your ad platforms unlocks campaign-level data, spend, and CPA, so you can see which campaigns actually pay off. <b>3 platforms left to connect.</b>
+        <span className="mr-[8px] flex flex-1 flex-col gap-[5px]">
+          <span className="text-[16px] font-semibold">Unlock spend & CPA on your ad sources</span>
+          <span className="text-[12px] leading-[17px] text-white/90">
+            Connecting your ad platforms unlocks campaign-level data, spend, and CPA, so you can see which campaigns actually pay off. <b className="font-semibold text-white">3 platforms left to connect.</b>
           </span>
         </span>
-        {PAID.map((p) => (
-          <span key={p.name} className="flex h-[30px] items-center gap-[6px] rounded-[6px] bg-white px-[10px] font-fp-ui text-[11px] font-medium text-fp-indigo">
-            <PlatformLogo name={p.logo} scale={0.75} />
-            Connect {p.name}
+        {(
+          [
+            ['bing', 'Bing Ads'],
+            ['meta', 'Meta Ads'],
+            ['google-ads', 'Google Ads'],
+          ] as const
+        ).map(([logo, name]) => (
+          <span key={name} className="flex h-[36px] flex-none items-center gap-[6px] rounded-[6px] bg-white px-[9px] text-[12px] font-medium text-fp-indigo">
+            <PlatformLogo name={logo} scale={0.85} />
+            Connect {name}
           </span>
         ))}
-        <span className="flex h-[30px] items-center rounded-[6px] border border-white/40 px-[10px] font-fp-ui text-[11px] font-medium">+ 3 more sources</span>
+        <span className="flex h-[36px] flex-none items-center rounded-[6px] border border-white/80 px-[9px] text-[12px] font-medium">+ 3 more sources</span>
+        <span className="absolute -bottom-[9px] left-[44px] h-0 w-0 border-x-[10px] border-t-[10px] border-x-transparent border-t-fp-indigo" aria-hidden="true" />
       </div>
 
       {/* source table */}
@@ -864,7 +871,7 @@ function Dashboard({ scroll, reduced }: { scroll: boolean; reduced: boolean }) {
 
 function TableRow({ cells, head = false, total = false }: { cells: ReactNode[]; head?: boolean; total?: boolean }) {
   return (
-    <div className={`grid grid-cols-[2.2fr_repeat(6,1fr)] items-center border-t border-fp-line px-[16px] text-[12px] ${head ? 'h-[38px] text-[11px] font-semibold text-fp-ink-2' : 'h-[42px]'} ${total ? 'bg-fp-bg font-semibold' : ''}`}>
+    <div className={`grid grid-cols-[2.2fr_repeat(6,1fr)] items-center border-t border-fp-line px-[16px] text-[12px] h-[53px] ${head ? 'text-[11px] font-semibold text-fp-ink-2' : ''} ${total ? 'bg-fp-bg font-semibold' : ''}`}>
       {cells.map((c, i) => (
         <span key={i} className={i === 0 ? '' : 'flex justify-end tabular-nums'}>
           {c}
@@ -875,7 +882,7 @@ function TableRow({ cells, head = false, total = false }: { cells: ReactNode[]; 
 }
 
 const SectionLabel = ({ children }: { children: ReactNode }) => (
-  <div className="flex h-[30px] items-center border-t border-fp-line bg-fp-bg px-[16px] text-[10.5px] font-semibold uppercase tracking-[0.08em] text-fp-muted">{children}</div>
+  <div className="flex h-[53px] items-center border-t border-fp-line bg-fp-bg px-[16px] text-[10.5px] font-semibold uppercase tracking-[0.08em] text-fp-muted">{children}</div>
 )
 
 /* ---------- small icons not in the pulled frames (line icons in the product's style) ---------- */
@@ -903,8 +910,8 @@ const Trash = () => (
     <path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6" />
   </svg>
 )
-const Lock = ({ muted = false }: { muted?: boolean }) => (
-  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" className={muted ? 'text-fp-faint' : ''} {...line}>
+const Lock = ({ muted = false, size = 14 }: { muted?: boolean; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" className={muted ? 'text-fp-faint' : ''} {...line}>
     <path d="M6 11h12v10H6zM8.5 11V7.5a3.5 3.5 0 017 0V11" />
   </svg>
 )
