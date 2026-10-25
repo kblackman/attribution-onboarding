@@ -41,6 +41,7 @@ A beat is up to three steps. Right arrow advances one step, left arrow reverses 
    - `section`: a cinematic title sequence, not a slide, made with `sectionCard('<id>')` (one line in `src/beats/index.ts`). Frameless and full-screen: from a dark vignetted screen, an accent horizon line draws out from center, the label rises letter by letter from behind it (sharpening as it clears), a warm glow blooms behind the word, and a giant outlined numeral settles far in the background; the small number, tagline, and a chapter row (01 to 05, current lit) land last. Leaves like a statement (shrinks away through depth). Timing in `TIMING` in `src/components/SectionCard.tsx`. Reduced motion: everything fades in together.
    - `hero`: the opening title screen, full-bleed, no logo (Framer's frame carries bkmn), with a Begin button and no hint text. `align: 'center'` centers it like the case study pages (Beat 1 uses this, at the larger `text-hero` size); default is the decks' left layout. Recedes into depth and fades fully on exit.
    A beat can add a full-screen `cardOverlay` on the press after its card: the card pushes back (smaller, blurred, dimmed) and the overlay's scrim and text take the screen, reversing on Back. `SpotlightLine` is the italic pull-statement content for it.
+   A visual can take several key presses too (`visual.steps`): it receives the current `sub` and can call `requestNext(sub)` to auto-advance, which only fires if the reader is still on that step. Auto-advance should run forward only (after a step back, wait for a key).
    A card can take extra key presses before moving on (`cardSteps`); content wrapped in `<Reveal step={n}>` lands on press n (e.g. a kicker).
 2. Full-screen visual (optional). A visual or animation takes over the whole screen, not bound by the card.
 3. Overlay (optional). After the visual finishes, a semi-transparent overlay fades in, blurs the visual, and text appears on top. Per beat: appears automatically when the visual completes (`trigger: 'auto'`) or waits for a key press (`trigger: 'key'`).
@@ -56,6 +57,8 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - Shared primitives in `src/components/`: Card (all three variants), Statement, BeginRow, VisualFrame (+ VideoVisual), Overlay, Placeholder, Reveal, and in-card visuals (DataTable, Comparison, StatBlock, PullQuote, TagRow, Caption, StatusTag).
 - `ChatThread` is a reusable generic team chat (channel, role avatars, timestamps, reactions; no real product's look) whose messages arrive one at a time when its card reveals. `text-with-aside` (with `.twa-main`, `.twa-aside`, `.twa-rest`) puts an artifact beside a card's first paragraph and stacks it after that paragraph on phones.
 - `Annotation` is Kyle's markup on a screenshot: a hand-drawn circle around a zone, a handwritten label (Caveat), and a hand-drawn arrow from the label to the circle's edge, all in the annotation color. Zones and label spots are percent of the image, so it holds for any screenshot size. Use it for any circled callout.
+- The setup map (`src/visuals/setup-map.tsx`) is reusable: nodes, edges, the 14-step path, and node/edge renderers. Beat 8's ride-along walks it; a 04 Solution beat is meant to redraw the same nodes as one linear path. `ShotView` (in `EmptyStateMontage.tsx`) renders a screenshot with its annotation, shared by the montage, the mapping board, and the map, so real screenshots swapped into `SHOTS` appear everywhere.
+- `RequiredOptional` is a reusable two-column Required / Optional split (no yellow).
 - `HandCircle` is a crude hand-drawn circle in the annotation color that marks empty areas. It draws clockwise with a rotating-mask sweep (transform only), fades under reduced motion, and has a few shape variants so repeats don't look stamped. `dashed` marks one circle as different (Beat 4's "Waiting on data", which a later beat calls back to). Beat 3 uses it; Beat 4's empty-state montage should reuse it.
 - Story beats set their body at the statement size (`text-statement`), per Kyle. Text-heavy cards add `cardDense: true` (the decks' tighter sub-slide padding) and a ~64ch measure on the body itself, and must fit without scrolling at 1920x1080, 1440x900, 1280x720, and a 375x812 phone.
 - `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes: 21% opacity, centered behind the text, tilted straight back (top away, bottom nearest the viewer), bottom faded into the page. Swap its children for real imagery; drop `placeholderLabel` when it's real.
@@ -118,6 +121,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: The problem statement sits on a left-aligned deck card with the accent glow, per Kyle. Its kicker moved off the card into a full-screen `cardOverlay` (card pushes back behind it), per Kyle.
 - 2026-10-24: Section card type and section-aware progress (`01 · 2/3`), per Kyle. Sections live in one data file so they're cheap to change. 01 Discovery opens before Beat 3.
 - 2026-10-24: A card stays dimmed behind the next beat (deck behavior) only when the next beat is framed too; a frameless statement after a card gets a clean slate.
+- 2026-10-25: Built 02 Diagnosis (section card plus three beats). Placed after "How widespread was it?" rather than after "Checking the hunch", since its beats reuse that montage and answer its overlay. Per the System, "Connecting the dots" and "Checking my work" are frameless statements (no artifact); "One problem, not six" is a card (it holds the Required / Optional split). Its headline is display size with "not six" in accent, echoing the title's two-tone device. Diagnosis tagline updated to Kyle's: "Mapping the flow to see the shape of the problem."
 - 2026-10-25: Added the section index (jump anywhere), same mechanism as the Tiled feature pitch deck, per Kyle.
 - 2026-10-25: Beat 4 split in two, per Kyle: "Checking the hunch" (statement, then the team chat as a full-screen visual) and "How widespread was it?" (statement, then the montage and overlay). The crowded card is gone. Context for the chat lives in its own UI (a date divider), not a title on the visual. Chat wording updated and approved; teammates appear by role, the CEO as "our CEO".
 - 2026-10-25: Cards and statements use `justify-content: safe center`, so content taller than the screen (phones) top-aligns instead of being cut off; cards also reset to their top when they become current.
@@ -139,10 +143,14 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 3 | pattern | statement (dense, wide), card overlay (question), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
 | 4 | hunch | statement, visual | Full-screen team chat (#team-indigo, "After the research sessions" divider), messages landing one at a time (`src/visuals/TeamChat.tsx`). | Built 2026-10-25, awaiting Kyle's review |
 | 5 | widespread | statement (wide), visual, overlay (auto, holds for a key press) | Empty-state montage as a falling stack with handwritten annotations (`src/visuals/EmptyStateMontage.tsx`, swappable `SHOTS`). | Built 2026-10-25, awaiting Kyle's review |
+| 6 | dots | statement (wide), visual | Mapping board (whiteboard): montage screenshots as anchors with annotations, step boxes, arrows, friction stickies (`src/visuals/MappingBoard.tsx`). | Built 2026-10-25, awaiting Kyle's review |
+| 7 | checking | statement (wide), visual (15 presses), overlay (auto) | Setup ride-along: marker and camera walk the 14-step path, counters, then a zoom-out to the whole map (`src/visuals/SetupRideAlong.tsx`, map in `setup-map.tsx`). Auto-advances every 2s, forward only. | Built 2026-10-25, awaiting Kyle's review |
+| 8 | one-problem | card (Evidence: Required / Optional beside the second paragraph) | None | Built 2026-10-25, awaiting Kyle's review |
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
+- 02 Diagnosis is built. Next: the 03 Approach section card and its beats; wait for Kyle's copy.
 - Beat 4 is built (Checking the hunch). Kyle feels the card plus chat reads crammed; he may revisit it later (not now).
 - Beat 4's montage became a falling stack, per Kyle; the pile-and-lines ending was dropped. Screenshots are bigger, annotations handwritten with arrows (per Kyle).
 - To swap real screenshots into Beat 4: drop files in `public/assets/hunch/`, then in `SHOTS` (top of `src/visuals/EmptyStateMontage.tsx`) set `src` and `aspect` (width / height), and measure `empty` (percent of the image) on the real screenshot. Any size or shape works; `labelAt` moves a label if needed. Repeats in the fast cascade reuse these automatically. The 02 Diagnosis section card comes next, then Diagnosis beats.
@@ -193,3 +201,23 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Closing line (own paragraph, accent): And it wasn't one empty state. It was many.
 - Montage labels, in order: No events. Events not defined. No ad sources. AI off. AI on, no events. Waiting on data.
 - Overlay (auto after the stack, holds for a key press): Six different empty states. Were they evidence of six problems, or just one? (updated by Kyle 2026-10-25)
+
+### 02 Diagnosis copy (verbatim)
+Section card: 02 Diagnosis. Tagline: Mapping the flow to see the shape of the problem.
+
+Connecting the dots
+- I took a screenshot of every empty state I found. Every time I thought I'd seen them all, another one turned up. Some looked nearly identical. Some seemed to come from the same missing step, and I couldn't tell why.
+- I knew my team could explain it, but first I wanted to understand it myself. In FigJam, I used the screenshots as anchor points and mapped the setup flow from start to finish. I filled the space between them with the steps that led there, like Event Creation, linked everything with arrows, and annotated why each point occurred. Anywhere I saw friction, I called it out.
+
+Checking my work
+- With the flow mapped as I understood it, I brought it to the team. I wanted to know two things: was I missing any steps, and what caused each empty state?
+- Their answers filled the gaps. The biggest surprise was that some empty states that looked like the same problem weren't problems at all. Setup was complete, and the account was just waiting on data ingestion. Nothing told the user that.
+- With the flow confirmed, I could finally see the full path a customer had to take.
+- Counters: Times you left Attribution. Empty states hit.
+- Overlay (auto after the zoom-out): To see their first recommendation, a new customer left Attribution three times, found their way back on their own each time, and hit six empty states along the way.
+
+One problem, not six
+- The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.
+- The map also showed what was required and what wasn't. Event Creation and Event Definition (marking events as mid or low funnel) were the only steps needed to see anything, and Attribution only needed a single low-funnel event to work. Connecting ad sources and enabling AI added value, but they were optional.
+- That pointed to the fix: front-load setup before users ever see the dashboard. Required steps first, explained clearly. Optional steps last, with the choice to skip them and an easy way back later.
+- Split: Required (Event Creation, Event Definition). Optional (Connect ad sources, Enable AI).

@@ -8,7 +8,7 @@ export const cardStepCount = (b: Beat) => Math.max(1, b.cardSteps ?? 1) + (b.car
 export function buildSteps(beats: Beat[]): Step[] {
   return beats.flatMap((b, i) => {
     const steps: Step[] = Array.from({ length: cardStepCount(b) }, (_, sub) => ({ beat: i, kind: 'card' as const, sub }))
-    if (b.visual) steps.push({ beat: i, kind: 'visual', sub: 0 })
+    if (b.visual) for (let sub = 0; sub < Math.max(1, b.visual.steps ?? 1); sub++) steps.push({ beat: i, kind: 'visual', sub })
     if (b.visual && b.overlay) steps.push({ beat: i, kind: 'overlay', sub: 0 })
     return steps
   })

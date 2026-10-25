@@ -114,6 +114,19 @@ export function App() {
   const completers = useMemo(() => beats.map((_, b) => () => engine.visualComplete(b)), [engine.visualComplete])
 
   const stepIndex = (b: number, kind: string) => steps.findIndex((s) => s.beat === b && s.kind === kind)
+  const lastStepIndex = (b: number, kind: string) => steps.findLastIndex((s) => s.beat === b && s.kind === kind)
+
+  // multi-step visuals ask to move on (auto-advance); only honored if the reader hasn't moved since
+  const stepRef = useRef(step)
+  stepRef.current = step
+  const requesters = useMemo(
+    () =>
+      beats.map((_, b) => (sub: number) => {
+        const cur = stepRef.current
+        if (cur.beat === b && cur.kind === 'visual' && cur.sub === sub) engine.next()
+      }),
+    [engine.next],
+  )
   const near = (i: number) => i >= 0 && Math.abs(i - index) <= 1
 
   const cb = step.beat
@@ -154,7 +167,11 @@ export function App() {
           else if (b === cb) visualStatus = step.kind === 'visual' ? 'active' : step.kind === 'overlay' ? 'dimmed' : 'pre'
 
           const vi = stepIndex(b, 'visual')
+          const viLast = lastStepIndex(b, 'visual')
           const oi = stepIndex(b, 'overlay')
+          const visualNear = vi >= 0 && index >= vi - 1 && index <= viLast + 1
+          const visualSteps = Math.max(1, beat.visual?.steps ?? 1)
+          const visualSub = b === cb && step.kind === 'visual' ? step.sub : b > cb || (b === cb && step.kind === 'card') ? 0 : visualSteps - 1
 
           return (
             <div key={beat.slug}>
@@ -183,14 +200,16 @@ export function App() {
                   id={`v-${beat.slug}`}
                   visual={beat.visual}
                   status={visualStatus}
-                  mounted={near(vi) || near(oi)}
+                  mounted={visualNear || near(oi)}
+                  sub={visualSub}
+                  requestNext={requesters[b]}
                   startFinished={b === cb && direction === -1}
                   reducedMotion={reduced}
                   onComplete={completers[b]}
                   zIndex={b * 10 + 2}
                 />
               )}
-              {beat.visual && beat.overlay && (near(oi) || near(vi)) && (
+              {beat.visual && beat.overlay && (near(oi) || visualNear) && (
                 <Overlay shown={b === cb && step.kind === 'overlay'} reducedMotion={reduced} zIndex={b * 10 + 3}>
                   {beat.overlay.content}
                 </Overlay>

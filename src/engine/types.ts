@@ -9,12 +9,18 @@ export interface VisualProps {
   reducedMotion: boolean
   /** Call once when the animation or video ends. Drives an auto overlay. */
   onComplete: () => void
+  /** Multi-step visuals (BeatVisual.steps): which step the reader is on. 0 for single-step visuals. */
+  sub: number
+  /** Multi-step visuals: move to the next step if the reader is still on `sub` (auto-advance). */
+  requestNext: (sub: number) => void
 }
 
 export interface BeatVisual {
   component: ComponentType<VisualProps>
   /** Text description of what the visual shows, for screen readers. Required. */
   description: string
+  /** Key presses the visual takes (default 1). Each press moves `sub` on by one; Back reverses it. */
+  steps?: number
 }
 
 export interface BeatOverlay {

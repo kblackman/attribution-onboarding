@@ -13,12 +13,14 @@ interface VisualFrameProps {
   startFinished: boolean
   reducedMotion: boolean
   onComplete: () => void
+  sub: number
+  requestNext: (sub: number) => void
   zIndex: number
   id: string
 }
 
 /** Full-screen stage for a beat's visual. Not bound by the card; takes the whole viewport. */
-export function VisualFrame({ visual, status, mounted, startFinished, reducedMotion, onComplete, zIndex, id }: VisualFrameProps) {
+export function VisualFrame({ visual, status, mounted, startFinished, reducedMotion, onComplete, sub, requestNext, zIndex, id }: VisualFrameProps) {
   const Visual = visual.component
   const on = status === 'active' || status === 'dimmed'
   return (
@@ -32,7 +34,7 @@ export function VisualFrame({ visual, status, mounted, startFinished, reducedMot
       initial={false}
       animate={status}
     >
-      {mounted && <Visual active={on} startFinished={startFinished} reducedMotion={reducedMotion} onComplete={onComplete} />}
+      {mounted && <Visual active={on} startFinished={startFinished} reducedMotion={reducedMotion} onComplete={onComplete} sub={sub} requestNext={requestNext} />}
       <figcaption id={`${id}-desc`} className="sr-only">
         {visual.description}
       </figcaption>

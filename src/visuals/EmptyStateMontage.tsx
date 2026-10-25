@@ -33,10 +33,10 @@ export interface Shot {
   question?: boolean
 }
 
-type Kind = 'no-events' | 'events-undefined' | 'no-ad-sources' | 'ai-off' | 'ai-no-events' | 'waiting'
+export type Kind = 'no-events' | 'events-undefined' | 'no-ad-sources' | 'ai-off' | 'ai-no-events' | 'waiting'
 
 // zones of the placeholder dashboard, in percent of the image
-const Z = {
+export const Z = {
   kpis: { x: 4, y: 17, w: 92, h: 17 },
   chart: { x: 4, y: 38, w: 58, h: 32 },
   side: { x: 66, y: 38, w: 30, h: 32 },
@@ -130,27 +130,13 @@ export function EmptyStateMontage(props: VisualProps) {
             >
               <motion.div
                 className="relative"
-                style={{ aspectRatio: `${aspect}`, containerType: 'inline-size' }}
                 initial={false}
                 animate={on ? { opacity: 1, scale: 1, y: '0%', filter: 'blur(0px)' } : { opacity: 0, scale: reduced ? 1 : 1.3, y: reduced ? '0%' : '-8%', filter: reduced ? 'blur(0px)' : 'blur(6px)' }}
                 transition={at(item.at, TIMING.fall)}
               >
-                {shot.src ? (
-                  <img
-                    src={asset(shot.src)}
-                    alt=""
-                    draggable={false}
-                    className="block h-full w-full rounded-[1.2cqw] object-cover shadow-[0_18px_40px_rgba(0,0,0,0.45)]"
-                  />
-                ) : (
-                  <Grab kind={shot.placeholder ?? 'no-events'} />
-                )}
-                <Annotation
-                  zone={shot.empty}
-                  aspect={aspect}
-                  label={item.quick ? undefined : shot.label}
-                  labelAt={shot.labelAt}
-                  question={!item.quick && shot.question}
+                <ShotView
+                  shot={shot}
+                  showLabel={!item.quick}
                   show={on}
                   instant={!playing}
                   reducedMotion={reduced}
@@ -176,6 +162,49 @@ export function EmptyStateMontage(props: VisualProps) {
   )
 }
 
+interface ShotViewProps {
+  shot: Shot
+  /** Show the handwritten label and the question mark (off for quick repeats). */
+  showLabel?: boolean
+  show: boolean
+  instant?: boolean
+  reducedMotion?: boolean
+  delay?: number
+  circleDuration?: number
+  variant?: number
+}
+
+/**
+ * One screenshot with its annotation, filling a box of the shot's aspect ratio (the parent sets the width).
+ * Real screenshot when the shot has a src, the placeholder dashboard otherwise. Shared by the montage and
+ * the Diagnosis mapping board, so swapping a screenshot into SHOTS updates both.
+ */
+export function ShotView({ shot, showLabel = true, show, instant = false, reducedMotion = false, delay = 0, circleDuration = 0.6, variant = 0 }: ShotViewProps) {
+  const aspect = shot.aspect ?? 16 / 10
+  return (
+    <div className="relative" style={{ aspectRatio: `${aspect}`, containerType: 'inline-size' }}>
+      {shot.src ? (
+        <img src={asset(shot.src)} alt="" draggable={false} className="block h-full w-full rounded-[1.2cqw] object-cover shadow-[0_18px_40px_rgba(0,0,0,0.45)]" />
+      ) : (
+        <Grab kind={shot.placeholder ?? 'no-events'} />
+      )}
+      <Annotation
+        zone={shot.empty}
+        aspect={aspect}
+        label={showLabel ? shot.label : undefined}
+        labelAt={shot.labelAt}
+        question={showLabel && shot.question}
+        show={show}
+        instant={instant}
+        reducedMotion={reducedMotion}
+        delay={delay}
+        circleDuration={circleDuration}
+        variant={variant}
+      />
+    </div>
+  )
+}
+
 /** Which zone each placeholder leaves empty (ai-no-events and waiting draw their own states). */
 const PLACEHOLDER_EMPTY: Record<Kind, keyof typeof Z | null> = {
   'no-events': 'chart',
@@ -187,7 +216,7 @@ const PLACEHOLDER_EMPTY: Record<Kind, keyof typeof Z | null> = {
 }
 
 /** A dummy Attribution screengrab with one area empty (or, for "waiting", everything still loading). */
-function Grab({ kind }: { kind: Kind }) {
+export function Grab({ kind }: { kind: Kind }) {
   const empty = (z: keyof typeof Z) => PLACEHOLDER_EMPTY[kind] === z
   const waiting = kind === 'waiting'
   const box = (z: Zone) => ({ left: `${z.x}%`, top: `${z.y}%`, width: `${z.w}%`, height: `${z.h}%` })

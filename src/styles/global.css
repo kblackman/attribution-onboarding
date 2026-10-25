@@ -146,7 +146,7 @@ body {
 }
 
 /* spotlight kicker: each line on its own row, the emphasized line in accent */
-.spotlight > span { display: block; }
+.spotlight:not(.is-long) > span { display: block; }
 .spotlight em { font-style: italic; font-weight: 600; color: var(--color-accent); }
 
 /*
@@ -221,3 +221,9 @@ body {
 @media (hover: none) { .secmenu .keys-hint { display: none; } }
 @media (max-width: 720px) { .secmenu { left: 16px; bottom: 74px; } }
 @media (prefers-reduced-motion: reduce) { .secmenu, .secmenu.show, .count svg { transition: none; } }
+/* variant: the artifact sits beside the second paragraph; the first and the rest run full width */
+.text-with-aside.is-mid { grid-template-areas: "lead lead" "main aside" "rest rest"; grid-template-rows: auto auto auto; align-items: center; }
+.twa-lead { grid-area: lead; }
+@media (max-width: 720px) {
+  .text-with-aside.is-mid { grid-template-areas: "lead" "main" "aside" "rest"; }
+}
