@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { beats } from './beats'
-import { useStepEngine } from './engine/useStepEngine'
+import { cardStepCount, useStepEngine } from './engine/useStepEngine'
 import { Card, type CardStatus } from './components/Card'
 import { VisualFrame, type VisualStatus } from './components/VisualFrame'
 import { Overlay } from './components/Overlay'
@@ -96,12 +96,13 @@ export function App() {
         {beats.map((beat, b) => {
           if (Math.abs(b - cb) > WINDOW) return null
 
-          const lastSub = Math.max(1, beat.cardSteps ?? 1) - 1
+          const lastSub = cardStepCount(beat) - 1
           const sub = b === cb && step.kind === 'card' ? step.sub : b > cb ? 0 : lastSub
+          const cardOverlayOn = !!beat.cardOverlay && b === cb && step.kind === 'card' && sub === lastSub
 
           let cardStatus: CardStatus
           if (b > cb) cardStatus = 'below'
-          else if (b === cb) cardStatus = step.kind === 'card' ? 'active' : 'gone'
+          else if (b === cb) cardStatus = step.kind !== 'card' ? 'gone' : cardOverlayOn ? 'pushed' : 'active'
           else cardStatus = !beat.visual && b === cb - 1 && step.kind === 'card' ? 'behind' : 'gone'
 
           let visualStatus: VisualStatus = 'pre'
@@ -128,6 +129,11 @@ export function App() {
               >
                 {beat.card}
               </Card>
+              {beat.cardOverlay && (
+                <Overlay shown={cardOverlayOn} reducedMotion={reduced} zIndex={b * 10 + 3}>
+                  {beat.cardOverlay}
+                </Overlay>
+              )}
               {beat.visual && (
                 <VisualFrame
                   id={`v-${beat.slug}`}

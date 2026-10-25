@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import { cardVariants, cardVariantsReduced, heroVariants, statementVariants } from '../engine/motion'
 import { RevealContext } from './Reveal'
 
-export type CardStatus = 'below' | 'active' | 'behind' | 'gone'
+export type CardStatus = 'below' | 'active' | 'pushed' | 'behind' | 'gone'
 
 interface CardProps {
   status: CardStatus
@@ -27,6 +27,7 @@ interface CardProps {
 /** The deck card. Rises from below, recedes up and back when the story moves on. */
 export function Card({ status, variant = 'card', align = 'left', dense = false, revealed, revealLead, sub, glow, reducedMotion, label, zIndex, children }: CardProps) {
   const active = status === 'active'
+  // pushed: still the current step, sitting back behind a card overlay
   const statement = variant === 'statement'
   const className = variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? `deck-statement${dense ? ' is-dense' : ''}` : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
   const variants = reducedMotion ? cardVariantsReduced : variant === 'hero' ? heroVariants : statement ? statementVariants : cardVariants

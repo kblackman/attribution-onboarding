@@ -16,6 +16,9 @@ export const DUR = {
 const deck = (duration: number, delay = 0): Transition => ({ duration, delay, ease: EASE_DECK })
 const fade: Transition = { duration: DUR.reduced, ease: 'easeOut' }
 
+/** A card or statement stepping back behind a card overlay: smaller, blurred, dimmed, still in place. */
+const PUSHED = { y: 0, scale: 0.92, opacity: 0.35, filter: 'blur(8px)', transition: deck(DUR.overlay) }
+
 /*
   Card states.
   below:  waiting under the fold (deck: translate3d(0, 110vh, 0)).
@@ -29,12 +32,15 @@ export const cardVariants: Variants = {
   active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card) },
   behind: { y: '-2.4vh', scale: 0.92, opacity: 0.64, filter: 'blur(1.6px)', transition: deck(DUR.card) },
   gone: { y: '-2.4vh', scale: 0.92, opacity: 0, filter: 'blur(1.6px)', transition: deck(DUR.card) },
+  pushed: PUSHED,
 }
 export const cardVariantsReduced: Variants = {
   below: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade },
   active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: fade },
   behind: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade },
   gone: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade },
+  // no blur here, so the card fades almost out to keep it from colliding with the overlay text
+  pushed: { y: 0, scale: 1, opacity: 0.06, filter: 'blur(0px)', transition: fade },
 }
 
 /*
@@ -48,6 +54,7 @@ export const statementVariants: Variants = {
   active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card, 0.15) },
   behind: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card) },
   gone: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card) },
+  pushed: PUSHED,
 }
 
 /*
@@ -60,6 +67,7 @@ export const heroVariants: Variants = {
   // fades fully (deck stops at 0.1): with no card frame covering it, a ghost would show through what follows
   behind: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card) },
   gone: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card) },
+  pushed: { z: -160, opacity: 0.35, filter: 'blur(8px)', transition: deck(DUR.overlay) },
 }
 
 /*

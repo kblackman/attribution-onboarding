@@ -44,6 +44,11 @@ export interface Beat {
    * appears on press n, e.g. a kicker line that lands after the body.
    */
   cardSteps?: number
+  /**
+   * A full-screen overlay that lands on the press after the card's own steps: the card pushes back
+   * (smaller, blurred, dimmed) and the overlay's scrim and text take the screen. Reverses on Back.
+   */
+  cardOverlay?: ReactNode
   visual?: BeatVisual
   overlay?: BeatOverlay
 }

@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Beat, Step } from './types'
 
+/** Presses a beat's card takes: its own steps, plus one for a card overlay. */
+export const cardStepCount = (b: Beat) => Math.max(1, b.cardSteps ?? 1) + (b.cardOverlay ? 1 : 0)
+
 /** Beats flatten into one ordered list of steps: card (one or more presses), then visual, then overlay, as each beat defines. */
 export function buildSteps(beats: Beat[]): Step[] {
   return beats.flatMap((b, i) => {
-    const steps: Step[] = Array.from({ length: Math.max(1, b.cardSteps ?? 1) }, (_, sub) => ({ beat: i, kind: 'card' as const, sub }))
+    const steps: Step[] = Array.from({ length: cardStepCount(b) }, (_, sub) => ({ beat: i, kind: 'card' as const, sub }))
     if (b.visual) steps.push({ beat: i, kind: 'visual', sub: 0 })
     if (b.visual && b.overlay) steps.push({ beat: i, kind: 'overlay', sub: 0 })
     return steps

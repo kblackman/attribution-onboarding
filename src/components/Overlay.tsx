@@ -26,10 +26,13 @@ export function Overlay({ shown, reducedMotion, zIndex, children }: OverlayProps
     >
       <motion.div
         className="mx-auto w-full max-w-[1080px]"
+        aria-hidden="true"
         variants={reducedMotion ? overlayTextVariantsReduced : overlayTextVariants}
       >
         {children}
       </motion.div>
+      {/* the overlay's text is hidden while it waits; a screen reader hears it when it lands */}
+      <div className="sr-only" aria-live="polite">{shown ? children : null}</div>
     </motion.div>
   )
 }

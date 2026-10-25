@@ -19,8 +19,9 @@ A standalone, keyboard-driven case study presentation, embedded in Kyle's Framer
 A beat is up to three steps. Right arrow advances one step, left arrow reverses it.
 1. Card. Tells part of the story, in one of three variants (`Beat.variant`):
    - `card`: the deck card frame. Reserved for beats that hold an artifact (table, stat block, before/after, pull quote), so the frame reads as evidence. On advance it recedes up and back, then fades (see Decisions).
-   - `statement`: no container, larger type set directly on the background. The default for narrative beats (Kyle, 2026-10-24). Motion is a zoom through depth: it arrives from in front of the screen (larger, blurred) and settles; moving on, it shrinks, blurs, and fades away; reverse plays it backward. Its text arrives with the zoom, with no separate rise. Content via `<Statement headline body kicker kickerStyle />`. `kickerStyle: 'spotlight'` steps the headline and body back and centers the kicker in Figtree italic between two short accent rules (an editorial pull statement); `<em>` marks the accent line.
+   - `statement`: no container, larger type set directly on the background. The default for narrative beats (Kyle, 2026-10-24). Motion is a zoom through depth: it arrives from in front of the screen (larger, blurred) and settles; moving on, it shrinks, blurs, and fades away; reverse plays it backward. Its text arrives with the zoom, with no separate rise. Content via `<Statement headline body kicker align />` (works on a card too).
    - `hero`: the opening title screen, full-bleed, no logo (Framer's frame carries bkmn), with a Begin button and no hint text. `align: 'center'` centers it like the case study pages (Beat 1 uses this, at the larger `text-hero` size); default is the decks' left layout. Recedes into depth and fades fully on exit.
+   A beat can add a full-screen `cardOverlay` on the press after its card: the card pushes back (smaller, blurred, dimmed) and the overlay's scrim and text take the screen, reversing on Back. `SpotlightLine` is the italic pull-statement content for it.
    A card can take extra key presses before moving on (`cardSteps`); content wrapped in `<Reveal step={n}>` lands on press n (e.g. a kicker).
 2. Full-screen visual (optional). A visual or animation takes over the whole screen, not bound by the card.
 3. Overlay (optional). After the visual finishes, a semi-transparent overlay fades in, blurs the visual, and text appears on top. Per beat: appears automatically when the visual completes (`trigger: 'auto'`) or waits for a key press (`trigger: 'key'`).
@@ -86,6 +87,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: Annotation color is vibrant magenta `#FF2E93` (`annotation` token), per Kyle. All markup on visuals (circles, future arrows or highlights) uses it, never brand or product colors.
 - 2026-10-24: Beat 3 body raised to the problem statement's size, per Kyle (the smaller reading size was too small). Added `cardDense`.
 - 2026-10-24: Beat 3 is frameless (statement), per Kyle: the card "takes me out of it". Frameless is the default for narrative beats; the card is saved for beats holding an artifact. Statements now zoom through depth (in from larger, out to smaller, reversible), per Kyle.
+- 2026-10-24: The problem statement sits on a left-aligned deck card with the accent glow, per Kyle. Its kicker moved off the card into a full-screen `cardOverlay` (card pushes back behind it), per Kyle.
 - 2026-10-24: Skill pills copied exactly from the case study's Role Pills, per Kyle: `#232324` fill (`pill`), 1px inside border at 15% white (`pill-border`), 7px radius, 4px 8px padding, 14px regular in accent, 10px gap. Fixed size, not viewport-scaled. Accent on the fill is about 10:1.
 - 2026-10-23: Performance windowing (one beat either side mounted), per Kyle.
 - 2026-10-23: Beat 1 is not a card. It's the decks' hero (Kyle: "using the word card was a bad move"), with no bkmn logo since the Framer frame has one. The hero fades fully on exit (deck stops at 0.1) so it doesn't ghost behind frameless statements.
@@ -99,7 +101,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 |---|------|-------|--------|--------|
 | 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
 | 3 | pattern | statement (dense), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
-| 2 | problem | statement (2 presses: body, then spotlight kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
+| 2 | problem | card with glow, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
@@ -115,7 +117,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 ### Beat 2 copy (verbatim)
 - Headline: The problem
 - Body: Freshpaint's healthcare marketing analytics platform was powerful, but it had no self-serve system in place to help customers reach the value they'd paid for. Setup flows were confusing and offered little to no guidance. Getting set up correctly meant reading dense documentation or booking a call with CS or an account manager.
-- Kicker (next key press, spotlight): Everyone knew it was a problem. Nobody prioritized fixing it. (Updated by Kyle 2026-10-23.)
+- Kicker (next key press, full-screen card overlay): Everyone knew it was a problem. Nobody prioritized fixing it. (Updated by Kyle 2026-10-23.)
 - Visual labels: Documentation, CS call, Account manager
 - Overlay: none
 
