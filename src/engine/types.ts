@@ -33,7 +33,11 @@ export interface Beat {
   slug: string
   /** Short name used in the progress label and screen reader announcements. */
   title: string
-  card: ReactNode
+  /**
+   * The beat's card. Omit it for a beat that opens directly on its visual (a section's first beat, when the
+   * section card sets it up). Such a beat must have a visual.
+   */
+  card?: ReactNode
   /**
    * card: the deck card. statement: no container, larger type set directly on the background, for emphasis beats.
    * hero: the decks' title screen, full-bleed with a Begin row, receding into depth on exit. Use for the opening.

@@ -175,6 +175,7 @@ export function App() {
 
           return (
             <div key={beat.slug}>
+              {beat.card !== undefined && (
               <Card
                 status={cardStatus}
                 variant={beat.variant}
@@ -190,6 +191,7 @@ export function App() {
               >
                 {beat.card}
               </Card>
+              )}
               {beat.cardOverlay && (
                 <Overlay shown={cardOverlayOn} reducedMotion={reduced} zIndex={b * 10 + 3}>
                   {beat.cardOverlay}

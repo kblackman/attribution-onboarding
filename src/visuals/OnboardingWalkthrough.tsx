@@ -6,15 +6,17 @@ import { PlaceholderBadge } from '../components/Placeholder'
 import { EVENT_NAME, EVENT_SELECTOR, FlowScreen, type FlowUI } from './onboarding-screens'
 
 /*
-  04 Solution, "Showing the team": an automated walkthrough of the new setup flow, as Kyle presented it.
+  04 Solution opens on this: an automated walkthrough of the new setup flow.
   One key press per step (8 steps), each step a short script for a simulated cursor: it clicks where the
-  previous step left it, the screen responds, then it moves to the next target. With no key press it moves
-  on by itself, forward only, HOLD seconds after a step's script ends (pacing after the Beat 7 ride-along).
+  previous step left it, the screen responds, then it moves to the next target. Kyle drives it with the
+  arrow keys; with TIMING.autoAdvance on it would also move on by itself, forward only, `hold` seconds
+  after a step's script ends.
   The button under the cursor shows its hover state once the cursor arrives. At the end the dashboard
   scrolls through the whole Attribution page.
   Screens live in onboarding-screens.tsx. Tune the timing here (seconds).
 */
 export const TIMING = {
+  autoAdvance: false, // Kyle presents this one himself: each step waits for an arrow press (2026-10-25). true to move on by itself
   hold: 1.8, // after a step's script ends, before auto-advancing
   move: 0.65, // cursor travel
   type: 0.055, // per character
@@ -152,7 +154,7 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
 
   // auto-advance, forward only, and never past the last step (the next press leaves the beat)
   useEffect(() => {
-    if (!active || startFinished || sub >= WALK_STEPS - 1) return
+    if (!TIMING.autoAdvance || !active || startFinished || sub >= WALK_STEPS - 1) return
     const end = script.frames[script.frames.length - 1].at
     const t = window.setTimeout(() => requestNext(sub), ((reduced ? 0 : end) + TIMING.hold + (reduced ? 0.8 : 0)) * 1000)
     return () => window.clearTimeout(t)
