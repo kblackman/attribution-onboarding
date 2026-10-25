@@ -30,7 +30,7 @@ const typing = (field: 'name' | 'selector', text: string, start: number): Frame[
   Array.from(text, (_, i) => ({ at: start + i * TIMING.type, set: { [field]: text.slice(0, i + 1) } }))
 const typed = (start: number, text: string) => start + text.length * TIMING.type
 
-const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, funnel: 'none', error: false, later: false, ai: false, note: false, scroll: false, cursor: true }
+const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, funnel: 'none', error: false, later: false, ai: false, note: false, aiCollapsed: false, scroll: false, cursor: true }
 
 const nameDone = typed(1.6, EVENT_NAME)
 const selDone = typed(nameDone + 1.2, EVENT_SELECTOR)
@@ -97,11 +97,14 @@ const SCRIPTS: Script[] = [
       { at: 3.2 }, // time to read the note before moving on
     ],
   },
-  // 8. resolve: the full Attribution dashboard, then a scroll down the whole page
+  // 8. resolve: the full Attribution dashboard. The cursor hides the AI card (still generating), then the page scrolls
   {
     frames: [
       { at: 0.8, set: { screen: 'dashboard' } },
-      { at: 2.4, set: { scroll: true } },
+      { at: 1.6, to: 'hide', set: { cursor: true } },
+      { at: 2.5, click: true, set: { aiCollapsed: true } },
+      { at: 3.1, set: { cursor: false } },
+      { at: 3.4, set: { scroll: true } },
     ],
   },
 ]

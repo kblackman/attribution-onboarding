@@ -34,6 +34,8 @@ export interface FlowUI {
   ai: boolean
   /** Kyle's handwritten note on the waiting room. */
   note: boolean
+  /** The dashboard's AI recommendations card (waiting on data) is collapsed. */
+  aiCollapsed: boolean
   /** The dashboard scrolls down the whole page. */
   scroll: boolean
   cursor: boolean
@@ -106,7 +108,7 @@ export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string |
             )}
             {ui.screen === 'dashboard' && (
               <motion.div key="dashboard" className={`${STACK} relative bg-fp-bg`} {...cross(reduced)}>
-                <Dashboard scroll={ui.scroll} reduced={reduced} />
+                <Dashboard scroll={ui.scroll} aiCollapsed={ui.aiCollapsed} hover={hover} reduced={reduced} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -733,12 +735,13 @@ const UNPAID: { name: string; values: string[] }[] = [
 ]
 const TOTALS = ['200,985', '20,690.60', '5,523.20', '2,442.20', '—', '—']
 
-function Dashboard({ scroll, reduced }: { scroll: boolean; reduced: boolean }) {
+function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; aiCollapsed: boolean; hover: string | null; reduced: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   const [travel, setTravel] = useState(0)
+  // measured when the scroll starts, after the AI card has collapsed
   useLayoutEffect(() => {
     if (ref.current) setTravel(Math.max(0, ref.current.offsetHeight - PAGE_H))
-  }, [])
+  }, [scroll])
   return (
     <motion.div
       ref={ref}
@@ -774,6 +777,8 @@ function Dashboard({ scroll, reduced }: { scroll: boolean; reduced: boolean }) {
         <span className="border-b-2 border-fp-indigo pb-[8px] font-semibold text-fp-indigo">Overview</span>
         <span className="pb-[8px] text-fp-muted">Journeys</span>
       </div>
+
+      <AiWaiting collapsed={aiCollapsed} hover={hover} reduced={reduced} />
 
       {/* filters */}
       <div className="mt-[28px] flex items-end justify-between">
@@ -895,6 +900,38 @@ function Dashboard({ scroll, reduced }: { scroll: boolean; reduced: boolean }) {
   )
 }
 
+/**
+ * AI recommendations while the first ones are generated (Kyle's reference). Hide collapses it to a slim bar
+ * with Show (the collapsed look is ours). Its height animates so the page below moves up smoothly: a deliberate
+ * exception to transform-and-opacity-only motion, for this one element of mock UI (transforms would misplace
+ * the content under the stage's scale).
+ */
+function AiWaiting({ collapsed, hover, reduced }: { collapsed: boolean; hover: string | null; reduced: boolean }) {
+  const tr = { duration: reduced ? 0 : 0.45, ease: EASE_DECK }
+  return (
+    <motion.div className="relative mt-[24px] overflow-hidden rounded-[12px] border border-fp-line bg-white" initial={false} animate={{ height: collapsed ? 54 : 316 }} transition={tr}>
+      <span
+        data-t="hide"
+        className={`absolute right-[28px] flex items-center gap-[6px] rounded-[6px] px-[8px] py-[5px] text-[13px] font-semibold transition-[background-color,top] duration-200 ${hover === 'hide' ? 'bg-fp-hover' : ''}`}
+        style={{ top: collapsed ? 12 : 30 }}
+      >
+        <Chevron up={!collapsed} size={14} />
+        {collapsed ? 'Show' : 'Hide'}
+      </span>
+      {collapsed && <span className="absolute left-[24px] top-[17px] text-[13px] font-semibold">AI recommendations</span>}
+      <motion.div className="flex flex-col items-center pt-[94px] text-center" initial={false} animate={{ opacity: collapsed ? 0 : 1 }} transition={{ duration: reduced ? 0 : 0.2 }}>
+        <span className="grid h-[43px] w-[43px] place-items-center rounded-full bg-fp-faint text-white">
+          <Clock />
+        </span>
+        <p className="m-0 mt-[22px] text-[18px] font-semibold">We’re generating your first recommendations</p>
+        <p className="m-0 mt-[8px] w-[460px] text-[13px] leading-[18px]">
+          Your first AI recommendations will be ready within 24 hours. We're analyzing your conversion events and ad performance data to generate insights.
+        </p>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 function TableRow({ cells, head = false, total = false }: { cells: ReactNode[]; head?: boolean; total?: boolean }) {
   return (
     <div className={`grid grid-cols-[2.2fr_repeat(6,1fr)] items-center border-t border-fp-line px-[16px] text-[12px] h-[53px] ${head ? 'text-[11px] font-semibold text-fp-ink-2' : ''} ${total ? 'bg-fp-bg font-semibold' : ''}`}>
@@ -914,9 +951,15 @@ const SectionLabel = ({ children }: { children: ReactNode }) => (
 /* ---------- small icons not in the pulled frames (line icons in the product's style) ---------- */
 
 const line = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
-const Chevron = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" {...line}>
-    <path d="M6 9l6 6 6-6" />
+const Chevron = ({ up = false, size = 16 }: { up?: boolean; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" {...line} strokeWidth={2}>
+    <path d={up ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'} />
+  </svg>
+)
+const Clock = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" {...line}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7.5V12l3 2" />
   </svg>
 )
 const Sparkle = () => (
