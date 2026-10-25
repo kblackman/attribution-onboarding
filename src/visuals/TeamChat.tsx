@@ -4,7 +4,7 @@ import { ChatThread, type ChatMessage } from '../components/ChatThread'
 
 /*
   Beat 4 visual: the team thread, full screen. Kyle's messages and the PM and Eng replies are Kyle's approved
-  wording; the roadmap exchange is still his placeholder. Messages land one at a time,
+  wording; the PM's last reply is still his placeholder. Messages land one at a time,
   slowly enough to read at this size. Tune the timing here (seconds).
 */
 export const TIMING = {
@@ -22,7 +22,7 @@ const MESSAGES: ChatMessage[] = [
   },
   { author: 'PM', time: '10:44 AM', text: "You're not crazy. Setup has been a known pain point. Even our CEO has called it out." },
   { author: 'Eng', time: '10:45 AM', text: 'Yeah, not surprised honestly. There are a bunch of things that have to be configured before that page shows anything useful.', reactions: [{ emoji: '👍', count: 1 }] },
-  { author: 'Kyle Blackman', time: '10:47 AM', text: 'Is fixing it on the roadmap anywhere?' },
+  { author: 'Kyle Blackman', time: '10:47 AM', text: 'Got it. Are there any plans to address this in the near future?' },
   { author: 'PM', time: '10:48 AM', text: 'Not right now.' },
 ]
 const TOTAL = TIMING.start + (MESSAGES.length - 1) * TIMING.stagger + 0.6 + TIMING.settle
@@ -36,7 +36,7 @@ export function TeamChat(props: VisualProps) {
         className="w-[min(100%,980px)]"
         channel="team-indigo"
         divider="After the research sessions"
-        placeholderNote="Roadmap messages are placeholders, final wording to come"
+        placeholderNote="Last message is a placeholder, final wording to come"
         messages={MESSAGES}
         shown={mode !== 'empty'}
         instant={mode === 'done'}

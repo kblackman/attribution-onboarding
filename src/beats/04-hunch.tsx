@@ -15,7 +15,7 @@ const beat: Beat = {
   visual: {
     component: TeamChat,
     description:
-      'A team chat thread in the #team-indigo channel, after the research sessions. Kyle Blackman: Noticed something over these past few customer sessions. Seems like almost everyone we spoke to had an Attribution dashboard that was only half set up. Am I crazy? PM: You\'re not crazy. Setup has been a known pain point. Even our CEO has called it out. Eng: Yeah, not surprised honestly. There are a bunch of things that have to be configured before that page shows anything useful. Kyle Blackman: Is fixing it on the roadmap anywhere? PM: Not right now.',
+      'A team chat thread in the #team-indigo channel, after the research sessions. Kyle Blackman: Noticed something over these past few customer sessions. Seems like almost everyone we spoke to had an Attribution dashboard that was only half set up. Am I crazy? PM: You\'re not crazy. Setup has been a known pain point. Even our CEO has called it out. Eng: Yeah, not surprised honestly. There are a bunch of things that have to be configured before that page shows anything useful. Kyle Blackman: Got it. Are there any plans to address this in the near future? PM: Not right now.',
   },
 }
 

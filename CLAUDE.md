@@ -183,7 +183,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
   - Kyle Blackman: Noticed something over these past few customer sessions. Seems like almost everyone we spoke to had an Attribution dashboard that was only half set up. Am I crazy? (approved)
   - PM: You're not crazy. Setup has been a known pain point. Even our CEO has called it out. (approved)
   - Eng: Yeah, not surprised honestly. There are a bunch of things that have to be configured before that page shows anything useful. (approved)
-  - Kyle Blackman: Is fixing it on the roadmap anywhere? (placeholder)
+  - Kyle Blackman: Got it. Are there any plans to address this in the near future? (approved)
   - PM: Not right now. (placeholder)
 
 ### Beat 5 copy (verbatim): How widespread was it?
