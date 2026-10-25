@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { cardVariants, cardVariantsReduced, heroVariants, statementVariants } from '../engine/motion'
+import { cardVariants, cardVariantsReduced, heroVariants, sectionVariants, statementVariants } from '../engine/motion'
 import { RevealContext } from './Reveal'
 
 export type CardStatus = 'below' | 'active' | 'pushed' | 'behind' | 'gone'
@@ -29,8 +29,8 @@ export function Card({ status, variant = 'card', align = 'left', dense = false, 
   const active = status === 'active'
   // pushed: still the current step, sitting back behind a card overlay
   const statement = variant === 'statement'
-  const className = variant === 'section' ? 'deck-card is-section' : variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? `deck-statement${dense ? ' is-dense' : ''}` : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
-  const variants = reducedMotion ? cardVariantsReduced : variant === 'hero' ? heroVariants : statement ? statementVariants : cardVariants
+  const className = variant === 'section' ? 'deck-section' : variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? `deck-statement${dense ? ' is-dense' : ''}` : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
+  const variants = reducedMotion ? cardVariantsReduced : variant === 'section' ? sectionVariants : variant === 'hero' ? heroVariants : statement ? statementVariants : cardVariants
   return (
     <motion.section
       aria-label={label}

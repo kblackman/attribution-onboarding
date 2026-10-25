@@ -37,8 +37,15 @@ body {
   will-change: transform, filter, opacity;
 }
 .deck-card.has-glow { background: var(--card-glow), var(--card-gradient); }
-/* section card: the deck divider's glow, plus an accent border so it never reads as a story card */
-.deck-card.is-section { background: var(--card-glow), var(--card-gradient); border-color: color-mix(in srgb, var(--color-accent) 22%, transparent); }
+/* section title sequence: full-screen, frameless, everything centered */
+.deck-section {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  will-change: transform, filter, opacity;
+}
 /* deck sub-slide padding: tighter top and bottom for text-heavy cards */
 .deck-card.is-dense, .deck-statement.is-dense { padding-top: clamp(28px, calc(var(--u) * 3.6), 90px); padding-bottom: clamp(28px, calc(var(--u) * 3.6), 90px); }
 

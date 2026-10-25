@@ -66,6 +66,18 @@ export const statementVariants: Variants = {
 }
 
 /*
+  Section states: the container only fades in (the title sequence inside does the entrance), then
+  leaves the same way statements do, shrinking away through depth. Reverse plays it back.
+*/
+export const sectionVariants: Variants = {
+  below: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: { duration: DUR.reduced }, ...HIDE },
+  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card, 0.1), ...SHOW },
+  behind: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card), ...HIDE },
+  gone: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card), ...HIDE },
+  pushed: PUSHED,
+}
+
+/*
   Hero states, from the decks' title screen: it recedes into depth (translate3d(0,0,-320px)),
   blurs 7px, and drops to 0.1 opacity. Brightness is omitted, as on cards.
 */

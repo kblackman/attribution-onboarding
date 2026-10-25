@@ -17,7 +17,7 @@ import { PresentationContext } from './engine/presentation'
   current one or adjacent to it, so video and heavy visuals load just in time and unload after.
 */
 const WINDOW = 1
-const FRAMED = new Set(['card', 'section'])
+const FRAMED = new Set(['card'])
 
 export function App() {
   const engine = useStepEngine(beats)
