@@ -7,7 +7,7 @@ import widespread from './05-widespread'
 import dots from './06-dots'
 import checking from './07-checking'
 import oneProblem from './08-one-problem'
-import beforeSketching from './09-before-sketching'
+import beforePrototyping from './09-before-prototyping'
 import codeTold from './10-code-told'
 import { sectionCard } from '../components/SectionCard'
 
@@ -25,6 +25,6 @@ export const beats: Beat[] = [
   checking,
   oneProblem,
   sectionCard('approach'),
-  beforeSketching,
+  beforePrototyping,
   codeTold,
 ]

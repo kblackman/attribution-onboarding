@@ -166,23 +166,21 @@ export function NodeView({ node, shown, annotated, drawNow, reducedMotion }: Nod
   )
 }
 
-/** Pages (outside Attribution) and drawers: generic product surfaces with a title and one detail. */
+/**
+ * Pages and drawers outside Attribution: the same shell as the Attribution screenshots (radius, header
+ * bar, shadow), so every node on the map reads as one family. Title, one line of detail, one feature.
+ */
 function PageNode({ node, on, reducedMotion }: { node: MapNode; on: boolean; reducedMotion: boolean }) {
-  const drawer = node.kind === 'drawer'
   return (
     <div
-      className={`relative overflow-hidden bg-surface text-ink shadow-[0_18px_40px_rgba(0,0,0,0.45)] ${drawer ? 'rounded-t-[4cqw] rounded-b-[1.5cqw]' : 'rounded-[3cqw]'}`}
-      style={{ containerType: 'inline-size', aspectRatio: drawer ? `${DRAWER_W} / 132` : `${PAGE_W} / 150` }}
+      className="relative overflow-hidden rounded-[1.2cqw] bg-surface text-ink shadow-[0_18px_40px_rgba(0,0,0,0.45)]"
+      style={{ containerType: 'inline-size', aspectRatio: node.kind === 'drawer' ? `${DRAWER_W} / 132` : `${PAGE_W} / 150` }}
     >
-      {drawer ? (
-        <div className="mx-auto mt-[3cqw] h-[1.4cqw] w-[16%] rounded-full bg-skeleton-strong" />
-      ) : (
-        <div className="flex h-[16%] items-center gap-[3%] border-b border-line px-[5%]">
-          <span className="block aspect-square h-[46%] rounded-[20%] bg-product-ink" />
-          <span className="block h-[26%] w-[24%] rounded-full bg-skeleton-strong" />
-        </div>
-      )}
-      <div className="px-[7%] pt-[6%]">
+      <div className="flex h-[15%] items-center gap-[3%] border-b border-line px-[5%]">
+        <span className="block aspect-square h-[46%] rounded-[20%] bg-product-ink" />
+        <span className="block h-[26%] w-[24%] rounded-full bg-skeleton-strong" />
+      </div>
+      <div className="px-[6%] pt-[6%]">
         <div className="text-[9cqw] font-bold leading-[1.1] tracking-[-0.01em]">{node.title}</div>
         {node.detail && <div className="mt-[2%] text-[6.4cqw] leading-[1.25] text-ink-2">{node.detail}</div>}
         <div className="mt-[6%] flex items-center gap-[4%]">
@@ -221,7 +219,7 @@ function HiddenButton({ show, instant, reducedMotion }: { show: boolean; instant
       <span className="block h-full w-full rounded-full border border-line-strong bg-surface" />
       <HandCircle show={show} instant={instant} reducedMotion={reducedMotion} delay={0.9} duration={0.45} variant={2} className="-inset-[35%] h-[170%] w-[170%]" />
       <motion.span
-        className="absolute -left-[30%] top-[150%] font-[family-name:var(--font-hand)] text-[70cqw] font-bold leading-none text-annotation"
+        className="absolute left-[102%] top-[-60%] font-[family-name:var(--font-hand)] text-[70cqw] font-bold leading-none text-annotation"
         initial={false}
         animate={show ? { opacity: 1, scale: 1, rotate: 10 } : { opacity: 0, scale: reducedMotion ? 1 : 0.5, rotate: 10 }}
         transition={instant ? { duration: 0 } : { duration: 0.4, delay: 1.3 }}

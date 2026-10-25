@@ -52,6 +52,9 @@
   */
   --color-annotation: #FF2E93;
 
+  /* Claude's coral, only for the reconstructed Claude Code session (approved by Kyle 2026-10-25) */
+  --color-coral: #D97757;
+
   /* ---- color: case study (approved 2026-10-23) ---- */
   --color-shipped: #61BF50;
   --color-caption: #AAB0B6;
