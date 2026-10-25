@@ -9,7 +9,7 @@ import { BOUNDS, EdgesView, Legend, NODES, NodeView, PATH, UNIT, firstStep, node
   Beat 7 visual: the setup ride-along. A marker starts on Attribution and travels the setup path one step
   per key press, the camera following it; with no key press it moves on by itself every AUTO seconds (only
   while going forward; after a step back it waits). Counters tick up in the corner. After the last step,
-  one more press zooms out to the whole map, then the overlay lands. The map lives in setup-map.tsx.
+  one more press (or the auto-advance) zooms out to the whole map; the overlay then waits for a key press. The map lives in setup-map.tsx.
 */
 export const RIDE_STEPS = PATH.length + 1 // the 14 steps, then the zoom-out
 export const TIMING = {
@@ -111,9 +111,10 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
           <Legend />
         </motion.div>
       </div>
-        {/* counters */}
-        <div className="absolute right-[1.6cqw] top-[1.6cqw] z-10 flex flex-col gap-[0.6cqw] rounded-[1cqw] border border-hairline bg-card-to/90 px-[1.4cqw] py-[1cqw] text-[clamp(11px,1.3cqw,19px)] text-fg-muted max-[720px]:static max-[720px]:mt-3 max-[720px]:gap-1 max-[720px]:px-3 max-[720px]:py-2">
+        {/* counters: a stat panel, after the case study's stat blocks */}
+        <div className="absolute right-[1.6cqw] top-[1.6cqw] z-10 flex items-stretch rounded-[1.2cqw] border border-hairline-strong bg-card-to/95 shadow-[0_18px_40px_rgba(0,0,0,0.45)] max-[720px]:static max-[720px]:mt-3 max-[720px]:self-stretch">
           <Counter label="Times you left Attribution" value={left} reduced={reduced} />
+          <span className="my-[1.2cqw] w-px bg-hairline-strong max-[720px]:my-3" aria-hidden="true" />
           <Counter label="Empty states hit" value={empty} reduced={reduced} />
         </div>
       </div>
@@ -123,21 +124,34 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
 
 function Counter({ label, value, reduced }: { label: string; value: number; reduced: boolean }) {
   return (
-    <div className="flex items-baseline justify-between gap-[1.6cqw]">
-      <span>{label}</span>
-      <span className="relative inline-grid min-w-[1.2em] place-items-end overflow-hidden text-[1.35em] font-bold tabular-nums text-fg">
+    <div className="flex min-w-[13cqw] flex-1 flex-col gap-[0.5cqw] px-[1.8cqw] py-[1.3cqw] max-[720px]:min-w-0 max-[720px]:px-4 max-[720px]:py-3">
+      <span className="relative block h-[1em] overflow-hidden text-[clamp(30px,4.6cqw,68px)] font-light leading-none tabular-nums text-fg">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
             key={value}
-            initial={reduced ? { opacity: 0 } : { y: '80%', opacity: 0 }}
+            className="absolute inset-0"
+            initial={reduced ? { opacity: 0 } : { y: '90%', opacity: 0 }}
             animate={{ y: '0%', opacity: 1 }}
-            exit={reduced ? { opacity: 0 } : { y: '-80%', opacity: 0 }}
-            transition={{ duration: reduced ? 0.2 : 0.35, ease: EASE_DECK }}
+            exit={reduced ? { opacity: 0 } : { y: '-90%', opacity: 0 }}
+            transition={{ duration: reduced ? 0.2 : 0.45, ease: EASE_DECK }}
           >
             {value}
+            {/* a brief accent flash when it ticks up */}
+            {value > 0 && (
+              <motion.span
+                className="absolute inset-0 text-accent"
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 0 }}
+                transition={{ duration: 1.1, delay: 0.25, ease: 'easeOut' }}
+                aria-hidden="true"
+              >
+                {value}
+              </motion.span>
+            )}
           </motion.span>
         </AnimatePresence>
       </span>
+      <span className="text-[clamp(10px,1.05cqw,15px)] uppercase leading-[1.3] tracking-[0.14em] text-fg-soft">{label}</span>
     </div>
   )
 }

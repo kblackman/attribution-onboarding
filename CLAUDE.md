@@ -144,7 +144,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 4 | hunch | statement, visual | Full-screen team chat (#team-indigo, "After the research sessions" divider), messages landing one at a time (`src/visuals/TeamChat.tsx`). | Built 2026-10-25, awaiting Kyle's review |
 | 5 | widespread | statement (wide), visual, overlay (auto, holds for a key press) | Empty-state montage as a falling stack with handwritten annotations (`src/visuals/EmptyStateMontage.tsx`, swappable `SHOTS`). | Built 2026-10-25, awaiting Kyle's review |
 | 6 | dots | statement (wide), visual | Mapping board (whiteboard): montage screenshots as anchors with annotations, step boxes, arrows, friction stickies (`src/visuals/MappingBoard.tsx`). | Built 2026-10-25, awaiting Kyle's review |
-| 7 | checking | statement (wide), visual (15 presses), overlay (auto) | Setup ride-along: marker and camera walk the 14-step path, counters, then a zoom-out to the whole map (`src/visuals/SetupRideAlong.tsx`, map in `setup-map.tsx`). Auto-advances every 2s, forward only. | Built 2026-10-25, awaiting Kyle's review |
+| 7 | checking | statement (wide), visual (15 presses), overlay (key press) | Setup ride-along: marker and camera walk the 14-step path, counters, then a zoom-out to the whole map (`src/visuals/SetupRideAlong.tsx`, map in `setup-map.tsx`). Auto-advances every 2s, forward only. | Built 2026-10-25, awaiting Kyle's review |
 | 8 | one-problem | card (Evidence: Required / Optional beside the second paragraph) | None | Built 2026-10-25, awaiting Kyle's review |
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
@@ -211,10 +211,10 @@ Connecting the dots
 
 Checking my work
 - With the flow mapped as I understood it, I brought it to the team. I wanted to know two things: was I missing any steps, and what caused each empty state?
-- Their answers filled the gaps. The biggest surprise was that some empty states that looked like the same problem weren't problems at all. Setup was complete, and the account was just waiting on data ingestion. Nothing told the user that.
+- Their answers filled the gaps. The biggest surprise was that some empty states weren't indicative of a problem at all. The setup was complete, the account was just waiting on data ingestion. Though nothing communicated that to the user. (Kyle's wording, 2026-10-25)
 - With the flow confirmed, I could finally see the full path a customer had to take.
 - Counters: Times you left Attribution. Empty states hit.
-- Overlay (auto after the zoom-out): To see their first recommendation, a new customer left Attribution three times, found their way back on their own each time, and hit six empty states along the way.
+- Overlay (on a key press after the zoom-out, per Kyle): To see their first recommendation, a new customer left Attribution three times, found their way back on their own each time, and hit six empty states along the way.
 
 One problem, not six
 - The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.
