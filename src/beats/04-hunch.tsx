@@ -9,7 +9,7 @@ const beat: Beat = {
   card: (
     <Statement
       headline="Checking the hunch"
-      body="I brought it up with the team. PM and Eng both agreed it was a problem. When I asked where it sat on the roadmap, the answer was that it didn't."
+      body="I brought it up with the team to see if anyone else had noticed. They had. PM and Eng both knew customers struggled to get fully set up. So I asked whether anything was planned to address it. Nothing was."
     />
   ),
   visual: {
