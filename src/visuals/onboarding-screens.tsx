@@ -571,7 +571,7 @@ const Select = ({ value, className = '' }: { value: string; className?: string }
 
 function WaitingRoom({ reduced }: { reduced: boolean }) {
   return (
-    <div className="mx-auto w-[700px] pt-[65px]">
+    <div className="mx-auto w-[700px] pt-[32px]">
       <div className="flex items-center gap-[18px]">
         <span className="text-[32px] font-semibold tracking-[-0.64px]">Attribution</span>
         <span className="rounded-full bg-fp-line px-[9px] py-[4px] text-[11px] font-semibold tracking-[0.02em]">PROCESSING</span>
@@ -649,7 +649,7 @@ function Dashboard({ scroll, reduced }: { scroll: boolean; reduced: boolean }) {
   return (
     <motion.div
       ref={ref}
-      className="px-[30px] pb-[40px] pt-[40px]"
+      className="px-[30px] pb-[40px] pt-[24px]"
       initial={false}
       // reduced motion: no scroll (a jump would skip the top of the page); it stays on the header and chart
       animate={{ y: scroll && !reduced ? -travel : 0 }}
