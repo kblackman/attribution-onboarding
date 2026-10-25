@@ -14,6 +14,7 @@ import twoMoments from './12-two-moments'
 import showingWork from './13-showing-work'
 import toTheTeam from './14-to-the-team'
 import setupFlow from './15-setup-flow'
+import threeGoals from './16-three-goals'
 import { sectionCard } from '../components/SectionCard'
 
 // The presentation, in order. Adding a beat: add its file in this folder, then one line here.
@@ -38,4 +39,5 @@ export const beats: Beat[] = [
   toTheTeam,
   sectionCard('solution'),
   setupFlow,
+  threeGoals,
 ]
