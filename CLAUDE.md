@@ -159,6 +159,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
+- Length is a standing concern (Kyle, 2026-10-25): the live talk must run 15 to 20 minutes. Flag beats that run long as the rest gets built, and suggest trims (never rewrite silently). Parked idea, not built: a discreet present mode (one key, e.g. T, global, no visible control) that swaps long beats to Kyle-approved TLDR copy (headline plus one to three short lines, set larger); full copy stays the default for portfolio readers. A speaker-notes window (full copy on a second screen) was also floated. Build only when Kyle asks.
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
 - 02 Diagnosis is built. 03 Approach has its section card and five beats (Checking before prototyping, What the code told me, Designing for real numbers, Two moments, two patterns, Showing my work); more Approach beats to come, wait for Kyle's copy.
 - Beat 4 is built (Checking the hunch). Kyle feels the card plus chat reads crammed; he may revisit it later (not now).
