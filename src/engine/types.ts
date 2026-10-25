@@ -32,7 +32,9 @@ export interface Beat {
    * card: the deck card. statement: no container, larger type set directly on the background, for emphasis beats.
    * hero: the decks' title screen, full-bleed with a Begin row, receding into depth on exit. Use for the opening.
    */
-  variant?: 'card' | 'statement' | 'hero'
+  variant?: 'card' | 'statement' | 'hero' | 'section'
+  /** Section cards only (made by sectionCard()): the section this card opens. */
+  sectionId?: string
   /** hero only: center the title screen, as on the case study pages (default left, as in the decks). */
   align?: 'left' | 'center'
   /** Adds a soft accent glow to the card, as on the deck's title and divider cards. */

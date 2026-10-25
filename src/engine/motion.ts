@@ -16,8 +16,16 @@ export const DUR = {
 const deck = (duration: number, delay = 0): Transition => ({ duration, delay, ease: EASE_DECK })
 const fade: Transition = { duration: DUR.reduced, ease: 'easeOut' }
 
+/*
+  Layers that finish fully transparent are also hidden, so the browser stops compositing them
+  (cheaper, and avoids a Chrome artifact where a blurred, transparent full-screen layer can render dark).
+  Visible states switch visibility back on at the start of their animation.
+*/
+const HIDE = { transitionEnd: { visibility: 'hidden' as const } }
+const SHOW = { visibility: 'visible' as const }
+
 /** A card or statement stepping back behind a card overlay: smaller, blurred, dimmed, still in place. */
-const PUSHED = { y: 0, scale: 0.92, opacity: 0.35, filter: 'blur(8px)', transition: deck(DUR.overlay) }
+const PUSHED = { y: 0, scale: 0.92, opacity: 0.35, filter: 'blur(8px)', transition: deck(DUR.overlay), ...SHOW }
 
 /*
   Card states.
@@ -28,19 +36,19 @@ const PUSHED = { y: 0, scale: 0.92, opacity: 0.35, filter: 'blur(8px)', transiti
   Brightness from the deck's recede is omitted: motion here is transform, opacity, and blur only.
 */
 export const cardVariants: Variants = {
-  below: { y: '110vh', scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card) },
-  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card) },
-  behind: { y: '-2.4vh', scale: 0.92, opacity: 0.64, filter: 'blur(1.6px)', transition: deck(DUR.card) },
-  gone: { y: '-2.4vh', scale: 0.92, opacity: 0, filter: 'blur(1.6px)', transition: deck(DUR.card) },
+  below: { y: '110vh', scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card), ...SHOW },
+  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card), ...SHOW },
+  behind: { y: '-2.4vh', scale: 0.92, opacity: 0.64, filter: 'blur(1.6px)', transition: deck(DUR.card), ...SHOW },
+  gone: { y: '-2.4vh', scale: 0.92, opacity: 0, filter: 'blur(1.6px)', transition: deck(DUR.card), ...HIDE },
   pushed: PUSHED,
 }
 export const cardVariantsReduced: Variants = {
-  below: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade },
-  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: fade },
-  behind: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade },
-  gone: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade },
+  below: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade, ...HIDE },
+  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: fade, ...SHOW },
+  behind: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade, ...HIDE },
+  gone: { y: 0, scale: 1, opacity: 0, filter: 'blur(0px)', transition: fade, ...HIDE },
   // no blur here, so the card fades almost out to keep it from colliding with the overlay text
-  pushed: { y: 0, scale: 1, opacity: 0.06, filter: 'blur(0px)', transition: fade },
+  pushed: { y: 0, scale: 1, opacity: 0.06, filter: 'blur(0px)', transition: fade, ...SHOW },
 }
 
 /*
@@ -50,10 +58,10 @@ export const cardVariantsReduced: Variants = {
   The incoming statement starts a beat after the outgoing one, so they don't collide.
 */
 export const statementVariants: Variants = {
-  below: { y: 0, scale: 1.14, opacity: 0, filter: 'blur(14px)', transition: deck(DUR.card) },
-  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card, 0.15) },
-  behind: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card) },
-  gone: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card) },
+  below: { y: 0, scale: 1.14, opacity: 0, filter: 'blur(14px)', transition: deck(DUR.card), ...HIDE },
+  active: { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card, 0.15), ...SHOW },
+  behind: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card), ...HIDE },
+  gone: { y: 0, scale: 0.88, opacity: 0, filter: 'blur(10px)', transition: deck(DUR.card), ...HIDE },
   pushed: PUSHED,
 }
 
@@ -62,12 +70,12 @@ export const statementVariants: Variants = {
   blurs 7px, and drops to 0.1 opacity. Brightness is omitted, as on cards.
 */
 export const heroVariants: Variants = {
-  below: { z: 0, opacity: 0, filter: 'blur(0px)', transition: fade },
-  active: { z: 0, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card) },
+  below: { z: 0, opacity: 0, filter: 'blur(0px)', transition: fade, ...HIDE },
+  active: { z: 0, opacity: 1, filter: 'blur(0px)', transition: deck(DUR.card), ...SHOW },
   // fades fully (deck stops at 0.1): with no card frame covering it, a ghost would show through what follows
-  behind: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card) },
-  gone: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card) },
-  pushed: { z: -160, opacity: 0.35, filter: 'blur(8px)', transition: deck(DUR.overlay) },
+  behind: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card), ...HIDE },
+  gone: { z: -320, opacity: 0, filter: 'blur(7px)', transition: deck(DUR.card), ...HIDE },
+  pushed: { z: -160, opacity: 0.35, filter: 'blur(8px)', transition: deck(DUR.overlay), ...SHOW },
 }
 
 /*
@@ -76,28 +84,28 @@ export const heroVariants: Variants = {
   dimmed: sits behind an overlay, blurred.
 */
 export const visualVariants: Variants = {
-  pre: { opacity: 0, scale: 1.04, filter: 'blur(10px)', transition: deck(DUR.visualOut) },
-  active: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: deck(DUR.visualIn, 0.18) },
-  dimmed: { opacity: 1, scale: 1.02, filter: 'blur(14px)', transition: deck(DUR.overlay) },
-  post: { opacity: 0, scale: 0.96, filter: 'blur(10px)', transition: deck(DUR.visualOut) },
+  pre: { opacity: 0, scale: 1.04, filter: 'blur(10px)', transition: deck(DUR.visualOut), ...HIDE },
+  active: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: deck(DUR.visualIn, 0.18), ...SHOW },
+  dimmed: { opacity: 1, scale: 1.02, filter: 'blur(14px)', transition: deck(DUR.overlay), ...SHOW },
+  post: { opacity: 0, scale: 0.96, filter: 'blur(10px)', transition: deck(DUR.visualOut), ...HIDE },
 }
 export const visualVariantsReduced: Variants = {
-  pre: { opacity: 0, scale: 1, filter: 'blur(0px)', transition: fade },
-  active: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: fade },
+  pre: { opacity: 0, scale: 1, filter: 'blur(0px)', transition: fade, ...HIDE },
+  active: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: fade, ...SHOW },
   // the overlay still needs to separate from the visual, so keep the blur but don't animate it
-  dimmed: { opacity: 1, scale: 1, filter: 'blur(14px)', transition: { duration: 0 } },
-  post: { opacity: 0, scale: 1, filter: 'blur(0px)', transition: fade },
+  dimmed: { opacity: 1, scale: 1, filter: 'blur(14px)', transition: { duration: 0 }, ...SHOW },
+  post: { opacity: 0, scale: 1, filter: 'blur(0px)', transition: fade, ...HIDE },
 }
 
 export const overlayVariants: Variants = {
-  hidden: { opacity: 0, transition: deck(DUR.overlay) },
-  shown: { opacity: 1, transition: deck(DUR.overlay) },
+  hidden: { opacity: 0, transition: deck(DUR.overlay), ...HIDE },
+  shown: { opacity: 1, transition: deck(DUR.overlay), ...SHOW },
 }
 export const overlayTextVariants: Variants = {
-  hidden: { opacity: 0, y: 18, transition: deck(DUR.overlay) },
-  shown: { opacity: 1, y: 0, transition: deck(DUR.reveal, 0.2) },
+  hidden: { opacity: 0, y: 18, transition: deck(DUR.overlay), ...HIDE },
+  shown: { opacity: 1, y: 0, transition: deck(DUR.reveal, 0.2), ...SHOW },
 }
 export const overlayTextVariantsReduced: Variants = {
-  hidden: { opacity: 0, y: 0, transition: fade },
-  shown: { opacity: 1, y: 0, transition: fade },
+  hidden: { opacity: 0, y: 0, transition: fade, ...HIDE },
+  shown: { opacity: 1, y: 0, transition: fade, ...SHOW },
 }

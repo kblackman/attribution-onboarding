@@ -8,7 +8,7 @@ export type CardStatus = 'below' | 'active' | 'pushed' | 'behind' | 'gone'
 interface CardProps {
   status: CardStatus
   /** card: deck card frame. statement: no container, text directly on the background. hero: the decks' title screen. */
-  variant?: 'card' | 'statement' | 'hero'
+  variant?: 'card' | 'statement' | 'hero' | 'section'
   /** Content has been revealed (plays once, the first time the card is active). */
   revealed: boolean
   /** Seconds to wait before content reveals: 0 on first load, the deck's 450ms after a card rises. */
@@ -29,7 +29,7 @@ export function Card({ status, variant = 'card', align = 'left', dense = false, 
   const active = status === 'active'
   // pushed: still the current step, sitting back behind a card overlay
   const statement = variant === 'statement'
-  const className = variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? `deck-statement${dense ? ' is-dense' : ''}` : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
+  const className = variant === 'section' ? 'deck-card is-section' : variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? `deck-statement${dense ? ' is-dense' : ''}` : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
   const variants = reducedMotion ? cardVariantsReduced : variant === 'hero' ? heroVariants : statement ? statementVariants : cardVariants
   return (
     <motion.section

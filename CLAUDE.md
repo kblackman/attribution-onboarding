@@ -20,6 +20,7 @@ A beat is up to three steps. Right arrow advances one step, left arrow reverses 
 1. Card. Tells part of the story, in one of three variants (`Beat.variant`):
    - `card`: the deck card frame. Reserved for beats that hold an artifact (table, stat block, before/after, pull quote), so the frame reads as evidence. On advance it recedes up and back, then fades (see Decisions).
    - `statement`: no container, larger type set directly on the background. The default for narrative beats (Kyle, 2026-10-24). Motion is a zoom through depth: it arrives from in front of the screen (larger, blurred) and settles; moving on, it shrinks, blurs, and fades away; reverse plays it backward. Its text arrives with the zoom, with no separate rise. Content via `<Statement headline body kicker align />` (works on a card too).
+   - `section`: a section divider, made with `sectionCard('<id>')` (one line in `src/beats/index.ts`). After the Tiled feature pitch deck's section title cards: the pie motif (one wedge per section, earlier ones dimmed, the current one lit), an accent rule with the number, the one-word label at hero size, and the tagline. Set apart from story cards by an accent-tinted border and a giant outlined numeral bleeding off the corner.
    - `hero`: the opening title screen, full-bleed, no logo (Framer's frame carries bkmn), with a Begin button and no hint text. `align: 'center'` centers it like the case study pages (Beat 1 uses this, at the larger `text-hero` size); default is the decks' left layout. Recedes into depth and fades fully on exit.
    A beat can add a full-screen `cardOverlay` on the press after its card: the card pushes back (smaller, blurred, dimmed) and the overlay's scrim and text take the screen, reversing on Back. `SpotlightLine` is the italic pull-statement content for it.
    A card can take extra key presses before moving on (`cardSteps`); content wrapped in `<Reveal step={n}>` lands on press n (e.g. a kicker).
@@ -44,10 +45,17 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - If a visual isn't ready, render a clearly labeled placeholder that describes what goes there, at the final aspect ratio.
 - If Kyle points to a Figma frame, use the Figma MCP to pull its design context.
 
+## Sections
+- Defined in `src/sections.ts` (temporary, expected to change). Rename, reword, or reorder there; numbers come from order, so nothing else hardcodes them.
+- A beat's section is inferred from position: everything after a section card belongs to it until the next one; beats before the first section card are the Prologue. Beat files never name their section.
+- Progress label, in the decks' format: `01 · 2/3` (section number, position among that section's beats, section card excluded), `01 · Discovery` on a section card, `Prologue · 1/2` before the first section.
+- Section cards are added as each section is built. Current plan: Prologue (Title, The problem), 01 Discovery, 02 Diagnosis, 03 Approach, 04 Solution, 05 Impact.
+
 ## Performance
 The piece is card and animation heavy, so it must not accumulate DOM or running animations as the reader progresses.
 - Only beats within one beat of the current beat are mounted (`WINDOW` in `src/App.tsx`). Everything else is unmounted.
 - A visual's content mounts only when its step is current or adjacent, so video and heavy visuals load just in time and unload after.
+- Layers that end fully transparent are also set to `visibility: hidden` when their fade finishes, so the browser stops compositing them (this also avoids a Chrome artifact where a blurred transparent full-screen layer rendered the page dark).
 - Visuals pause or reset when not active. Motion uses transform, opacity, and blur only (GPU friendly). Avoid large blurred layers that stay on screen.
 - When adding heavy assets, keep files compressed and consider lazy-loading the beat's visual module.
 
@@ -88,6 +96,8 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: Beat 3 body raised to the problem statement's size, per Kyle (the smaller reading size was too small). Added `cardDense`.
 - 2026-10-24: Beat 3 is frameless (statement), per Kyle: the card "takes me out of it". Frameless is the default for narrative beats; the card is saved for beats holding an artifact. Statements now zoom through depth (in from larger, out to smaller, reversible), per Kyle.
 - 2026-10-24: The problem statement sits on a left-aligned deck card with the accent glow, per Kyle. Its kicker moved off the card into a full-screen `cardOverlay` (card pushes back behind it), per Kyle.
+- 2026-10-24: Section card type and section-aware progress (`01 · 2/3`), per Kyle. Sections live in one data file so they're cheap to change. 01 Discovery opens before Beat 3.
+- 2026-10-24: A card stays dimmed behind the next beat (deck behavior) only when the next beat is framed too; a frameless statement after a card gets a clean slate.
 - 2026-10-24: Skill pills copied exactly from the case study's Role Pills, per Kyle: `#232324` fill (`pill`), 1px inside border at 15% white (`pill-border`), 7px radius, 4px 8px padding, 14px regular in accent, 10px gap. Fixed size, not viewport-scaled. Accent on the fill is about 10:1.
 - 2026-10-23: Performance windowing (one beat either side mounted), per Kyle.
 - 2026-10-23: Beat 1 is not a card. It's the decks' hero (Kyle: "using the word card was a bad move"), with no bkmn logo since the Framer frame has one. The hero fades fully on exit (deck stops at 0.1) so it doesn't ghost behind frameless statements.
@@ -100,6 +110,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | # | Slug | Steps | Visual | Status |
 |---|------|-------|--------|--------|
 | 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
+| 2a | section-discovery | section card | None | Built 2026-10-24 |
 | 3 | pattern | statement (dense), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
 | 2 | problem | card with glow, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 

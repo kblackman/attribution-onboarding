@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { beats } from './beats'
 import { cardStepCount, useStepEngine } from './engine/useStepEngine'
+import { placeBeats, placeLabel } from './engine/sections'
 import { Card, type CardStatus } from './components/Card'
 import { VisualFrame, type VisualStatus } from './components/VisualFrame'
 import { Overlay } from './components/Overlay'
@@ -16,9 +17,11 @@ import { PresentationContext } from './engine/presentation'
   current one or adjacent to it, so video and heavy visuals load just in time and unload after.
 */
 const WINDOW = 1
+const FRAMED = new Set(['card', 'section'])
 
 export function App() {
   const engine = useStepEngine(beats)
+  const places = useMemo(() => placeBeats(beats), [])
   const { steps, index, step, direction } = engine
   const reduced = usePrefersReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
@@ -78,7 +81,8 @@ export function App() {
   // as in the decks, the hero carries its own Begin control, so the bar stays out of the way until it's left
   const onHero = beats[cb].variant === 'hero' && step.kind === 'card'
   const presentation = useMemo(() => ({ next: engine.next }), [engine.next])
-  const announce = `Beat ${cb + 1} of ${beats.length}, ${beats[cb].title}. ${
+  const place = placeLabel(places[cb])
+  const announce = `${place.replace(' · ', ', ')}. ${beats[cb].title}. ${
     step.kind === 'card' ? '' : step.kind === 'visual' ? beats[cb].visual?.description ?? '' : 'Overlay.'
   }`
 
@@ -103,7 +107,8 @@ export function App() {
           let cardStatus: CardStatus
           if (b > cb) cardStatus = 'below'
           else if (b === cb) cardStatus = step.kind !== 'card' ? 'gone' : cardOverlayOn ? 'pushed' : 'active'
-          else cardStatus = !beat.visual && b === cb - 1 && step.kind === 'card' ? 'behind' : 'gone'
+          // decks keep the previous card dimmed behind the next one, but only when the next one is framed too
+          else cardStatus = !beat.visual && b === cb - 1 && step.kind === 'card' && FRAMED.has(beats[cb].variant ?? 'card') ? 'behind' : 'gone'
 
           let visualStatus: VisualStatus = 'pre'
           if (b < cb) visualStatus = 'post'
@@ -124,7 +129,7 @@ export function App() {
                 revealLead={b === 0 ? 0 : DUR.revealLead}
                 glow={beat.cardGlow}
                 reducedMotion={reduced}
-                label={`Beat ${b + 1}: ${beat.title}`}
+                label={beat.title}
                 zIndex={b * 10 + 1}
               >
                 {beat.card}
@@ -160,8 +165,7 @@ export function App() {
       <p className="sr-only" aria-live="polite">{announce}</p>
       <Controls
         hidden={onHero}
-        beat={cb + 1}
-        beatCount={beats.length}
+        label={place}
         progress={steps.length > 1 ? index / (steps.length - 1) : 1}
         canPrev={!engine.isFirst}
         canNext={!engine.isLast}
