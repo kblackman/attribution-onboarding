@@ -254,4 +254,4 @@ Two moments, two patterns
 - The waiting room told a different story. The 24-hour numbers barely changed, but by 30 days, users had created more events. For anyone reaching the waiting room weeks into setup, a list would get bulky. So I designed a grid that wraps to a new row after every four events.
 - Then I stress-tested both. I built a tweaks panel into the prototype that swapped between real customer data loads and updated the UI on the fly. I knew Eng would ask how it scaled, and I wanted to show my work. The panel later became part of our shared prototyping skill, so every new prototype came with one.
 - Tweaks panel options: Low (1 event, list), Average (2, list), High (15, grid), Outlier (22, grid). Event names are mock.
-- Kyle may split the last paragraph into its own beat paired with the prototype if it reads too long.
+- Kept as one beat (Kyle, 2026-10-25), after considering splitting the last paragraph off with the prototype.
