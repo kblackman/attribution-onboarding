@@ -214,7 +214,7 @@ Checking my work
 - Their answers filled the gaps. The biggest surprise was that some empty states weren't indicative of a problem at all. The setup was complete, the account was just waiting on data ingestion. Though nothing communicated that to the user. (Kyle's wording, 2026-10-25)
 - With the flow confirmed, I could finally see the full path a customer had to take.
 - Counters: Times you left Attribution. Empty states hit.
-- Overlay (on a key press after the zoom-out, per Kyle): To see their first recommendation, a new customer left Attribution three times, found their way back on their own each time, and hit six empty states along the way.
+- Overlay (on a key press after the zoom-out, per Kyle): To set up Attribution properly, a new customer had to leave it three times, find their way back on their own, and push through six empty states. (Option C, chosen by Kyle 2026-10-25: the goal is a fully set-up Attribution, not the first recommendation.)
 
 One problem, not six
 - The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.

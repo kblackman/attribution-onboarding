@@ -35,7 +35,7 @@ const beat: Beat = {
     trigger: 'key', // the kicker waits for a deliberate press after the zoom-out
     content: (
       <SpotlightLine long>
-        To see their first recommendation, a new customer <em>left Attribution three times</em>, found their way back on their own each time, and hit <em>six empty states</em> along the way.
+        To set up Attribution properly, a new customer had to <em>leave it three times</em>, find their way back on their own, and push through <em>six empty states</em>.
       </SpotlightLine>
     ),
   },
