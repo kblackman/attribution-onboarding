@@ -112,29 +112,13 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
           <Legend />
         </motion.div>
       </div>
-        <RideCounters left={left} empty={empty} reduced={reduced} />
+        {/* counters: a stat panel, after the case study's stat blocks */}
+        <div className="absolute right-[1.6cqw] top-[1.6cqw] z-10 flex items-stretch rounded-[1.2cqw] border border-hairline-strong bg-card-to/95 shadow-[0_18px_40px_rgba(0,0,0,0.45)] max-[720px]:static max-[720px]:mt-3 max-[720px]:self-stretch">
+          <Counter label="Times you left Attribution" value={left} reduced={reduced} />
+          <span className="my-[1.2cqw] w-px bg-hairline-strong max-[720px]:my-3" aria-hidden="true" />
+          <Counter label="Empty states hit" value={empty} reduced={reduced} />
+        </div>
       </div>
-    </div>
-  )
-}
-
-/**
- * The ride-along's counters: a stat panel, after the case study's stat blocks. Inside the frame's top-right
- * corner on wide screens, below it on phones. Reused by the 04 Solution walkthrough (where both stay at 0).
- * Place it inside a relative wrapper with container-type inline-size (cqw units).
- */
-export function RideCounters({ left, empty, reduced, corner = 'top-right' }: { left: number; empty: number; reduced: boolean; corner?: 'top-right' | 'bottom-left' }) {
-  // bottom-left stacks the two counters so the panel stays narrow (over a product sidebar)
-  const stacked = corner === 'bottom-left'
-  return (
-    <div
-      className={`absolute z-10 flex rounded-[1.2cqw] border border-hairline-strong bg-card-to/95 shadow-[0_18px_40px_rgba(0,0,0,0.45)] max-[720px]:static max-[720px]:mt-3 max-[720px]:w-auto max-[720px]:flex-row max-[720px]:self-stretch ${
-        stacked ? 'bottom-[1.4cqw] left-[1.4cqw] w-[14cqw] flex-col' : 'right-[1.6cqw] top-[1.6cqw] items-stretch'
-      }`}
-    >
-      <Counter label="Times you left Attribution" value={left} reduced={reduced} />
-      <span className={`bg-hairline-strong max-[720px]:mx-0 max-[720px]:my-3 max-[720px]:h-auto max-[720px]:w-px ${stacked ? 'mx-[1.2cqw] h-px' : 'my-[1.2cqw] w-px'}`} aria-hidden="true" />
-      <Counter label="Empty states hit" value={empty} reduced={reduced} />
     </div>
   )
 }

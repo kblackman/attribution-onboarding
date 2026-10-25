@@ -3,7 +3,6 @@ import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { PlaceholderBadge } from '../components/Placeholder'
-import { RideCounters } from './SetupRideAlong'
 import { EVENT_NAME, EVENT_SELECTOR, FlowScreen, type FlowUI } from './onboarding-screens'
 
 /*
@@ -11,7 +10,8 @@ import { EVENT_NAME, EVENT_SELECTOR, FlowScreen, type FlowUI } from './onboardin
   One key press per step (8 steps), each step a short script for a simulated cursor: it clicks where the
   previous step left it, the screen responds, then it moves to the next target. With no key press it moves
   on by itself, forward only, HOLD seconds after a step's script ends (pacing after the Beat 7 ride-along).
-  The ride-along's counters sit in the corner and stay at 0: the before-and-after.
+  The button under the cursor shows its hover state once the cursor arrives. At the end the dashboard
+  scrolls through the whole Attribution page.
   Screens live in onboarding-screens.tsx. Tune the timing here (seconds).
 */
 export const TIMING = {
@@ -28,7 +28,7 @@ const typing = (field: 'name' | 'selector', text: string, start: number): Frame[
   Array.from(text, (_, i) => ({ at: start + i * TIMING.type, set: { [field]: text.slice(0, i + 1) } }))
 const typed = (start: number, text: string) => start + text.length * TIMING.type
 
-const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, low: false, error: false, later: false, ai: false, cursor: true }
+const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, low: false, error: false, later: false, ai: false, scroll: false, cursor: true }
 
 const nameDone = typed(1.6, EVENT_NAME)
 const selDone = typed(nameDone + 1.2, EVENT_SELECTOR)
@@ -68,13 +68,13 @@ const SCRIPTS: Script[] = [
       { at: 4.6, to: 'continue' },
     ],
   },
-  // 5. Connect Ad Sources: skip, past the note that it can be set up later
+  // 5. Connect Ad Sources: the note that it can be set up later, then Skip for now
   {
     frames: [
       { at: 0.15, click: true, set: { phase: 3 } },
       { at: 0.8, to: 'later' },
       { at: 1.1, set: { later: true } },
-      { at: 2.6, to: 'continue' },
+      { at: 2.6, to: 'skip' },
     ],
   },
   // 6. Enable AI: toggle on
@@ -93,8 +93,13 @@ const SCRIPTS: Script[] = [
       { at: 0.7, set: { cursor: false } },
     ],
   },
-  // 8. resolve: the full Attribution dashboard
-  { frames: [{ at: 0.8, set: { screen: 'dashboard' } }] },
+  // 8. resolve: the full Attribution dashboard, then a scroll down the whole page
+  {
+    frames: [
+      { at: 0.8, set: { screen: 'dashboard' } },
+      { at: 2.4, set: { scroll: true } },
+    ],
+  },
 ]
 export const WALK_STEPS = SCRIPTS.length
 
@@ -154,6 +159,18 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
   const target = lastTarget(frames, START_TARGET[step])
   const lastClick = frames.reduce((n, f, i) => (f.click ? i : n), -1)
 
+  // hover: the button under the cursor, once the cursor has arrived there
+  const [hover, setHover] = useState<string | null>(null)
+  useEffect(() => {
+    if (!play) {
+      setHover(target)
+      return
+    }
+    setHover(null)
+    const t = window.setTimeout(() => setHover(target), TIMING.move * 700)
+    return () => window.clearTimeout(t)
+  }, [target, play])
+
   // scale the 1440 x 900 screen to the frame
   const frameRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
@@ -191,7 +208,6 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
       <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
         <PlaceholderBadge>Rebuilt from the Figma designs, mock data</PlaceholderBadge>
       </div>
-      {/* wrapper: the product frame, plus the counters (inside the frame on wide screens, below it on phones) */}
       <div
         className="relative flex flex-col"
         style={{ width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))', containerType: 'inline-size' }}
@@ -199,12 +215,10 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
       >
         <div ref={frameRef} className="relative w-full overflow-hidden rounded-[1.2cqw] shadow-[0_24px_60px_rgba(0,0,0,0.45)]" style={{ aspectRatio: `${W} / ${H}` }}>
           <div ref={stageRef} className="absolute left-0 top-0 origin-top-left" style={{ width: W, height: H, transform: `scale(${scale})` }}>
-            <FlowScreen ui={ui} reduced={reduced} />
+            <FlowScreen ui={ui} hover={ui.cursor ? hover : null} reduced={reduced} />
             <Cursor x={pos.x} y={pos.y} visible={ui.cursor} reduced={reduced} clickKey={lastClick >= 0 && play ? `${step}-${lastClick}` : null} />
           </div>
         </div>
-        {/* bottom-left, over the lower sidebar: the drawer and the dashboard's header use the top-right */}
-        <RideCounters left={0} empty={0} reduced={reduced} corner="bottom-left" />
       </div>
     </div>
   )

@@ -56,33 +56,42 @@
   --color-coral: #D97757;
 
   /*
-    ---- color: Freshpaint product UI, from Kyle's Figma (2026-10-25) ----
-    Sampled from the onboarding flow, waiting room, and dashboard frames. Only for the rebuilt Freshpaint
-    screens in the 04 Solution walkthrough (Kyle: "Figma is the source of truth for every screen").
+    ---- Freshpaint product UI, from Kyle's Figma (2026-10-25) ----
+    Values from the design context of the onboarding frames (Figma variable names in comments). Only for the
+    rebuilt Freshpaint screens in the 04 Solution walkthrough (Kyle: "Figma is the source of truth").
+    Fonts too, per Kyle: the product sets its page content in Inter and its navigation and buttons in Roboto.
   */
-  --color-fp-nav: #1E2235;
-  --color-fp-nav-active: #282D3F;
-  --color-fp-bg: #FAFBFB;
-  --color-fp-line: #E3E5E8;
-  --color-fp-ink: #1D2125;
-  --color-fp-body: #4A4D52;
-  --color-fp-muted: #8A9099;
-  --color-fp-track: #DDE0E4;
-  --color-fp-indigo: #3F51B5;
-  --color-fp-indigo-soft: #6473C9;
-  --color-fp-indigo-off: #9DA6D8;
+  --font-fp: Inter, system-ui, sans-serif;
+  --font-fp-ui: Roboto, system-ui, sans-serif;
+  --color-fp-nav: #0D1126;          /* blue-900 */
+  --color-fp-nav-line: #23303E;
+  --color-fp-nav-active: rgb(73 83 96 / 0.23);
+  --color-fp-bg: #F9FAFA;
+  --color-fp-ink: #1E2125;          /* textDefault */
+  --color-fp-ink-2: #3D444C;        /* gray-600 */
+  --color-fp-muted: #5D6875;
+  --color-fp-faint: #A3ACB7;        /* gray-400 */
+  --color-fp-line: #DDE0E4;         /* borderSubtle, gray-200 */
+  --color-fp-line-strong: #C9CED4;  /* button outline border, gray-300 */
+  --color-fp-input: #CBD5E1;
+  --color-fp-tagger: #DEE4EA;
+  --color-fp-indigo: #3F51B5;       /* blue-500, button primary fill */
+  --color-fp-indigo-hover: #3444A0; /* hover: not in the frames, a step darker */
+  --color-fp-indigo-soft: #6473C9;  /* blue-400 */
+  --color-fp-indigo-line: #B7BEE6;  /* blue-200 */
   --color-fp-indigo-tint: #F4F5FB;
+  --color-fp-hover: #F1F3F5;        /* outline and ghost button hover: not in the frames */
   --color-fp-green: #4ADE80;
   --color-fp-green-tint: #DCFCE7;
   --color-fp-green-ink: #15803D;
-  --color-fp-mint: #61DABF;
+  --color-fp-mint: #61DABF;         /* teal-500 */
   --color-fp-teal: #249980;
   --color-fp-new: #DEF7F2;
-  --color-fp-new-ink: #2F7D6D;
-  --color-fp-red: #C62828;
-  --color-fp-red-tint: #FEF6F6;
-  --color-fp-red-line: #F5C9C9;
-  --color-fp-logo: #EE5757;
+  --color-fp-new-ink: #186756;
+  --color-fp-red: #BE1316;          /* red-600 */
+  --color-fp-red-tint: #FEF6F6;     /* red-50 */
+  --color-fp-red-line: #FCDFDF;     /* red-100 */
+  --color-fp-required: #E81C1F;
   --color-fp-ai: #987DD1;
   /* chart series (dashboard mock) */
   --color-fp-s1: #F27B7B;

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import { HandCircle } from '../components/HandCircle'
@@ -6,10 +6,13 @@ import { HandCircle } from '../components/HandCircle'
 /*
   The new Attribution setup flow, rebuilt from Kyle's Figma (file "Attribution": the onboarding flow section,
   the waiting room, and the full dashboard). Laid out in the frames' own 1440 x 900 pixel space and scaled
-  as a whole by the walkthrough, so positions match the designs. Copy is the designs' own; customer data is
-  mock. Colors are the fp-* tokens sampled from the frames.
+  as a whole by the walkthrough. Measurements, type, and colors come from the frames' design context
+  (setup steps, the Create Event drawer, the No Low Funnel state); the logo, nav icons, and ad platform
+  logos are the frames' own assets (public/assets/showing-team/). Copy is the designs' own; data is mock.
+  Page content is Inter, navigation and buttons Roboto, as in the product.
 
-  Anything the cursor moves to carries data-t="<target>"; the walkthrough measures it to place the cursor.
+  Anything the cursor moves to carries data-t="<target>"; the walkthrough measures it to place the cursor,
+  and passes `hover` so the button under the cursor shows its hover state.
 */
 
 export interface FlowUI {
@@ -28,33 +31,42 @@ export interface FlowUI {
   /** The hand-drawn circle around "You can always set this up later". */
   later: boolean
   ai: boolean
+  /** The dashboard scrolls down the whole page. */
+  scroll: boolean
   cursor: boolean
 }
 
 export const EVENT_NAME = 'Booked Appointment'
 export const EVENT_SELECTOR = 'button[data-action="book"]'
+/** Seconds the dashboard takes to scroll from top to bottom. */
+export const DASHBOARD_SCROLL = 7
 
 const STEPS = ['Create an event', 'Define conversion events', 'Connect ad sources', 'Enable AI']
+const PAGE_H = 900 - 65 // the main area under the header
+const asset = (name: string) => `${import.meta.env.BASE_URL}assets/showing-team/${name}.svg`
+const Img = ({ name, size, className = '' }: { name: string; size: number; className?: string }) => (
+  <img src={asset(name)} alt="" width={size} height={size} className={`block flex-none ${className}`} draggable={false} />
+)
 const fade = (reduced: boolean) => ({
   initial: { opacity: 0, y: reduced ? 0 : 6 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: reduced ? 0.15 : 0.35, ease: EASE_DECK },
 })
 
-export function FlowScreen({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
+export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; reduced: boolean }) {
   return (
-    <div className="relative flex h-[900px] w-[1440px] overflow-hidden bg-fp-bg text-fp-ink" style={{ fontSize: 14 }}>
+    <div className="relative flex h-[900px] w-[1440px] overflow-hidden bg-fp-bg font-fp text-fp-ink" style={{ fontSize: 14 }}>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="h-[64px] flex-none border-b border-fp-line bg-white" />
-        <div className="relative flex-1">
+        <div className="relative z-10 h-[65px] flex-none border-b border-fp-line bg-white" />
+        <div className="relative flex-1 overflow-hidden">
           {ui.screen === 'setup' && (
-            <div className="mx-auto w-[700px] pt-[66px]">
-              <p className="m-0 text-[12px] font-bold tracking-[0.06em] text-fp-indigo-soft">SETUP GUIDE</p>
-              <h3 className="m-0 mt-[4px] text-[33px] font-semibold tracking-[-0.01em]">Getting started with Attribution</h3>
+            <div className="mx-auto w-[700px] pt-[65px]">
+              <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo-soft">SETUP GUIDE</p>
+              <h3 className="m-0 mt-[4px] text-[32px] font-semibold leading-normal tracking-[-0.64px]">Getting started with Attribution</h3>
               <Progress phase={ui.phase} reduced={reduced} />
               <motion.div key={`${ui.phase}-${ui.events}`} {...fade(reduced)}>
-                <SetupStep ui={ui} reduced={reduced} />
+                <SetupStep ui={ui} hover={hover} reduced={reduced} />
               </motion.div>
             </div>
           )}
@@ -65,99 +77,158 @@ export function FlowScreen({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
           )}
           {ui.screen === 'dashboard' && (
             <motion.div key="dashboard" {...fade(reduced)}>
-              <Dashboard />
+              <Dashboard scroll={ui.scroll} reduced={reduced} />
             </motion.div>
           )}
         </div>
       </div>
-      <Drawer ui={ui} reduced={reduced} />
+      <Drawer ui={ui} hover={hover} reduced={reduced} />
     </div>
+  )
+}
+
+/* ---------- buttons (sizes and styles from the frames; hover states are ours, a step darker) ---------- */
+
+type Kind = 'primary' | 'outline' | 'ghost'
+const KIND: Record<Kind, { base: string; hover: string }> = {
+  primary: { base: 'bg-fp-indigo text-white', hover: 'bg-fp-indigo-hover text-white' },
+  outline: { base: 'border border-fp-line-strong bg-white text-fp-ink', hover: 'border border-fp-line-strong bg-fp-hover text-fp-ink' },
+  ghost: { base: 'text-fp-ink', hover: 'bg-fp-hover text-fp-ink' },
+}
+
+function Button({ t, kind, hover, disabled = false, size = 'lg', children }: { t?: string; kind: Kind; hover: string | null; disabled?: boolean; size?: 'lg' | 'md' | 'sm'; children: ReactNode }) {
+  const on = !disabled && !!t && hover === t
+  const sizes = {
+    lg: 'h-[44px] px-[20px] font-fp-ui text-[16px] font-medium leading-[20px] rounded-[6px]',
+    md: 'h-[40px] px-[16px] text-[14px] font-semibold rounded-[8px]',
+    sm: 'h-[36px] px-[12px] font-fp-ui text-[12px] font-medium leading-[16px] rounded-[6px]',
+  }[size]
+  return (
+    <span
+      data-t={t}
+      className={`flex flex-none items-center justify-center gap-[6px] transition-[background-color,opacity] duration-150 ${sizes} ${on ? KIND[kind].hover : KIND[kind].base} ${disabled ? 'opacity-50' : ''}`}
+    >
+      {children}
+    </span>
   )
 }
 
 /* ---------- chrome ---------- */
 
-const NAV: { label: string; icon: IconName; badge?: boolean; chevron?: boolean }[] = [
-  { label: 'Freshpaint AI', icon: 'spark', badge: true },
-  { label: 'Sources', icon: 'sliders' },
-  { label: 'Events', icon: 'route', chevron: true },
-  { label: 'Destinations', icon: 'grid', chevron: true },
+const NAV_TOP: { label: string; icon: string; chevron?: boolean }[] = [
+  { label: 'Sources', icon: 'nav-sources' },
+  { label: 'Events', icon: 'nav-events', chevron: true },
+  { label: 'Destinations', icon: 'nav-destinations', chevron: true },
 ]
 const INSIGHTS = ['Attribution', 'Web Analytics', 'Funnels', 'Heatmaps', 'Session Replay', 'Surveys']
-const NAV_AFTER: { label: string; icon: IconName }[] = [
-  { label: 'Audiences', icon: 'users' },
-  { label: 'Consent', icon: 'check' },
-  { label: 'Short Links', icon: 'link' },
-  { label: 'Internal Tools', icon: 'wrench' },
+const NAV_BOTTOM = [
+  { label: 'Audiences', icon: 'nav-audiences' },
+  { label: 'Consent', icon: 'nav-consent' },
+  { label: 'Short Links', icon: 'nav-short-links' },
+  { label: 'Internal Tools', icon: 'nav-internal-tools' },
 ]
 
 function Sidebar() {
   return (
-    <div className="flex h-full w-[240px] flex-none flex-col bg-fp-nav text-white">
-      <div className="flex h-[64px] items-center gap-[12px] px-[24px]">
-        <Logo />
-        <span className="text-[21px] font-bold tracking-[-0.01em]">Freshpaint</span>
-        <span className="ml-auto block h-[16px] w-[16px] rounded-[3px] border-[1.5px] border-white/70" />
-      </div>
-      <div className="mx-[12px] flex items-center gap-[12px] rounded-[8px] border border-white/15 px-[14px] py-[14px]">
-        <Icon name="layers" />
-        <span className="flex flex-col">
-          <span className="text-[12px] text-white/70">Main</span>
-          <span className="text-[14px] font-bold">Production</span>
+    <div className="relative z-10 flex h-full w-[240px] flex-none flex-col bg-fp-nav font-fp-ui text-white">
+      <div className="flex h-[68px] flex-none items-center justify-between pl-[24px] pr-[16px]">
+        <img src={asset('logo')} alt="Freshpaint" width={148.7} height={32} className="block" draggable={false} />
+        <span className="grid h-[32px] w-[32px] place-items-center">
+          <Img name="nav-collapse" size={18} />
         </span>
-        <Icon name="chevronRight" className="ml-auto" />
       </div>
-      <div className="mt-[16px] border-t border-white/10 pt-[10px]">
-        {NAV.map((n) => (
-          <NavRow key={n.label} {...n} />
-        ))}
-        <div className="mx-[12px] rounded-[8px] bg-white/[0.04] pb-[8px]">
-          <NavRow label="Insights" icon="chart" chevron up flush />
-          {INSIGHTS.map((label, i) => (
-            <div key={label} className={`ml-[32px] mr-0 flex h-[40px] items-center rounded-l-[6px] pl-[12px] pr-[16px] text-[12.5px] ${i === 0 ? 'bg-fp-nav-active text-white' : 'text-white/85'}`}>
-              {label}
-              {i > 0 && <NewBadge />}
-            </div>
-          ))}
+      <div className="px-[12px] pb-[16px]">
+        <div className="flex items-center gap-[12px] rounded-[8px] border border-white/10 px-[13px] py-[9px]">
+          <Img name="nav-env" size={20} />
+          <span className="flex h-[56px] flex-1 flex-col justify-center">
+            <span className="text-[12px] font-bold leading-[16px] text-white/60">Main</span>
+            <span className="text-[14px] font-bold leading-[20px]">Production</span>
+          </span>
+          <Img name="chevron-env" size={20} className="-rotate-90" />
         </div>
-        {NAV_AFTER.map((n) => (
-          <NavRow key={n.label} {...n} chevron />
+      </div>
+      <div className="h-px flex-none border-b border-white/15 bg-fp-nav-line" />
+      <div className="px-[6px] pb-[4px] pt-[6px]">
+        <div className="p-[6px]">
+          <NavRow label="Freshpaint AI" icon={<AiIcon />} badge />
+        </div>
+        {NAV_TOP.map((n) => (
+          <div key={n.label} className="p-[6px]">
+            <NavRow label={n.label} icon={<Img name={n.icon} size={20} />} chevron={n.chevron ? 'down' : undefined} />
+          </div>
+        ))}
+        <div className="p-[6px]">
+          <div className="rounded-t-[8px] bg-white/[0.07]">
+            <NavRow label="Insights" icon={<Img name="nav-insights" size={20} />} chevron="up" />
+          </div>
+          <div className="rounded-b-[8px] bg-white/[0.07] pl-[16px] pt-[6px]">
+            {INSIGHTS.map((label, i) => (
+              <div key={label} className="h-[44px] pb-[4px] pl-[16px]">
+                <div className={`flex h-[40px] w-[184px] items-center justify-between rounded-l-[8px] pl-[12px] pr-[4px] text-[12px] leading-[20px] tracking-[0.35px] ${i === 0 ? 'bg-fp-nav-active' : ''}`}>
+                  {label}
+                  {i > 0 && <NewBadge />}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {NAV_BOTTOM.map((n) => (
+          <div key={n.label} className="p-[6px]">
+            <NavRow label={n.label} icon={<Img name={n.icon} size={20} />} chevron="down" />
+          </div>
         ))}
       </div>
     </div>
   )
 }
 
-function NavRow({ label, icon, badge, chevron, up, flush }: { label: string; icon: IconName; badge?: boolean; chevron?: boolean; up?: boolean; flush?: boolean }) {
+function NavRow({ label, icon, badge, chevron }: { label: string; icon: ReactNode; badge?: boolean; chevron?: 'down' | 'up' }) {
   return (
-    <div className={`flex h-[52px] items-center gap-[12px] ${flush ? 'px-[12px]' : 'px-[24px]'} text-[14px] font-bold`}>
-      <Icon name={icon} />
-      {label}
-      {badge && <NewBadge />}
-      {chevron && <Icon name={up ? 'chevronUp' : 'chevronDown'} className="ml-auto" />}
+    <div className="flex h-[40px] w-[216px] items-center rounded-[8px] px-[12px] text-[14px] font-bold leading-[20px] tracking-[0.35px]">
+      <span className="pr-[8px]">{icon}</span>
+      <span className="flex-1">{label}</span>
+      {badge && (
+        <span className="pr-[4px]">
+          <NewBadge />
+        </span>
+      )}
+      {chevron && <Img name={chevron === 'up' ? 'chevron-up' : 'chevron-down'} size={20} />}
     </div>
   )
 }
 
-const NewBadge = () => <span className="ml-auto rounded-[4px] bg-fp-new px-[7px] py-[2px] text-[11px] font-semibold text-fp-new-ink">New</span>
+const NewBadge = () => <span className="rounded-[6px] bg-fp-new px-[8px] py-[4px] text-[12px] font-medium leading-[16px] tracking-[0.35px] text-fp-new-ink">New</span>
 
-/** The Freshpaint mark, drawn from simple blocks in its two brand colors. */
-function Logo() {
+/** Freshpaint AI's sparkle icon: two layers, the second masked, as in the frame. */
+function AiIcon() {
+  const mask = `url("${asset('nav-ai-mask')}")`
   return (
-    <svg width="24" height="30" viewBox="0 0 24 30" aria-hidden="true">
-      <rect x="0" y="0" width="24" height="6" className="fill-fp-logo" />
-      <rect x="0" y="9" width="16" height="6" className="fill-fp-logo" />
-      <rect x="0" y="9" width="6" height="12" className="fill-fp-logo" />
-      <rect x="0" y="23" width="7" height="7" className="fill-fp-mint" />
-      <rect x="9" y="16" width="7" height="5" className="fill-fp-mint" />
-    </svg>
+    <span className="relative block h-[20px] w-[20px] overflow-hidden">
+      <img src={asset('nav-ai')} alt="" className="absolute inset-y-0 left-[5.56%] h-full w-[88.88%]" draggable={false} />
+      <span
+        className="absolute"
+        style={{
+          inset: '16.02% 35.97% 37.41% 17.46%',
+          maskImage: mask,
+          WebkitMaskImage: mask,
+          maskPosition: '-0.621px -1.242px',
+          WebkitMaskPosition: '-0.621px -1.242px',
+          maskSize: '10.556px 10.556px',
+          WebkitMaskSize: '10.556px 10.556px',
+          maskRepeat: 'no-repeat',
+          WebkitMaskRepeat: 'no-repeat',
+        }}
+      >
+        <img src={asset('nav-ai-spark')} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
+      </span>
+    </span>
   )
 }
 
 function Progress({ phase, reduced }: { phase: number; reduced: boolean }) {
   return (
-    <div className="mt-[40px]">
-      <div className="relative h-[6px] overflow-hidden rounded-full bg-fp-track">
+    <div className="mt-[40px] flex flex-col gap-[10px]">
+      <div className="relative h-[8px] overflow-hidden rounded-[12px] bg-fp-line">
         <motion.div
           className="absolute inset-0 origin-left rounded-full bg-fp-indigo-soft"
           initial={false}
@@ -165,18 +236,14 @@ function Progress({ phase, reduced }: { phase: number; reduced: boolean }) {
           transition={{ duration: reduced ? 0 : 0.6, ease: EASE_DECK }}
         />
       </div>
-      <div className="mt-[14px] grid grid-cols-4 text-[12.5px]">
+      <div className="flex">
         {STEPS.map((label, i) => {
           const n = i + 1
           const done = n < phase
           const now = n === phase
           return (
-            <span key={label} className={`flex items-center gap-[8px] ${i === 0 ? 'pl-[28px]' : i === 3 ? 'justify-center' : ''} ${done || now ? 'font-semibold text-fp-ink' : 'text-fp-muted'}`}>
-              {done && (
-                <span className="grid h-[18px] w-[18px] place-items-center rounded-full bg-fp-green text-white">
-                  <Icon name="tick" size={11} />
-                </span>
-              )}
+            <span key={label} className={`flex w-[175px] items-center justify-center gap-[8px] text-[12px] font-semibold ${done || now ? 'text-fp-ink' : 'text-fp-faint'}`}>
+              {done && <Img name="step-done" size={18} />}
               {now && <span className="grid h-[18px] w-[18px] place-items-center rounded-full bg-fp-indigo-soft text-[10px] font-bold text-white">{n}</span>}
               {label}
             </span>
@@ -189,33 +256,101 @@ function Progress({ phase, reduced }: { phase: number; reduced: boolean }) {
 
 /* ---------- setup steps ---------- */
 
-function SetupCard({ n, title, optional, children, body }: { n: number; title: string; optional?: boolean; body: ReactNode; children: ReactNode }) {
+function SetupCard({ n, title, optional, body, children }: { n: number; title: string; optional?: boolean; body: ReactNode; children: ReactNode }) {
   return (
-    <div className="mt-[40px] rounded-[12px] border border-fp-line bg-white px-[40px] pb-[40px] pt-[42px]">
-      <p className="m-0 text-[18px] font-semibold">
-        <span className="mr-[6px]">{n}.</span>
-        {title}
-        {optional && <span className="ml-[5px] text-[12px] font-normal text-fp-muted">(Optional)</span>}
-      </p>
-      <p className="m-0 mt-[14px] max-w-[460px] text-[14px] leading-[1.45] text-fp-body">{body}</p>
-      <div className="mt-[40px] flex flex-col gap-[6px]">{children}</div>
+    <div className="mt-[40px] flex min-h-[140px] flex-col gap-[40px] rounded-[12px] border border-black/[0.09] bg-white p-[40px] shadow-[0_0_3px_rgba(0,0,0,0.08)]">
+      <div className="flex flex-col gap-[16px]">
+        <p className="relative m-0 pl-[27px] text-[18px] font-semibold tracking-[-0.36px]">
+          <span className="absolute left-[4px]">{n}.</span>
+          {title}
+          {optional && <span className="ml-[4px] text-[12px] font-normal tracking-normal text-fp-muted">(Optional)</span>}
+        </p>
+        <p className="m-0 w-[464px] text-[14px] leading-[20px]">{body}</p>
+      </div>
+      <div className="flex flex-col gap-[4px]">{children}</div>
     </div>
   )
 }
 
-function Buttons({ back = true, label = 'Continue', enabled = true, arrow = true }: { back?: boolean; label?: string; enabled?: boolean; arrow?: boolean }) {
+function Footer({ hover, back = true, skip = false, label = 'Continue', enabled = true, arrow = true }: { hover: string | null; back?: boolean; skip?: boolean; label?: string; enabled?: boolean; arrow?: boolean }) {
   return (
     <div className="mt-[40px] flex items-center justify-between">
-      {back ? <span className="rounded-[6px] border border-fp-line bg-white px-[19px] py-[11px] text-[16px] font-medium">Back</span> : <span />}
-      <span data-t="continue" className={`flex items-center gap-[8px] rounded-[6px] px-[20px] py-[11px] text-[16px] font-semibold text-white transition-colors duration-300 ${enabled ? 'bg-fp-indigo' : 'bg-fp-indigo-off'}`}>
-        {label}
-        {arrow && <Icon name="arrowRight" size={16} />}
+      {back ? (
+        <Button t="back" kind="outline" hover={hover}>
+          Back
+        </Button>
+      ) : (
+        <span />
+      )}
+      <span className="flex gap-[10px]">
+        {skip && (
+          <Button t="skip" kind="ghost" hover={hover}>
+            Skip for now
+          </Button>
+        )}
+        <Button t="continue" kind="primary" hover={hover} disabled={!enabled}>
+          {label}
+          {arrow && <Img name="arrow-right" size={18} />}
+        </Button>
       </span>
     </div>
   )
 }
 
-function SetupStep({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
+function Row({ lead, label, children, tinted = false }: { lead: ReactNode; label: string; children?: ReactNode; tinted?: boolean }) {
+  return (
+    <div className={`flex items-center justify-between rounded-[10px] border border-fp-line p-[16px] transition-colors duration-300 ${tinted ? 'bg-fp-indigo-tint' : 'bg-white'}`}>
+      <span className="flex items-center gap-[10px]">
+        {lead}
+        <span className="text-[14px] font-semibold">{label}</span>
+      </span>
+      {children}
+    </div>
+  )
+}
+
+const Avatar = ({ letter, dark = false, size = 32 }: { letter: string; dark?: boolean; size?: number }) => (
+  <span className={`grid flex-none place-items-center rounded-full font-semibold text-white ${dark ? 'bg-fp-teal' : 'bg-fp-mint'}`} style={{ width: size, height: size, fontSize: size * 0.44 }}>
+    {letter}
+  </span>
+)
+
+const EventRow = ({ children }: { children?: ReactNode }) => (
+  <Row lead={<Avatar letter="B" />} label={EVENT_NAME}>
+    {children}
+  </Row>
+)
+
+type Platform = 'google-ads' | 'meta' | 'bing'
+
+/** The ad platform logo tiles, as in the frame (Bing's tile is one asset, shadow included). */
+function SourceTile({ name }: { name: Platform }) {
+  if (name === 'bing')
+    return (
+      <span className="relative block h-[32px] w-[32px] flex-none">
+        <img src={asset('bing-tile')} alt="" className="absolute block max-w-none" style={{ inset: '-12.5% -18.75% -25% -18.75%' }} draggable={false} />
+      </span>
+    )
+  return (
+    <span className="grid h-[32px] w-[32px] flex-none place-items-center rounded-[8px] border border-black/[0.08] bg-white shadow-[0_2px_6px_rgba(0,0,0,0.07)]">
+      <PlatformLogo name={name} />
+    </span>
+  )
+}
+
+/** The bare platform mark (Google Ads and Meta from the frame; Bing from its tile, scaled to sit like the others). */
+function PlatformLogo({ name, scale = 1 }: { name: Platform; scale?: number }) {
+  if (name === 'google-ads') return <img src={asset('google-ads')} alt="" width={17.5 * scale} height={16 * scale} draggable={false} />
+  if (name === 'meta') return <img src={asset('meta')} alt="" width={17 * scale} height={11.3 * scale} draggable={false} />
+  // the Bing tile's mark, cropped out of its 44px tile
+  return (
+    <span className="relative block overflow-hidden" style={{ width: 16 * scale, height: 16 * scale }}>
+      <img src={asset('bing-tile')} alt="" className="absolute max-w-none" style={{ width: 44 * scale * 0.73, height: 44 * scale * 0.73, left: -8.3 * scale, top: -4.6 * scale }} draggable={false} />
+    </span>
+  )
+}
+
+function SetupStep({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; reduced: boolean }) {
   if (ui.phase === 1)
     return (
       <>
@@ -225,14 +360,14 @@ function SetupStep({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
               <EventRow />
             </motion.div>
           )}
-          <div className={`grid place-items-center rounded-[8px] border border-dashed border-fp-indigo-off/60 bg-fp-indigo-tint ${ui.events > 0 ? 'mt-[6px] h-[72px]' : 'h-[120px]'}`}>
-            <span data-t="create" className="flex items-center gap-[8px] rounded-[6px] border border-fp-line bg-white px-[16px] py-[9px] text-[14px] font-medium">
-              <Icon name="plus" size={14} />
+          <div className={`flex flex-col items-center justify-center rounded-[10px] border border-dashed border-fp-indigo-line bg-fp-indigo-tint ${ui.events > 0 ? 'mt-[6px] py-[16px]' : 'py-[40px]'}`}>
+            <Button t="create" kind="outline" size="md" hover={hover}>
+              <Img name="plus" size={16} />
               Create Event
-            </span>
+            </Button>
           </div>
         </SetupCard>
-        {ui.events > 0 && <Buttons back={false} />}
+        {ui.events > 0 && <Footer hover={hover} back={false} />}
       </>
     )
   if (ui.phase === 2)
@@ -240,24 +375,26 @@ function SetupStep({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
       <>
         <SetupCard n={2} title="Define conversion events" body="Designate events as mid or low funnel. Only one low-funnel event is required to continue">
           <EventRow>
-            <span className="flex overflow-hidden rounded-[6px] border border-fp-line text-[12.5px] font-medium">
-              <span className="px-[16px] py-[8px]">Mid funnel</span>
-              <span data-t="low" className={`border-l border-fp-line px-[16px] py-[8px] transition-colors duration-300 ${ui.low ? 'bg-fp-indigo text-white' : ''}`}>
+            <span className="flex text-[12px] font-semibold">
+              <span className="grid h-[32px] w-[95px] place-items-center rounded-l-[6px] border border-fp-line bg-white text-fp-ink-2">Mid funnel</span>
+              <span
+                data-t="low"
+                className={`grid h-[32px] w-[95px] place-items-center rounded-r-[8px] border-y border-r transition-colors duration-200 ${
+                  ui.low ? 'border-fp-indigo bg-fp-indigo text-white' : hover === 'low' ? 'border-fp-line bg-fp-hover text-fp-ink-2' : 'border-fp-line bg-white text-fp-ink-2'
+                }`}
+              >
                 Low funnel
               </span>
             </span>
           </EventRow>
-          <motion.div
-            className="mx-auto mt-[22px] flex items-center gap-[10px] rounded-[6px] border border-fp-red-line bg-fp-red-tint px-[16px] py-[9px] text-[12.5px] text-fp-red"
-            initial={false}
-            animate={{ opacity: ui.error ? 1 : 0, y: ui.error || reduced ? 0 : -4 }}
-            transition={{ duration: reduced ? 0.15 : 0.3 }}
-          >
-            <Icon name="warn" size={16} />
-            At least one event must be marked Low Funnel to continue.
+          <motion.div className="flex justify-center pt-[24px]" initial={false} animate={{ opacity: ui.error ? 1 : 0, y: ui.error || reduced ? 0 : -4 }} transition={{ duration: reduced ? 0.15 : 0.3 }}>
+            <span className="flex items-center gap-[10px] rounded-[8px] border border-fp-red-line bg-fp-red-tint px-[16px] py-[10px] text-[12px] font-medium text-fp-red">
+              <Img name="triangle-alert" size={16} />
+              At least one event must be marked Low Funnel to continue.
+            </span>
           </motion.div>
         </SetupCard>
-        <Buttons enabled={ui.low} />
+        <Footer hover={hover} enabled={ui.low} />
       </>
     )
   if (ui.phase === 3)
@@ -279,16 +416,22 @@ function SetupStep({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
             </>
           }
         >
-          {['Google Ads', 'Meta Ads', 'Bing Ads'].map((s) => (
-            <Row key={s} lead={<SourceMark name={s} />} label={s}>
-              <span className="flex items-center gap-[6px] rounded-[6px] border border-fp-line px-[12px] py-[8px] text-[12.5px] font-medium">
-                <Icon name="plug" size={13} />
+          {(
+            [
+              ['google-ads', 'Google Ads'],
+              ['meta', 'Meta Ads'],
+              ['bing', 'Bing Ads'],
+            ] as const
+          ).map(([logo, label]) => (
+            <Row key={label} lead={<SourceTile name={logo} />} label={label}>
+              <Button kind="outline" size="sm" hover={hover}>
+                <Img name="plug" size={14} />
                 Connect
-              </span>
+              </Button>
             </Row>
           ))}
         </SetupCard>
-        <Buttons />
+        <Footer hover={hover} skip />
       </>
     )
   return (
@@ -297,13 +440,13 @@ function SetupStep({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
         <Row
           tinted={ui.ai}
           lead={
-            <span className="grid h-[32px] w-[32px] place-items-center rounded-[6px] border border-fp-line bg-white text-fp-ai">
-              <Icon name="spark" size={16} />
+            <span className="grid h-[32px] w-[32px] place-items-center rounded-[8px] border border-black/[0.08] bg-white text-fp-ai shadow-[0_2px_6px_rgba(0,0,0,0.07)]">
+              <Sparkle />
             </span>
           }
           label="AI recommendations"
         >
-          <span data-t="toggle" className={`relative block h-[16px] w-[36px] rounded-full transition-colors duration-300 ${ui.ai ? 'bg-fp-indigo-off' : 'bg-fp-track'}`}>
+          <span data-t="toggle" className={`relative block h-[16px] w-[36px] rounded-full transition-colors duration-300 ${ui.ai ? 'bg-fp-indigo-line' : 'bg-fp-line-strong'}`}>
             <motion.span
               className={`absolute top-1/2 block h-[20px] w-[20px] -translate-y-1/2 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.25)] ${ui.ai ? 'bg-fp-indigo' : 'bg-white'}`}
               initial={false}
@@ -313,65 +456,28 @@ function SetupStep({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
           </span>
         </Row>
       </SetupCard>
-      <Buttons label={ui.ai ? 'Finish & go to Attribution' : 'Continue'} arrow={!ui.ai} />
+      <Footer hover={hover} label={ui.ai ? 'Finish & go to Attribution' : 'Continue'} arrow={!ui.ai} />
     </>
   )
 }
 
-function Row({ lead, label, children, tinted = false }: { lead: ReactNode; label: string; children: ReactNode; tinted?: boolean }) {
-  return (
-    <div className={`flex h-[66px] items-center gap-[12px] rounded-[8px] border border-fp-line px-[15px] transition-colors duration-300 ${tinted ? 'bg-fp-indigo-tint' : 'bg-white'}`}>
-      {lead}
-      <span className="text-[15px] font-semibold">{label}</span>
-      <span className="ml-auto">{children}</span>
-    </div>
-  )
-}
+/* ---------- drawer (from the Create Event Drawer frame) ---------- */
 
-function EventRow({ children }: { children?: ReactNode }) {
-  return (
-    <Row lead={<Avatar letter="B" />} label={EVENT_NAME}>
-      {children}
-    </Row>
-  )
-}
-
-const Avatar = ({ letter, dark = false, size = 32 }: { letter: string; dark?: boolean; size?: number }) => (
-  <span className={`grid flex-none place-items-center rounded-full font-semibold text-white ${dark ? 'bg-fp-teal' : 'bg-fp-mint'}`} style={{ width: size, height: size, fontSize: size * 0.42 }}>
-    {letter}
-  </span>
-)
-
-/** Simplified marks for the three ad platforms (not their logos). */
-function SourceMark({ name }: { name: string }) {
-  const c = name.startsWith('Google') ? '#FBBC04' : name.startsWith('Meta') ? '#0866FF' : '#008373'
-  return (
-    <span className="grid h-[32px] w-[32px] place-items-center rounded-[6px] border border-fp-line bg-white text-[14px] font-bold" style={{ color: c }}>
-      {name[0]}
-    </span>
-  )
-}
-
-/* ---------- drawer ---------- */
-
-function Drawer({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
+function Drawer({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; reduced: boolean }) {
   const tr = { duration: reduced ? 0 : 0.45, ease: EASE_DECK }
   return (
     <>
-      <motion.div className="absolute inset-0 bg-[#0B0D18]/45" initial={false} animate={{ opacity: ui.drawer ? 1 : 0 }} transition={tr} />
-      <motion.div
-        className="absolute inset-y-0 right-0 flex w-[420px] flex-col bg-white shadow-[-12px_0_40px_rgba(0,0,0,0.18)]"
-        initial={false}
-        animate={{ x: ui.drawer ? 0 : 440 }}
-        transition={tr}
-      >
-        <div className="flex-1 overflow-hidden px-[24px] pt-[28px]">
-          <div className="flex items-center justify-between">
-            <span className="text-[19px] font-semibold">Create Event</span>
-            <span className="text-[18px] text-fp-body">✕</span>
-          </div>
+      <motion.div className="absolute inset-0 z-20 bg-black/50" initial={false} animate={{ opacity: ui.drawer ? 1 : 0 }} transition={tr} />
+      <motion.div className="absolute inset-y-0 right-0 z-20 flex w-[420px] flex-col gap-[10px] bg-white" initial={false} animate={{ x: ui.drawer ? 0 : 440 }} transition={tr}>
+        <div className="flex items-center gap-[10px] p-[24px]">
+          <p className="m-0 flex-1 text-[18px] font-bold tracking-[-0.27px] text-black">Create Event</p>
+          <span className="grid h-[32px] w-[32px] place-items-center">
+            <Img name="close" size={14} />
+          </span>
+        </div>
+        <div className="flex flex-1 flex-col gap-[24px] overflow-hidden px-[24px]">
           <Field label="Event name" required>
-            <Input t="name" value={ui.name} focus={ui.focus === 'name'} placeholder={'e.g. "Booked Appt" or "Checkout: Submit Order"'} />
+            <Input t="name" value={ui.name} focus={ui.focus === 'name'} placeholder="e.g. “Booked Appt” or “Checkout: Submit Order”" />
           </Field>
           <Field label="Library" aside="Whats this?">
             <Select value="Web" />
@@ -381,23 +487,46 @@ function Drawer({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
           </Field>
           <Field label="CSS selector" required>
             <div className="flex gap-[10px]">
-              <Input t="selector" value={ui.selector} focus={ui.focus === 'selector'} placeholder={'e.g. button[data-action="book"]'} />
-              <span className="flex flex-none items-center rounded-[6px] bg-fp-track px-[12px] text-[13px] font-semibold">Use Visual Tagger</span>
+              <Input t="selector" value={ui.selector} focus={ui.focus === 'selector'} placeholder="e.g. button[data-action=”book”]" />
+              <span className="flex h-[40px] flex-none items-center rounded-[8px] bg-fp-tagger px-[12px] text-[12px] font-semibold">Use Visual Tagger</span>
             </div>
           </Field>
           <Field label="Description">
-            <div className="h-[80px] rounded-[6px] border border-fp-line px-[12px] py-[10px] text-[12.5px] text-fp-muted">e.g. "Fires when a user completes the appointment confirmation step"</div>
+            <div className="h-[80px] rounded-[8px] border border-fp-input p-[12px] text-[12px] text-fp-faint">e.g. “Fires when a user completes the appointment confirmation step”</div>
           </Field>
-          <div className="mt-[24px] flex flex-col gap-[6px] text-[13px] font-semibold">
-            <span className="rounded-[6px] border border-fp-line px-[12px] py-[10px]">+ Add filter</span>
-            <span className="rounded-[6px] border border-fp-line px-[12px] py-[10px]">+ Add dynamic property</span>
+          <div className="flex flex-col gap-[6px] text-[12px] font-semibold text-black">
+            <span className="h-[39px] rounded-[8px] border border-fp-input p-[12px]">+ Add filter</span>
+            <span className="h-[39px] rounded-[8px] border border-fp-input p-[12px]">+ Add dynamic property</span>
+          </div>
+          <div className="flex flex-col gap-[20px] border-t border-fp-line pt-[24px]">
+            <p className="m-0 text-[14px] font-semibold text-black">Event Destinations</p>
+            <div className="flex flex-col gap-[4px]">
+              {(
+                [
+                  ['meta', 'Facebook Conversions API'],
+                  ['google-ads', 'Google Ads'],
+                ] as const
+              ).map(([logo, label]) => (
+                <div key={label} className="flex h-[56px] items-center gap-[10px] rounded-[8px] border border-fp-input p-[12px]">
+                  <span className="grid h-[20px] w-[20px] place-items-center">
+                    <PlatformLogo name={logo} />
+                  </span>
+                  <span className="flex-1 text-[12px] text-black">{label}</span>
+                  <span className="flex w-[32px] rounded-full bg-fp-faint p-[2px]">
+                    <span className="block h-[14px] w-[14px] rounded-full bg-white shadow-[0_1px_1px_rgba(0,0,0,0.06)]" />
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="flex justify-end gap-[12px] border-t border-fp-line px-[24px] py-[12px]">
-          <span className="rounded-[6px] border border-fp-line px-[16px] py-[10px] text-[15px] font-medium">Cancel</span>
-          <span data-t="save" className="rounded-[6px] bg-fp-indigo px-[16px] py-[10px] text-[15px] font-semibold text-white">
+        <div className="flex justify-end gap-[10px] border-t border-fp-line bg-white px-[24px] py-[12px]">
+          <Button kind="outline" size="md" hover={hover}>
+            Cancel
+          </Button>
+          <Button t="save" kind="primary" size="md" hover={hover}>
             Create
-          </span>
+          </Button>
         </div>
       </motion.div>
     </>
@@ -406,13 +535,13 @@ function Drawer({ ui, reduced }: { ui: FlowUI; reduced: boolean }) {
 
 function Field({ label, required, aside, children }: { label: string; required?: boolean; aside?: string; children: ReactNode }) {
   return (
-    <div className="mt-[22px]">
-      <div className="mb-[8px] flex items-baseline justify-between text-[13px] font-semibold">
-        <span>
+    <div className="flex flex-col gap-[8px]">
+      <div className="flex items-center justify-between font-semibold">
+        <span className="text-[12px] text-black">
           {label}
-          {required && <span className="text-fp-red"> *</span>}
+          {required && <span className="text-fp-required"> *</span>}
         </span>
-        {aside && <span className="text-[11px] font-semibold text-fp-indigo">{aside}</span>}
+        {aside && <span className="text-[10px] text-fp-indigo">{aside}</span>}
       </div>
       {children}
     </div>
@@ -423,18 +552,18 @@ function Input({ t, value, focus, placeholder }: { t: string; value: string; foc
   return (
     <div
       data-t={t}
-      className={`flex h-[40px] min-w-0 flex-1 items-center rounded-[6px] border px-[12px] text-[13px] transition-colors duration-200 ${focus ? 'border-fp-indigo shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-fp-indigo)_15%,transparent)]' : 'border-fp-line'}`}
+      className={`flex h-[40px] min-w-0 flex-1 items-center rounded-[8px] border px-[12px] text-[12px] transition-[border-color,box-shadow] duration-200 ${focus ? 'border-fp-indigo shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-fp-indigo)_15%,transparent)]' : 'border-fp-input'}`}
     >
-      <span className={`truncate ${value ? 'text-fp-ink' : 'text-fp-muted'}`}>{value || (focus ? '' : placeholder)}</span>
-      {focus && <span className="ml-[1px] block h-[16px] w-[1.5px] animate-pulse bg-fp-ink" />}
+      <span className={`truncate ${value ? 'text-fp-ink' : 'text-fp-faint'}`}>{value || (focus ? '' : placeholder)}</span>
+      {focus && <span className="ml-[1px] block h-[15px] w-[1.5px] animate-pulse bg-fp-ink" />}
     </div>
   )
 }
 
-const Select = ({ value }: { value: string }) => (
-  <div className="flex h-[40px] items-center justify-between rounded-[6px] border border-fp-line px-[12px] text-[13px]">
-    {value}
-    <Icon name="chevronDown" size={14} />
+const Select = ({ value, className = '' }: { value: string; className?: string }) => (
+  <div className={`flex h-[40px] items-center gap-[10px] rounded-[8px] border border-fp-input bg-white px-[12px] text-[12px] ${className}`}>
+    <span className="flex-1">{value}</span>
+    <Chevron />
   </div>
 )
 
@@ -442,12 +571,12 @@ const Select = ({ value }: { value: string }) => (
 
 function WaitingRoom({ reduced }: { reduced: boolean }) {
   return (
-    <div className="mx-auto w-[700px] pt-[70px]">
+    <div className="mx-auto w-[700px] pt-[65px]">
       <div className="flex items-center gap-[18px]">
-        <span className="text-[33px] font-semibold tracking-[-0.01em]">Attribution</span>
-        <span className="rounded-full bg-fp-track px-[9px] py-[4px] text-[11px] font-semibold tracking-[0.02em]">PROCESSING</span>
+        <span className="text-[32px] font-semibold tracking-[-0.64px]">Attribution</span>
+        <span className="rounded-full bg-fp-line px-[9px] py-[4px] text-[11px] font-semibold tracking-[0.02em]">PROCESSING</span>
       </div>
-      <div className="mt-[40px] flex flex-col items-center rounded-[12px] border border-fp-line bg-white px-[100px] pb-[40px] pt-[40px] text-center">
+      <div className="mt-[40px] flex flex-col items-center rounded-[12px] border border-black/[0.09] bg-white px-[100px] py-[40px] text-center shadow-[0_0_3px_rgba(0,0,0,0.08)]">
         <span className="relative grid h-[56px] w-[56px] place-items-center rounded-[8px] bg-fp-indigo-soft">
           {!reduced && (
             <motion.span
@@ -460,20 +589,20 @@ function WaitingRoom({ reduced }: { reduced: boolean }) {
           <span className="absolute block h-[9px] w-[9px] rounded-full bg-white" />
         </span>
         <p className="m-0 mt-[26px] text-[18px] font-semibold">Listening for conversions</p>
-        <p className="m-0 mt-[14px] text-[14px] leading-[1.45] text-fp-body">
+        <p className="m-0 mt-[14px] text-[14px] leading-[20px]">
           Everything's set up correctly. Attribution runs on a daily processing cycle, so your first charts and rankings will be ready after today's data is processed.
         </p>
       </div>
       <div className="mt-[40px] flex items-center justify-between">
         <span className="text-[16px] font-semibold">Events being tracked</span>
-        <span className="flex items-center gap-[6px] rounded-[6px] border border-fp-line bg-white px-[12px] py-[9px] text-[12.5px] font-medium">
-          <Icon name="gear" size={13} />
+        <span className="flex h-[36px] items-center gap-[6px] rounded-[6px] border border-fp-line-strong bg-white px-[12px] font-fp-ui text-[12px] font-medium">
+          <Gear />
           Manage conversions
         </span>
       </div>
-      <div className="mt-[16px] rounded-[8px] border border-fp-line bg-white px-[15px] py-[16px]">
-        <p className="m-0 text-[12px] font-semibold tracking-[0.06em] text-fp-body">LOW-FUNNEL</p>
-        <span className="mt-[14px] inline-flex items-center gap-[7px] rounded-[6px] border border-fp-line px-[8px] py-[7px] text-[12.5px] font-semibold">
+      <div className="mt-[16px] rounded-[10px] border border-fp-line bg-white p-[16px]">
+        <p className="m-0 text-[12px] font-semibold tracking-[0.06em] text-fp-muted">LOW-FUNNEL</p>
+        <span className="mt-[14px] inline-flex items-center gap-[7px] rounded-[6px] border border-fp-line px-[8px] py-[7px] text-[12px] font-semibold">
           <Avatar letter="B" dark size={20} />
           {EVENT_NAME}
         </span>
@@ -482,7 +611,7 @@ function WaitingRoom({ reduced }: { reduced: boolean }) {
   )
 }
 
-/* ---------- dashboard (top of the full Attribution page) ---------- */
+/* ---------- dashboard: the full Attribution page (after the Figma frame), scrolled top to bottom ---------- */
 
 // Source performance, share of each stage by source (mock, after the Figma frame's chart)
 const BARS = [
@@ -492,14 +621,42 @@ const BARS = [
   { label: 'Low-funnel conv.', parts: [27, 36, 8, 17, 4, 0, 8] },
 ]
 const SERIES = ['Google Ads', 'Meta Ads', 'Bing Ads', 'Organic Search', 'Direct', 'theTradeDesk', 'Other']
+const SERIES_VALUES = ['6,230.00', '168.00', '133.00', '239.00', '239.00', '3,605.00', '188.00']
 // full class names so Tailwind emits the series colors
 const SERIES_BG = ['bg-fp-s1', 'bg-fp-s2', 'bg-fp-s3', 'bg-fp-s4', 'bg-fp-s5', 'bg-fp-s6', 'bg-fp-s7']
 
-function Dashboard() {
+// the source table (mock numbers). Paid sources aren't connected yet, so their CPA and spend are locked.
+const COLS = ['Impressions', 'Landing page views', 'Mid-funnel conv.', 'Low-funnel conv.', 'CPA ($)', 'Total spend']
+const PAID: { name: string; logo: Platform; values: string[] }[] = [
+  { name: 'Google Ads', logo: 'google-ads', values: ['87,206', '10,609.40', '3,228.50', '1,151.10'] },
+  { name: 'Meta Ads', logo: 'meta', values: ['72,455', '8,353.10', '1,953.10', '1,109.60'] },
+  { name: 'Bing Ads', logo: 'bing', values: ['10,331', '1,128.10', '341.60', '181.50'] },
+]
+const UNPAID: { name: string; values: string[] }[] = [
+  { name: 'TheTradeDesk', values: ['10,331', '300', '0', '0', '—', '—'] },
+  { name: 'Organic Search', values: ['10,331', '300', '0', '0', '—', '—'] },
+  { name: 'Direct', values: ['10,331', '300', '0', '0', '—', '—'] },
+  { name: 'Referral', values: ['10,331', '300', '0', '0', '—', '—'] },
+]
+const TOTALS = ['200,985', '20,690.60', '5,523.20', '2,442.20', '—', '—']
+
+function Dashboard({ scroll, reduced }: { scroll: boolean; reduced: boolean }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [travel, setTravel] = useState(0)
+  useLayoutEffect(() => {
+    if (ref.current) setTravel(Math.max(0, ref.current.offsetHeight - PAGE_H))
+  }, [])
   return (
-    <div className="px-[30px] pt-[80px]">
+    <motion.div
+      ref={ref}
+      className="px-[30px] pb-[40px] pt-[40px]"
+      initial={false}
+      // reduced motion: no scroll (a jump would skip the top of the page); it stays on the header and chart
+      animate={{ y: scroll && !reduced ? -travel : 0 }}
+      transition={{ duration: DASHBOARD_SCROLL, ease: [0.45, 0, 0.35, 1] }}
+    >
       <div className="flex items-center justify-between">
-        <span className="text-[30px] font-semibold tracking-[-0.01em]">Attribution</span>
+        <span className="text-[30px] font-semibold tracking-[-0.6px]">Attribution</span>
         <span className="flex overflow-hidden rounded-[6px] border border-fp-line bg-white text-[12px] font-medium">
           {['1 low-funnel', '0 of 3 sources connected', 'AI on'].map((c, i) => (
             <span key={c} className={`flex items-center gap-[6px] px-[12px] py-[8px] ${i ? 'border-l border-fp-line' : ''}`}>
@@ -511,25 +668,52 @@ function Dashboard() {
       </div>
       <div className="mt-[22px] flex items-center gap-[14px] rounded-[10px] border border-fp-line bg-white px-[16px] py-[14px]">
         <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
-          <circle cx="13" cy="13" r="10" fill="none" className="stroke-fp-track" strokeWidth="3" />
+          <circle cx="13" cy="13" r="10" fill="none" className="stroke-fp-line" strokeWidth="3" />
           <circle cx="13" cy="13" r="10" fill="none" className="stroke-fp-green" strokeWidth="3" strokeDasharray="47 63" transform="rotate(-90 13 13)" strokeLinecap="round" />
         </svg>
         <span className="flex flex-col">
           <span className="text-[13px] font-semibold">Finish setting up attribution</span>
-          <span className="text-[11.5px] text-fp-body">75% complete • Connect ad sources to get the full picture</span>
+          <span className="text-[11.5px] text-fp-muted">75% complete • Connect ad sources to get the full picture</span>
         </span>
         <span className="ml-auto text-[12.5px] font-semibold text-fp-indigo">Resume setup ›</span>
       </div>
       <div className="mt-[22px] flex gap-[20px] border-b border-fp-line text-[12.5px]">
         <span className="border-b-2 border-fp-indigo pb-[8px] font-semibold text-fp-indigo">Overview</span>
-        <span className="pb-[8px] text-fp-body">Journeys</span>
+        <span className="pb-[8px] text-fp-muted">Journeys</span>
       </div>
-      <div className="mt-[22px] rounded-[10px] border border-fp-line bg-white px-[20px] pb-[18px] pt-[16px]">
+
+      {/* filters */}
+      <div className="mt-[28px] flex items-end justify-between">
+        <span className="flex gap-[16px]">
+          <span className="flex flex-col gap-[6px] text-[11px] text-fp-muted">
+            Group results by
+            <Select value="Source & campaign" className="h-[34px] w-[190px]" />
+          </span>
+          <span className="flex flex-col gap-[6px] text-[11px] text-fp-muted">
+            Attribution model
+            <Select value="Last touch" className="h-[34px] w-[190px]" />
+          </span>
+        </span>
+        <span className="flex items-center gap-[4px] rounded-[8px] border border-fp-line bg-white p-[4px] text-[11.5px] text-fp-muted">
+          {['Custom', '7D', '30D', '3M', '6M', '12M'].map((r) => (
+            <span key={r} className={`rounded-[6px] px-[9px] py-[5px] ${r === '30D' ? 'bg-fp-indigo-tint font-semibold text-fp-indigo' : ''}`}>
+              {r}
+            </span>
+          ))}
+          <span className="px-[8px]">Last 30 days</span>
+        </span>
+      </div>
+
+      {/* source performance */}
+      <div className="mt-[14px] rounded-[10px] border border-fp-line bg-white px-[20px] pb-[18px] pt-[16px]">
         <div className="flex items-center justify-between">
           <span className="text-[14px] font-semibold">Source performance</span>
-          <span className="text-[11.5px] text-fp-body">Last 30 days</span>
+          <span className="flex rounded-[6px] border border-fp-line text-[11px]">
+            <span className="px-[8px] py-[3px] text-fp-muted">Linear</span>
+            <span className="border-l border-fp-line bg-fp-indigo-tint px-[8px] py-[3px] font-semibold text-fp-indigo">%</span>
+          </span>
         </div>
-        <div className="mt-[18px] flex h-[330px] items-end gap-[90px] border-b border-fp-line px-[60px]">
+        <div className="mt-[18px] flex h-[300px] items-end gap-[90px] border-b border-fp-line px-[60px]">
           {BARS.map((b) => (
             <div key={b.label} className="flex h-full flex-1 flex-col-reverse overflow-hidden rounded-t-[3px]">
               {b.parts.map((p, i) => (
@@ -538,58 +722,115 @@ function Dashboard() {
             </div>
           ))}
         </div>
-        <div className="mt-[8px] flex gap-[90px] px-[60px] text-center text-[11px] text-fp-body">
+        <div className="mt-[8px] flex gap-[90px] px-[60px] text-center text-[11px] text-fp-muted">
           {BARS.map((b) => (
             <span key={b.label} className="flex-1">
               {b.label}
             </span>
           ))}
         </div>
-        <div className="mt-[18px] flex flex-wrap justify-center gap-x-[22px] gap-y-[6px] text-[11px] text-fp-body">
+        <div className="mt-[18px] flex flex-wrap justify-center gap-x-[22px] gap-y-[6px] text-[11px]">
           {SERIES.map((s, i) => (
-            <span key={s} className="flex items-center gap-[6px]">
-              <span className={`block h-[9px] w-[9px] rounded-[2px] ${SERIES_BG[i]}`} />
-              {s}
+            <span key={s} className="flex items-start gap-[6px]">
+              <span className={`mt-[3px] block h-[9px] w-[9px] rounded-[2px] ${SERIES_BG[i]}`} />
+              <span className="flex flex-col">
+                {s}
+                <span className="text-fp-muted">({SERIES_VALUES[i]})</span>
+              </span>
             </span>
           ))}
         </div>
       </div>
+
+      {/* unlock spend: the way back to the skipped step */}
+      <div className="mx-[20px] mt-[36px] flex items-center gap-[16px] rounded-[10px] bg-fp-indigo px-[22px] py-[18px] text-white">
+        <span className="grid h-[34px] w-[34px] flex-none place-items-center rounded-full bg-white/15">
+          <Lock />
+        </span>
+        <span className="flex flex-1 flex-col gap-[4px]">
+          <span className="text-[14px] font-semibold">Unlock spend & CPA on your ad sources</span>
+          <span className="text-[11.5px] leading-[16px] text-white/85">
+            Connecting your ad platforms unlocks campaign-level data, spend, and CPA, so you can see which campaigns actually pay off. <b>3 platforms left to connect.</b>
+          </span>
+        </span>
+        {PAID.map((p) => (
+          <span key={p.name} className="flex h-[30px] items-center gap-[6px] rounded-[6px] bg-white px-[10px] font-fp-ui text-[11px] font-medium text-fp-indigo">
+            <PlatformLogo name={p.logo} scale={0.75} />
+            Connect {p.name}
+          </span>
+        ))}
+        <span className="flex h-[30px] items-center rounded-[6px] border border-white/40 px-[10px] font-fp-ui text-[11px] font-medium">+ 3 more sources</span>
+      </div>
+
+      {/* source table */}
+      <div className="mt-[10px] rounded-[10px] border border-fp-line bg-white">
+        <div className="flex items-center justify-between px-[16px] py-[14px]">
+          <span className="flex h-[32px] w-[220px] items-center rounded-[6px] border border-fp-line px-[10px] text-[11.5px] text-fp-faint">Search sources or campaigns</span>
+          <span className="flex h-[32px] items-center rounded-[6px] border border-fp-line-strong px-[12px] font-fp-ui text-[11.5px] font-medium">Export CSV</span>
+        </div>
+        <TableRow head cells={['Source', ...COLS]} />
+        <SectionLabel>Paid</SectionLabel>
+        {PAID.map((p) => (
+          <TableRow
+            key={p.name}
+            cells={[
+              <span key="n" className="flex items-center gap-[8px]">
+                <PlatformLogo name={p.logo} scale={0.85} />
+                {p.name}
+                <span className="rounded-full border border-fp-indigo-line px-[7px] py-[1px] text-[10.5px] font-medium text-fp-indigo">Connect</span>
+              </span>,
+              ...p.values,
+              <Lock key="c" muted />,
+              <Lock key="s" muted />,
+            ]}
+          />
+        ))}
+        <SectionLabel>Unpaid</SectionLabel>
+        {UNPAID.map((u) => (
+          <TableRow key={u.name} cells={[u.name, ...u.values]} />
+        ))}
+        <TableRow total cells={['Totals', ...TOTALS]} />
+      </div>
+    </motion.div>
+  )
+}
+
+function TableRow({ cells, head = false, total = false }: { cells: ReactNode[]; head?: boolean; total?: boolean }) {
+  return (
+    <div className={`grid grid-cols-[2.2fr_repeat(6,1fr)] items-center border-t border-fp-line px-[16px] text-[12px] ${head ? 'h-[38px] text-[11px] font-semibold text-fp-ink-2' : 'h-[42px]'} ${total ? 'bg-fp-bg font-semibold' : ''}`}>
+      {cells.map((c, i) => (
+        <span key={i} className={i === 0 ? '' : 'flex justify-end tabular-nums'}>
+          {c}
+        </span>
+      ))}
     </div>
   )
 }
 
-/* ---------- icons (simple line icons, standing in for the product's set) ---------- */
+const SectionLabel = ({ children }: { children: ReactNode }) => (
+  <div className="flex h-[30px] items-center border-t border-fp-line bg-fp-bg px-[16px] text-[10.5px] font-semibold uppercase tracking-[0.08em] text-fp-muted">{children}</div>
+)
 
-type IconName =
-  | 'spark' | 'sliders' | 'route' | 'grid' | 'chart' | 'users' | 'check' | 'link' | 'wrench' | 'layers'
-  | 'chevronRight' | 'chevronDown' | 'chevronUp' | 'tick' | 'plus' | 'arrowRight' | 'warn' | 'plug' | 'gear'
+/* ---------- small icons not in the pulled frames (line icons in the product's style) ---------- */
 
-const PATHS: Record<IconName, string> = {
-  spark: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z',
-  sliders: 'M4 7h10M18 7h2M4 12h4M12 12h8M4 17h12M20 17h0M14 5v4M8 10v4M16 15v4',
-  route: 'M5 19c0-6 3-9 9-9M14 10l4-4M6 19a1 1 0 100-2',
-  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
-  chart: 'M4 20V4M4 20h16M8 16l4-5 3 3 5-6',
-  users: 'M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5M16 4.5a3.5 3.5 0 010 6.5M18 14.8c2 .8 3.2 2.6 3.5 5.2',
-  check: 'M3 13l4 4L17 7M13 17l8-10',
-  link: 'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
-  wrench: 'M14 6a4 4 0 005 5l-9 9-3-3 9-9a4 4 0 01-2-2z',
-  layers: 'M12 3l9 5-9 5-9-5zM3 13l9 5 9-5',
-  chevronRight: 'M9 6l6 6-6 6',
-  chevronDown: 'M6 9l6 6 6-6',
-  chevronUp: 'M6 15l6-6 6 6',
-  tick: 'M5 12.5l4.5 4.5L19 7.5',
-  plus: 'M12 5v14M5 12h14',
-  arrowRight: 'M5 12h14M13 6l6 6-6 6',
-  warn: 'M12 4l9 16H3zM12 10v4M12 17v.5',
-  plug: 'M9 3v5M15 3v5M7 8h10v3a5 5 0 01-10 0zM12 16v5',
-  gear: 'M12 15a3 3 0 100-6 3 3 0 000 6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
-}
-
-function Icon({ name, size = 18, className = '' }: { name: IconName; size?: number; className?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`flex-none ${className}`} aria-hidden="true">
-      <path d={PATHS[name]} />
-    </svg>
-  )
-}
+const line = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
+const Chevron = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" {...line}>
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+)
+const Sparkle = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" {...line}>
+    <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 3v4M17 5h4" />
+  </svg>
+)
+const Gear = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" {...line}>
+    <path d="M12 15a3 3 0 100-6 3 3 0 000 6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" />
+  </svg>
+)
+const Lock = ({ muted = false }: { muted?: boolean }) => (
+  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" className={muted ? 'text-fp-faint' : ''} {...line}>
+    <path d="M6 11h12v10H6zM8.5 11V7.5a3.5 3.5 0 017 0V11" />
+  </svg>
+)
