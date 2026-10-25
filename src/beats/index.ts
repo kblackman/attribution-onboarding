@@ -11,6 +11,7 @@ import beforePrototyping from './09-before-prototyping'
 import codeTold from './10-code-told'
 import realNumbers from './11-real-numbers'
 import twoMoments from './12-two-moments'
+import showingWork from './13-showing-work'
 import { sectionCard } from '../components/SectionCard'
 
 // The presentation, in order. Adding a beat: add its file in this folder, then one line here.
@@ -31,4 +32,5 @@ export const beats: Beat[] = [
   codeTold,
   realNumbers,
   twoMoments,
+  showingWork,
 ]
