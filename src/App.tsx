@@ -6,6 +6,7 @@ import { Card, type CardStatus } from './components/Card'
 import { VisualFrame, type VisualStatus } from './components/VisualFrame'
 import { Overlay } from './components/Overlay'
 import { Controls } from './components/Controls'
+import { SectionIndex } from './components/SectionIndex'
 import { DUR } from './engine/motion'
 import { usePrefersReducedMotion } from './engine/reducedMotion'
 import { PresentationContext } from './engine/presentation'
@@ -26,6 +27,23 @@ export function App() {
   const reduced = usePrefersReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
   const [revealed, setRevealed] = useState<Set<number>>(() => new Set([0]))
+  const [menuOpen, setMenuOpen] = useState(false)
+  const countRef = useRef<HTMLButtonElement>(null)
+
+  // section index: jump to a beat's first step; number keys open a section by its number
+  const sectionCards = useMemo(() => places.map((p, b) => ({ p, b })).filter(({ p }) => p.isSectionCard), [places])
+  const closeMenu = useCallback((refocus = true) => {
+    setMenuOpen(false)
+    if (refocus) countRef.current?.focus({ preventScroll: true })
+  }, [])
+  const jumpToBeat = useCallback(
+    (b: number) => {
+      setMenuOpen(false)
+      engine.go(steps.findIndex((s) => s.beat === b))
+      rootRef.current?.focus({ preventScroll: true })
+    },
+    [engine, steps],
+  )
 
   // card content reveals once per beat, the first time its card is current
   useEffect(() => {
@@ -35,6 +53,7 @@ export function App() {
   const begin = useCallback(() => {
     // inside a Framer embed, a click has to hand the iframe keyboard focus
     window.focus()
+    setMenuOpen(false)
     rootRef.current?.focus({ preventScroll: true })
   }, [])
 
@@ -43,6 +62,26 @@ export function App() {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return
       const k = e.key
+      if (k === 's' || k === 'S') {
+        e.preventDefault()
+        if (menuOpen) closeMenu()
+        else setMenuOpen(true)
+        return
+      }
+      if (k === 'Escape' && menuOpen) {
+        e.preventDefault()
+        closeMenu()
+        return
+      }
+      if (/^[1-9]$/.test(k)) {
+        const target = sectionCards.find(({ p }) => Number(p.number) === Number(k))
+        if (target) {
+          e.preventDefault()
+          jumpToBeat(target.b)
+        }
+        return
+      }
+      if (menuOpen) return // the index handles its own keys
       const forward = k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !(e.target instanceof HTMLButtonElement))
       const back = k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp'
       if (forward || back || k === 'Home' || k === 'End') {
@@ -54,7 +93,7 @@ export function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [engine, steps.length])
+  }, [engine, steps.length, menuOpen, closeMenu, sectionCards, jumpToBeat])
 
   // swipe: horizontal only, so a tall card can still scroll on a phone
   const touch = useRef<{ x: number; y: number } | null>(null)
@@ -163,7 +202,19 @@ export function App() {
       </PresentationContext.Provider>
 
       <p className="sr-only" aria-live="polite">{announce}</p>
+      <SectionIndex
+        open={menuOpen}
+        beats={beats}
+        places={places}
+        currentBeat={cb}
+        sectionNumbers={sectionCards.map(({ p }) => p.number)}
+        onJump={jumpToBeat}
+        onClose={closeMenu}
+      />
       <Controls
+        menuOpen={menuOpen}
+        onToggleMenu={() => (menuOpen ? closeMenu() : setMenuOpen(true))}
+        countRef={countRef}
         hidden={onHero}
         label={place}
         progress={steps.length > 1 ? index / (steps.length - 1) : 1}

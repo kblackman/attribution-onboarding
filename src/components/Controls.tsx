@@ -1,3 +1,5 @@
+import type { Ref } from 'react'
+
 interface ControlsProps {
   /** Fades the bar out (deck behavior on the hero). */
   hidden?: boolean
@@ -8,6 +10,10 @@ interface ControlsProps {
   canNext: boolean
   onPrev: () => void
   onNext: () => void
+  /** The progress label opens the section index, as in the decks. */
+  menuOpen: boolean
+  onToggleMenu: () => void
+  countRef: Ref<HTMLButtonElement>
 }
 
 const Arrow = ({ flip }: { flip?: boolean }) => (
@@ -16,8 +22,8 @@ const Arrow = ({ flip }: { flip?: boolean }) => (
   </svg>
 )
 
-/** Deck chrome: 1px progress line on top, beat count and Back / Next pills on the bottom. */
-export function Controls({ hidden = false, label, progress, canPrev, canNext, onPrev, onNext }: ControlsProps) {
+/** Deck chrome: 1px progress line on top; on the bottom, the progress label (opens the section index) and Back / Next pills. */
+export function Controls({ hidden = false, label, progress, canPrev, canNext, onPrev, onNext, menuOpen, onToggleMenu, countRef }: ControlsProps) {
   return (
     <>
       <div className="fixed left-0 top-0 z-[60] h-px w-full bg-white/[0.08]" aria-hidden="true">
@@ -33,9 +39,22 @@ export function Controls({ hidden = false, label, progress, canPrev, canNext, on
         style={{ opacity: hidden ? 0 : 1 }}
         className="transition-opacity duration-[400ms] ease-out motion-reduce:transition-none fixed inset-x-0 bottom-[max(10px,calc(6.5vh-30px))] z-[70] flex items-center justify-between px-[calc(var(--gutter)+4px)] max-[720px]:bottom-3.5 max-[720px]:px-4"
       >
-        <p className="m-0 text-ui tabular-nums tracking-[0.06em] text-fg-soft">
-          {label}
-        </p>
+        <button
+          ref={countRef}
+          type="button"
+          className="count"
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          aria-controls="section-index"
+          aria-label={`${label}. All beats`}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={onToggleMenu}
+        >
+          <span aria-hidden="true">{label}</span>
+          <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M3.5 8.5L7 5l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
         <div className="flex items-center gap-2 sm:gap-3">
           <button type="button" className="pill secondary" aria-label="Previous step" aria-disabled={!canPrev} onClick={onPrev}>
             <Arrow flip />

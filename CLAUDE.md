@@ -87,7 +87,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 
 ## Embedding and accessibility
 - It runs inside a Framer Embed (iframe), so it can't rely on the parent page. Kyle removed the on-screen instruction: the hero's Begin button starts it, and any click gives the iframe keyboard focus. As in the decks, the bottom control bar stays hidden on the hero and appears once it's left.
-- Navigation: arrow keys (plus PageUp/PageDown, Space, Home/End), visible Back/Next controls, and horizontal swipe on touch. Progress shows "Beat X of Y" plus a 1px progress line.
+- Navigation: arrow keys (plus PageUp/PageDown, Space, Home/End), visible Back/Next controls, and horizontal swipe on touch. Section index (ported from the Tiled feature pitch deck, `src/components/SectionIndex.tsx`): the progress label is a button that opens every beat grouped by section, current one marked; S toggles it, 1 to 9 jump to that section's title, Up/Down move, Enter jumps, Escape or a click outside closes. Built from the beats list and `src/sections.ts`, so new beats and sections appear on their own. Progress shows "Beat X of Y" plus a 1px progress line.
 - Responsive down to phone width.
 - WCAG 2.1 AA is the floor. Check contrast for overlay text on blurred visuals and for any accent color on dark backgrounds. Focus states, semantic headings, alt text for images, and a text description for each video or visual (`visual.description`).
 - Lowest text opacity is `fg-soft` (white 0.6). The deck's 0.42 label opacity fails AA (3.7 to 4.1:1), so it isn't used for text.
@@ -118,6 +118,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: The problem statement sits on a left-aligned deck card with the accent glow, per Kyle. Its kicker moved off the card into a full-screen `cardOverlay` (card pushes back behind it), per Kyle.
 - 2026-10-24: Section card type and section-aware progress (`01 · 2/3`), per Kyle. Sections live in one data file so they're cheap to change. 01 Discovery opens before Beat 3.
 - 2026-10-24: A card stays dimmed behind the next beat (deck behavior) only when the next beat is framed too; a frameless statement after a card gets a clean slate.
+- 2026-10-25: Added the section index (jump anywhere), same mechanism as the Tiled feature pitch deck, per Kyle.
 - 2026-10-25: Beat 4 split in two, per Kyle: "Checking the hunch" (statement, then the team chat as a full-screen visual) and "How widespread was it?" (statement, then the montage and overlay). The crowded card is gone. Context for the chat lives in its own UI (a date divider), not a title on the visual. Chat wording updated and approved; teammates appear by role, the CEO as "our CEO".
 - 2026-10-25: Cards and statements use `justify-content: safe center`, so content taller than the screen (phones) top-aligns instead of being cut off; cards also reset to their top when they become current.
 - 2026-10-25: Unified the presentation into three tiers (Moments, Story, Evidence), per Kyle ("starting to feel a little disjointed"). Problem back to a frameless story statement; one story headline size; every punchline is a full-screen overlay with the horizon line (Beat 3's question moved to an overlay); the hero introduces the horizon line; incidental yellow went neutral. See System.
