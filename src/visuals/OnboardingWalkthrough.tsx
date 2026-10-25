@@ -30,7 +30,7 @@ const typing = (field: 'name' | 'selector', text: string, start: number): Frame[
   Array.from(text, (_, i) => ({ at: start + i * TIMING.type, set: { [field]: text.slice(0, i + 1) } }))
 const typed = (start: number, text: string) => start + text.length * TIMING.type
 
-const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, low: false, error: false, later: false, ai: false, note: false, scroll: false, cursor: true }
+const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, funnel: 'none', error: false, later: false, ai: false, note: false, scroll: false, cursor: true }
 
 const nameDone = typed(1.6, EVENT_NAME)
 const selDone = typed(nameDone + 1.2, EVENT_SELECTOR)
@@ -59,15 +59,15 @@ const SCRIPTS: Script[] = [
       { at: 1.3, to: 'continue' },
     ],
   },
-  // 4. Event Definition: continue without a low-funnel event, hit the error, pause, mark it low funnel
+  // 4. Event Definition: nothing defined yet; marking it mid funnel raises the No Low Funnel error; pause; then low funnel
   {
     frames: [
       { at: 0.15, click: true, set: { phase: 2 } },
-      { at: 0.9, to: 'continue' },
-      { at: 1.55, click: true, set: { error: true } },
-      { at: 3.2, to: 'low' },
-      { at: 3.85, click: true, set: { low: true, error: false } },
-      { at: 4.6, to: 'continue' },
+      { at: 0.9, to: 'mid' },
+      { at: 1.55, click: true, set: { funnel: 'mid', error: true } },
+      { at: 3.4, to: 'low' },
+      { at: 4.05, click: true, set: { funnel: 'low', error: false } },
+      { at: 4.8, to: 'continue' },
     ],
   },
   // 5. Connect Ad Sources: the note that it can be set up later, then Skip for now

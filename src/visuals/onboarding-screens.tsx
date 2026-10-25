@@ -26,7 +26,8 @@ export interface FlowUI {
   focus: 'name' | 'selector' | null
   /** Events created (0 or 1). */
   events: number
-  low: boolean
+  /** The event's funnel definition: none yet, then mid, then low. */
+  funnel: 'none' | 'mid' | 'low'
   error: boolean
   /** The hand-drawn circle around "You can always set this up later". */
   later: boolean
@@ -39,7 +40,7 @@ export interface FlowUI {
 }
 
 export const EVENT_NAME = 'Booked Appointment'
-export const EVENT_SELECTOR = 'button[data-action="book"]'
+export const EVENT_SELECTOR = 'button.booked-appt'
 /** Seconds the dashboard takes to scroll from top to bottom. */
 export const DASHBOARD_SCROLL = 7
 
@@ -300,12 +301,15 @@ function Footer({ hover, back = true, skip = false, label = 'Continue', enabled 
   )
 }
 
-function Row({ lead, label, children, tinted = false }: { lead: ReactNode; label: string; children?: ReactNode; tinted?: boolean }) {
+function Row({ lead, label, sub, children, tinted = false }: { lead: ReactNode; label: string; sub?: string; children?: ReactNode; tinted?: boolean }) {
   return (
     <div className={`flex items-center justify-between rounded-[10px] border border-fp-line p-[16px] transition-colors duration-300 ${tinted ? 'bg-fp-indigo-tint' : 'bg-white'}`}>
       <span className="flex items-center gap-[10px]">
         {lead}
-        <span className="text-[14px] font-semibold">{label}</span>
+        <span className="flex flex-col gap-[2px]">
+          <span className="text-[14px] font-semibold">{label}</span>
+          {sub && <span className="text-[12px] text-fp-muted">{sub}</span>}
+        </span>
       </span>
       {children}
     </div>
@@ -318,11 +322,22 @@ const Avatar = ({ letter, dark = false, size = 32 }: { letter: string; dark?: bo
   </span>
 )
 
-const EventRow = ({ children }: { children?: ReactNode }) => (
-  <Row lead={<Avatar letter="B" />} label={EVENT_NAME}>
+const EventRow = ({ sub, children }: { sub?: string; children?: ReactNode }) => (
+  <Row lead={<Avatar letter="B" />} label={EVENT_NAME} sub={sub}>
     {children}
   </Row>
 )
+
+/** One half of the Mid / Low funnel selector (from the No Low Funnel frame). */
+function Segment({ t, on, hover, side, children }: { t: string; on: boolean; hover: string | null; side: 'left' | 'right'; children: ReactNode }) {
+  const shape = side === 'left' ? 'rounded-l-[6px] border' : 'rounded-r-[8px] border-y border-r'
+  const look = on ? 'border-fp-indigo bg-fp-indigo text-white' : hover === t ? 'border-fp-line bg-fp-hover text-fp-ink-2' : 'border-fp-line bg-white text-fp-ink-2'
+  return (
+    <span data-t={t} className={`grid h-[32px] w-[95px] place-items-center transition-colors duration-200 ${shape} ${look}`}>
+      {children}
+    </span>
+  )
+}
 
 type Platform = 'google-ads' | 'meta' | 'bing'
 
@@ -358,17 +373,29 @@ function SetupStep({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; r
     return (
       <>
         <SetupCard n={1} title="Create an event" body="Add at least one event you want to track. You can add more than one, but one is enough to continue.">
-          {ui.events > 0 && (
-            <motion.div {...fade(reduced)}>
-              <EventRow />
-            </motion.div>
+          {ui.events > 0 ? (
+            // after the first event (Kyle's reference frame): the list, then Add another; the dashed zone is gone
+            <>
+              <motion.div {...fade(reduced)}>
+                <EventRow sub={EVENT_SELECTOR}>
+                  <Trash />
+                </EventRow>
+              </motion.div>
+              <div className="mt-[20px] flex justify-center">
+                <Button t="create" kind="outline" size="md" hover={hover}>
+                  <Img name="plus" size={16} />
+                  Add another
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-[10px] border border-dashed border-fp-indigo-line bg-fp-indigo-tint py-[40px]">
+              <Button t="create" kind="outline" size="md" hover={hover}>
+                <Img name="plus" size={16} />
+                Create Event
+              </Button>
+            </div>
           )}
-          <div className={`flex flex-col items-center justify-center rounded-[10px] border border-dashed border-fp-indigo-line bg-fp-indigo-tint ${ui.events > 0 ? 'mt-[6px] py-[16px]' : 'py-[40px]'}`}>
-            <Button t="create" kind="outline" size="md" hover={hover}>
-              <Img name="plus" size={16} />
-              Create Event
-            </Button>
-          </div>
         </SetupCard>
         {ui.events > 0 && <Footer hover={hover} back={false} />}
       </>
@@ -379,15 +406,12 @@ function SetupStep({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; r
         <SetupCard n={2} title="Define conversion events" body="Designate events as mid or low funnel. Only one low-funnel event is required to continue">
           <EventRow>
             <span className="flex text-[12px] font-semibold">
-              <span className="grid h-[32px] w-[95px] place-items-center rounded-l-[6px] border border-fp-line bg-white text-fp-ink-2">Mid funnel</span>
-              <span
-                data-t="low"
-                className={`grid h-[32px] w-[95px] place-items-center rounded-r-[8px] border-y border-r transition-colors duration-200 ${
-                  ui.low ? 'border-fp-indigo bg-fp-indigo text-white' : hover === 'low' ? 'border-fp-line bg-fp-hover text-fp-ink-2' : 'border-fp-line bg-white text-fp-ink-2'
-                }`}
-              >
+              <Segment t="mid" on={ui.funnel === 'mid'} hover={hover} side="left">
+                Mid funnel
+              </Segment>
+              <Segment t="low" on={ui.funnel === 'low'} hover={hover} side="right">
                 Low funnel
-              </span>
+              </Segment>
             </span>
           </EventRow>
           <motion.div className="flex justify-center pt-[24px]" initial={false} animate={{ opacity: ui.error ? 1 : 0, y: ui.error || reduced ? 0 : -4 }} transition={{ duration: reduced ? 0.15 : 0.3 }}>
@@ -397,7 +421,7 @@ function SetupStep({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; r
             </span>
           </motion.div>
         </SetupCard>
-        <Footer hover={hover} enabled={ui.low} />
+        <Footer hover={hover} enabled={ui.funnel === 'low'} />
       </>
     )
   if (ui.phase === 3)
@@ -870,6 +894,11 @@ const Sparkle = () => (
 const Gear = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" {...line}>
     <path d="M12 15a3 3 0 100-6 3 3 0 000 6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" />
+  </svg>
+)
+const Trash = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="mr-[8px] text-fp-ink" {...line}>
+    <path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6" />
   </svg>
 )
 const Lock = ({ muted = false }: { muted?: boolean }) => (
