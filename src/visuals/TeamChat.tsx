@@ -3,8 +3,8 @@ import { useVisualPlayback } from '../engine/useVisualPlayback'
 import { ChatThread, type ChatMessage } from '../components/ChatThread'
 
 /*
-  Beat 4 visual: the team thread, full screen. Kyle's messages and the PM's first reply are Kyle's approved
-  wording; the Eng message and the roadmap exchange are still his placeholders. Messages land one at a time,
+  Beat 4 visual: the team thread, full screen. Kyle's messages and the PM and Eng replies are Kyle's approved
+  wording; the roadmap exchange is still his placeholder. Messages land one at a time,
   slowly enough to read at this size. Tune the timing here (seconds).
 */
 export const TIMING = {
@@ -21,7 +21,7 @@ const MESSAGES: ChatMessage[] = [
     reactions: [{ emoji: '👀', count: 2 }],
   },
   { author: 'PM', time: '10:44 AM', text: "You're not crazy. Setup has been a known pain point. Even our CEO has called it out." },
-  { author: 'Eng', time: '10:45 AM', text: "Agreed. The flow doesn't really guide anyone through it.", reactions: [{ emoji: '👍', count: 1 }] },
+  { author: 'Eng', time: '10:45 AM', text: 'Yeah, not surprised honestly. There are a bunch of things that have to be configured before that page shows anything useful.', reactions: [{ emoji: '👍', count: 1 }] },
   { author: 'Kyle Blackman', time: '10:47 AM', text: 'Is fixing it on the roadmap anywhere?' },
   { author: 'PM', time: '10:48 AM', text: 'Not right now.' },
 ]
@@ -36,7 +36,7 @@ export function TeamChat(props: VisualProps) {
         className="w-[min(100%,980px)]"
         channel="team-indigo"
         divider="After the research sessions"
-        placeholderNote="Eng and roadmap messages are placeholders, final wording to come"
+        placeholderNote="Roadmap messages are placeholders, final wording to come"
         messages={MESSAGES}
         shown={mode !== 'empty'}
         instant={mode === 'done'}
