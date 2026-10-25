@@ -29,10 +29,12 @@ interface HandCircleProps {
   reducedMotion?: boolean
   /** Which of the hand-drawn shapes to use, so repeated circles don't look stamped. */
   variant?: number
+  /** A dashed stroke, to mark one circle as different from the rest (e.g. an open question). */
+  dashed?: boolean
   className?: string
 }
 
-export function HandCircle({ show, delay = 0, duration = 0.8, instant = false, reducedMotion = false, variant = 0, className = '' }: HandCircleProps) {
+export function HandCircle({ show, delay = 0, duration = 0.8, instant = false, reducedMotion = false, variant = 0, dashed = false, className = '' }: HandCircleProps) {
   const id = useId().replace(/:/g, '')
   const d = SHAPES[variant % SHAPES.length]
 
@@ -48,7 +50,7 @@ export function HandCircle({ show, delay = 0, duration = 0.8, instant = false, r
         transition={{ duration: instant ? 0 : 0.3, delay: show && !instant ? delay : 0 }}
         aria-hidden="true"
       >
-        <Stroke d={d} />
+        <Stroke d={d} dashed={dashed} />
       </motion.svg>
     )
   }
@@ -90,7 +92,7 @@ export function HandCircle({ show, delay = 0, duration = 0.8, instant = false, r
         </mask>
       </defs>
       <g mask={`url(#${id}-m)`}>
-        <Stroke d={d} />
+        <Stroke d={d} dashed={dashed} />
       </g>
     </svg>
   )
@@ -104,6 +106,6 @@ const HalfDisc = () => (
   </>
 )
 
-const Stroke = ({ d }: { d: string }) => (
-  <path d={d} fill="none" stroke="var(--color-annotation)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+const Stroke = ({ d, dashed }: { d: string; dashed?: boolean }) => (
+  <path d={d} fill="none" stroke="var(--color-annotation)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" strokeDasharray={dashed ? '7 8' : undefined} vectorEffect="non-scaling-stroke" />
 )

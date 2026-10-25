@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { cardVariants, cardVariantsReduced, heroVariants, sectionVariants, statementVariants } from '../engine/motion'
 import { RevealContext } from './Reveal'
@@ -27,12 +27,18 @@ interface CardProps {
 /** The deck card. Rises from below, recedes up and back when the story moves on. */
 export function Card({ status, variant = 'card', align = 'left', dense = false, revealed, revealLead, sub, glow, reducedMotion, label, zIndex, children }: CardProps) {
   const active = status === 'active'
+  // a card that scrolls (phones) always arrives at its top
+  const ref = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (active && ref.current) ref.current.scrollTop = 0
+  }, [active])
   // pushed: still the current step, sitting back behind a card overlay
   const statement = variant === 'statement'
   const className = variant === 'section' ? 'deck-section' : variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? `deck-statement${dense ? ' is-dense' : ''}` : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
   const variants = reducedMotion ? cardVariantsReduced : variant === 'section' ? sectionVariants : variant === 'hero' ? heroVariants : statement ? statementVariants : cardVariants
   return (
     <motion.section
+      ref={ref}
       aria-label={label}
       aria-hidden={!active}
       inert={!active}

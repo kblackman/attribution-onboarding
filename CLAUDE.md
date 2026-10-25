@@ -52,7 +52,8 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - One step engine (`src/engine/useStepEngine.ts`) handles navigation, transitions, and state. Beats are data plus content, never custom navigation logic.
 - Each beat is one file in `src/beats/`, registered in order in `src/beats/index.ts`. Adding a beat = one file + one line. A beat with a bespoke animated visual may add its visual in `src/visuals/`.
 - Shared primitives in `src/components/`: Card (all three variants), Statement, BeginRow, VisualFrame (+ VideoVisual), Overlay, Placeholder, Reveal, and in-card visuals (DataTable, Comparison, StatBlock, PullQuote, TagRow, Caption, StatusTag).
-- `HandCircle` is a crude hand-drawn circle in the annotation color that marks empty areas. It draws clockwise with a rotating-mask sweep (transform only), fades under reduced motion, and has a few shape variants so repeats don't look stamped. Beat 3 uses it; Beat 4's empty-state montage should reuse it.
+- `ChatThread` is a reusable generic team chat (channel, role avatars, timestamps, reactions; no real product's look) whose messages arrive one at a time when its card reveals. `text-with-aside` (with `.twa-main`, `.twa-aside`, `.twa-rest`) puts an artifact beside a card's first paragraph and stacks it after that paragraph on phones.
+- `HandCircle` is a crude hand-drawn circle in the annotation color that marks empty areas. It draws clockwise with a rotating-mask sweep (transform only), fades under reduced motion, and has a few shape variants so repeats don't look stamped. `dashed` marks one circle as different (Beat 4's "Waiting on data", which a later beat calls back to). Beat 3 uses it; Beat 4's empty-state montage should reuse it.
 - Story beats set their body at the statement size (`text-statement`), per Kyle. Text-heavy cards add `cardDense: true` (the decks' tighter sub-slide padding) and a ~64ch measure on the body itself, and must fit without scrolling at 1920x1080, 1440x900, 1280x720, and a 375x812 phone.
 - `HeroBackdrop` pushes imagery back behind hero text, after the case study heroes: 21% opacity, centered behind the text, tilted straight back (top away, bottom nearest the viewer), bottom faded into the page. Swap its children for real imagery; drop `placeholderLabel` when it's real.
 - Coded visuals in `src/visuals/` use `useVisualPlayback` (play, finish, reset) and keep a `TIMING` block at the top for tuning.
@@ -114,6 +115,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-24: The problem statement sits on a left-aligned deck card with the accent glow, per Kyle. Its kicker moved off the card into a full-screen `cardOverlay` (card pushes back behind it), per Kyle.
 - 2026-10-24: Section card type and section-aware progress (`01 · 2/3`), per Kyle. Sections live in one data file so they're cheap to change. 01 Discovery opens before Beat 3.
 - 2026-10-24: A card stays dimmed behind the next beat (deck behavior) only when the next beat is framed too; a frameless statement after a card gets a clean slate.
+- 2026-10-25: Cards and statements use `justify-content: safe center`, so content taller than the screen (phones) top-aligns instead of being cut off; cards also reset to their top when they become current.
 - 2026-10-25: Unified the presentation into three tiers (Moments, Story, Evidence), per Kyle ("starting to feel a little disjointed"). Problem back to a frameless story statement; one story headline size; every punchline is a full-screen overlay with the horizon line (Beat 3's question moved to an overlay); the hero introduces the horizon line; incidental yellow went neutral. See System.
 - 2026-10-25: Section cards became a cinematic title sequence (frameless, letter-by-letter rise from behind a horizon line, glow, giant outlined numeral, chapter row), per Kyle: "more cinematic title card reveal instead of a traditional PowerPoint section". The pie motif and card frame were dropped.
 - 2026-10-24: Skill pills copied exactly from the case study's Role Pills, per Kyle: `#232324` fill (`pill`), 1px inside border at 15% white (`pill-border`), 7px radius, 4px 8px padding, 14px regular in accent, 10px gap. Fixed size, not viewport-scaled. Accent on the fill is about 10:1.
@@ -130,11 +132,13 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 | 1 | title | hero (centered) | No full-screen visual. Pushed-back backdrop with placeholder imagery | Revised 2026-10-23, awaiting Kyle's review |
 | 2a | section-discovery | section title sequence | None | Reworked 2026-10-25, awaiting Kyle's review |
 | 3 | pattern | statement (dense, wide), card overlay (question), visual | 2x2 video-call grid builds one tile at a time (Day 1 New feature, Day 1 Bug walkthrough, Day 2 Adoption check-in, Day 2 New feature), each sharing the same half-set-up dashboard with a hand-drawn circle on its empty area; the last tile then zooms to fill the frame and holds. Placeholder shapes (`src/visuals/SessionGrid.tsx`, timing in `TIMING`). Reduced motion: all tiles and circles fade in together, no zoom. | Built, awaiting Kyle's review |
+| 4 | hunch | card (Evidence: chat thread beside the text), visual, overlay (auto, holds for a key press) | Empty-state montage: six dummy dashboards drop and get circled and labeled ("Waiting on data" dashed with a question mark), duplicates pile up and stop, six lines meet at one point (`src/visuals/EmptyStateMontage.tsx`, timing in `TIMING`, about 17s). Placeholder shapes. | Built, awaiting Kyle's review |
 | 2 | problem | statement, card overlay (kicker), visual | Three paths branching away from a simplified product shape to Documentation, CS call, Account manager. Placeholder shapes (`src/visuals/SetupPaths.tsx`, timing in `TIMING`). | Built, awaiting Kyle's review |
 
 ## Up next and open notes
 - The case study title may change later. "Diagnosing the problem, not the symptom" stands for now (title in `src/beats/01-title.tsx` and `index.html`).
-- Beat 4 is next: where Kyle realized customers had a real problem, conferred with his team, and investigated on his own. Waiting on his copy.
+- Beat 4 is built (Checking the hunch). The 02 Diagnosis section card comes next, then Diagnosis beats.
+- (Kept for reference) Beat 4 brief context: where Kyle realized customers had a real problem, conferred with his team, and investigated on his own. Waiting on his copy.
 - When Kyle asks for them ("ask me the Beat 4 questions", or similar), ask all of these again, in full:
   1. Conferring with the team: who did you bring it to (PM, engineering, CS, account managers), and what came back? Did they recognize it, push back, or say it was a known issue nobody owned? Any real quotes to use?
   2. Your own investigation: what did you actually do (codebase, product data, support tickets, walking the setup flow yourself), and what did you find? This is where the "Codebase Investigation" and "Data-Informed Design" tags pay off.
@@ -164,3 +168,12 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Closing question (full-screen overlay, "or a pattern?" emphasized): Was it a coincidence, or a pattern?
 - Visual labels: Day 1, Day 1, Day 2, Day 2; New feature, Bug walkthrough, Adoption check-in, New feature
 - Overlay: none
+
+### Beat 4 copy (verbatim)
+- Headline: Checking the hunch
+- Body 1: I brought it up with the team. PM and Eng both agreed it was a problem. When I asked where it sat on the roadmap, the answer was that it didn't.
+- Body 2: Before pushing further, I wanted to know how widespread it was. Our masquerade tool let us see the product exactly as a customer saw it, so I used it to look inside roughly 20 of our 200+ customer accounts. I didn't have to dig. Almost every account was either half set up or not set up at all. The fully configured ones were outliers.
+- Closing line (own paragraph, accent): And it wasn't one empty state. It was many.
+- Chat (#team-indigo, placeholder wording, roles not names; Kyle shown as "Design"): five messages as briefed.
+- Montage labels, in order: No events. Events not defined. No ad sources. AI off. AI on, no events. Waiting on data.
+- Overlay (auto after the lines, holds for a key press): Six different empty states. Were they six problems, or one?
