@@ -55,6 +55,44 @@
   /* Claude's coral, only for the reconstructed Claude Code session (approved by Kyle 2026-10-25) */
   --color-coral: #D97757;
 
+  /*
+    ---- color: Freshpaint product UI, from Kyle's Figma (2026-10-25) ----
+    Sampled from the onboarding flow, waiting room, and dashboard frames. Only for the rebuilt Freshpaint
+    screens in the 04 Solution walkthrough (Kyle: "Figma is the source of truth for every screen").
+  */
+  --color-fp-nav: #1E2235;
+  --color-fp-nav-active: #282D3F;
+  --color-fp-bg: #FAFBFB;
+  --color-fp-line: #E3E5E8;
+  --color-fp-ink: #1D2125;
+  --color-fp-body: #4A4D52;
+  --color-fp-muted: #8A9099;
+  --color-fp-track: #DDE0E4;
+  --color-fp-indigo: #3F51B5;
+  --color-fp-indigo-soft: #6473C9;
+  --color-fp-indigo-off: #9DA6D8;
+  --color-fp-indigo-tint: #F4F5FB;
+  --color-fp-green: #4ADE80;
+  --color-fp-green-tint: #DCFCE7;
+  --color-fp-green-ink: #15803D;
+  --color-fp-mint: #61DABF;
+  --color-fp-teal: #249980;
+  --color-fp-new: #DEF7F2;
+  --color-fp-new-ink: #2F7D6D;
+  --color-fp-red: #C62828;
+  --color-fp-red-tint: #FEF6F6;
+  --color-fp-red-line: #F5C9C9;
+  --color-fp-logo: #EE5757;
+  --color-fp-ai: #987DD1;
+  /* chart series (dashboard mock) */
+  --color-fp-s1: #F27B7B;
+  --color-fp-s2: #FDDB6D;
+  --color-fp-s3: #9B7FDA;
+  --color-fp-s4: #F5B98A;
+  --color-fp-s5: #5967CF;
+  --color-fp-s6: #7EE0C9;
+  --color-fp-s7: #A9AEB6;
+
   /* ---- color: case study (approved 2026-10-23) ---- */
   --color-shipped: #61BF50;
   --color-caption: #AAB0B6;

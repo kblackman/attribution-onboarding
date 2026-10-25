@@ -13,6 +13,7 @@ import realNumbers from './11-real-numbers'
 import twoMoments from './12-two-moments'
 import showingWork from './13-showing-work'
 import toTheTeam from './14-to-the-team'
+import showingTeam from './15-showing-team'
 import { sectionCard } from '../components/SectionCard'
 
 // The presentation, in order. Adding a beat: add its file in this folder, then one line here.
@@ -35,4 +36,6 @@ export const beats: Beat[] = [
   twoMoments,
   showingWork,
   toTheTeam,
+  sectionCard('solution'),
+  showingTeam,
 ]
