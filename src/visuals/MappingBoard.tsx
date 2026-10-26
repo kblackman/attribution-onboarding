@@ -9,8 +9,8 @@ import { SHOTS, ShotView } from './EmptyStateMontage'
 /*
   Beat 6 visual ("Connecting the dots"): the method, not the result. A generic whiteboard (not FigJam's UI).
   The six empty-state screenshots from the montage drop on as anchor points, circles and labels intact;
-  step boxes fill the gaps between them; arrows draw in to connect everything; sticky notes pop up at a
-  few friction points. Real screenshots swapped into SHOTS appear here too. Tune the timing here (seconds).
+  step boxes fill the gaps between them; arrows draw in to connect everything; handwritten magenta notes
+  with arrows call out the friction points (Kyle's markup, as on the montage). Real screenshots swapped into SHOTS appear here too. Tune the timing here (seconds).
 */
 export const TIMING = {
   start: 0.4,
@@ -20,8 +20,8 @@ export const TIMING = {
   arrowsAfter: 0.3, // after the last step box
   arrowGap: 0.14,
   arrowDraw: 0.45,
-  stickiesAfter: 0.3, // after the last arrow
-  stickyGap: 0.3,
+  notesAfter: 0.3, // after the last arrow
+  noteGap: 0.45,
   settle: 0.8,
 }
 
@@ -41,19 +41,20 @@ const FLOW: Item[] = [
   { kind: 'step', label: 'AI settings', x: 28, y: 74 },
   { kind: 'shot', shot: 4, x: 10, y: 74 }, // AI on, no events
 ]
-// friction points: sticky notes near these items (index into FLOW), offset in percent
-const STICKIES = [
-  { at: 1, dx: 0, dy: -17, r: -6 },
-  { at: 6, dx: 0, dy: 15, r: 5 },
-  { at: 8, dx: 1, dy: 15, r: -4 },
+// friction points: a handwritten note above or below a step (index into FLOW), with an arrow to it.
+// Wording derived from the case study, to confirm with Kyle.
+const NOTES: { at: number; text: string; side: 'above' | 'below'; r: number }[] = [
+  { at: 1, text: 'Leaves Attribution to create events', side: 'above', r: -4 },
+  { at: 6, text: 'No way back after connecting', side: 'below', r: 3 },
+  { at: 8, text: 'Leaves Attribution to turn on AI', side: 'below', r: -3 },
 ]
 
 const shots = FLOW.filter((f) => f.kind === 'shot')
 const stepsOnly = FLOW.filter((f) => f.kind === 'step')
 const STEPS_AT = TIMING.start + shots.length * TIMING.shotGap + TIMING.stepsAfter
 const ARROWS_AT = STEPS_AT + stepsOnly.length * TIMING.stepGap + TIMING.arrowsAfter
-const STICKIES_AT = ARROWS_AT + (FLOW.length - 1) * TIMING.arrowGap + TIMING.arrowDraw + TIMING.stickiesAfter
-const TOTAL = STICKIES_AT + STICKIES.length * TIMING.stickyGap + TIMING.settle
+const NOTES_AT = ARROWS_AT + (FLOW.length - 1) * TIMING.arrowGap + TIMING.arrowDraw + TIMING.notesAfter
+const TOTAL = NOTES_AT + NOTES.length * TIMING.noteGap + TIMING.settle
 
 const halfW = (f: Item) => (f.kind === 'shot' ? SHOT_W : STEP_W) / 2
 const halfH = (f: Item) => (f.kind === 'shot' ? (SHOT_W * 10) / 16 : 5) / 2 / 0.625 // percent of board height
@@ -145,21 +146,31 @@ export function MappingBoard(props: VisualProps) {
           )
         })}
 
-        {/* friction points */}
-        {STICKIES.map((s, i) => {
-          const f = FLOW[s.at]
+        {/* friction points: Kyle's handwritten notes, each with an arrow to its step */}
+        {NOTES.map((n, i) => {
+          const f = FLOW[n.at]
+          const edge = f.y + (n.side === 'above' ? -halfH(f) - 1 : halfH(f) + 1) // percent of board height
           return (
-            <Placed key={`s${i}`} x={f.x + s.dx} y={f.y + s.dy} w={7.5} r={s.r} z={30}>
-              <motion.div
-                className="flex aspect-square flex-col justify-center gap-[0.7cqw] rounded-[0.3cqw] p-[0.9cqw] shadow-[0_6px_16px_rgba(20,21,28,0.18)]"
-                style={{ background: 'color-mix(in srgb, var(--color-annotation) 22%, var(--color-surface))' }}
-                {...pop(STICKIES_AT + i * TIMING.stickyGap, 0.6)}
-              >
-                {[90, 70, 80].map((w, k) => (
-                  <span key={k} className="block h-[0.45cqw] rounded-full" style={{ width: `${w}%`, background: 'color-mix(in srgb, var(--color-annotation) 55%, var(--color-surface))' }} />
-                ))}
+            <div
+              key={`n${i}`}
+              className="absolute z-30 flex w-[17cqw] flex-col items-center"
+              style={{ left: `${f.x}%`, top: `${edge}%`, transform: `translate(-50%, ${n.side === 'above' ? '-100%' : '0'})` }}
+            >
+              <motion.div className={`flex items-center ${n.side === 'below' ? 'flex-col-reverse' : 'flex-col'}`} {...pop(NOTES_AT + i * TIMING.noteGap, 0.9)}>
+                <span
+                  className="block text-center font-[family-name:var(--font-hand)] text-[clamp(11px,1.75cqw,30px)] font-bold leading-[1.05] text-annotation"
+                  style={{ transform: `rotate(${n.r}deg)` }}
+                >
+                  {n.text}
+                </span>
+                <svg viewBox="0 0 30 34" className={`h-[3.2cqw] w-[2.8cqw] overflow-visible ${n.side === 'below' ? 'mb-[0.3cqw] rotate-180' : 'mt-[0.3cqw]'}`} aria-hidden="true">
+                  <g fill="none" stroke="var(--color-annotation)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2 C9 12 9 22 15 31" vectorEffect="non-scaling-stroke" />
+                    <path d="M9 25 L15 31 L20 24" vectorEffect="non-scaling-stroke" />
+                  </g>
+                </svg>
               </motion.div>
-            </Placed>
+            </div>
           )
         })}
       </div>

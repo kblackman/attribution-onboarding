@@ -15,7 +15,7 @@ const beat: Beat = {
       <div className="text-with-aside mt-[clamp(18px,calc(var(--u)*2.6),46px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-main">
           <p className="m-0">
-            The drawer was fully self-contained. It had no dependency on the Events page, so surfacing it in Attribution's new setup flow took only a few lines of code, and it could stay in Events for anyone used to creating events there. The investigation also showed that only two fields were required, event name and CSS selector, something the drawer itself never made clear.
+            The drawer was fully self-contained. It had no dependency on the Events page, so surfacing it in Attribution's new setup flow took only a few lines of code, and it could stay in Events for anyone used to creating events there.
           </p>
         </Reveal>
         <Reveal order={2} className="twa-aside">

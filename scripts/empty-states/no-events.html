@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   "No events" empty state, recreated (Kyle had no screen grab of it). Modeled on the product's
-  "No integrations connected" screen from the same era: same shell, same layout, an events illustration,
+  "No integrations connected" screen (same layout), in the walkthrough's shell (its sidebar, exactly, per Kyle), an events illustration,
   "No events created", and "+ Add Event". Mock content only.
   Render to public/assets/hunch/no-events.png with: sh scripts/empty-states/render.sh
 -->
@@ -14,22 +14,33 @@
   html, body { width: 1512px; height: 982px; overflow: hidden; font-family: Roboto, sans-serif; color: #1e2125; background: #fff; }
   .app { display: flex; height: 982px; }
 
-  /* sidebar */
-  .side { width: 240px; flex: none; background: #1f2d3d; color: #fff; padding: 20px 12px; }
-  .logo { display: block; height: 28px; width: auto; margin: 2px 0 22px 10px; }
-  .ws { border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 10px 14px; display: flex; align-items: center; margin-bottom: 18px; }
-  .ws span { flex: 1; display: flex; flex-direction: column; }
-  .ws small { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 18px; }
-  .ws b { font-size: 16px; font-weight: 600; line-height: 22px; }
-  .row { height: 44px; display: flex; align-items: center; gap: 12px; padding: 0 12px; font-size: 14px; font-weight: 500; }
-  .row svg { width: 20px; height: 20px; flex: none; }
-  .row .label { flex: 1; }
-  .caret { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #fff; }
-  .caret.up { border-top: 0; border-bottom: 5px solid #fff; }
-  .caret.right { border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 5px solid #fff; border-right: 0; }
-  .group { background: rgba(255,255,255,0.05); border-radius: 6px; padding-bottom: 4px; }
-  .sub { height: 44px; display: flex; align-items: center; padding-left: 40px; font-size: 14px; font-weight: 500; margin-left: 0; }
-  .sub.on { background: rgba(255,255,255,0.12); border-radius: 6px 0 0 6px; margin-left: 28px; padding-left: 12px; }
+  /* sidebar: an exact port of the walkthrough's Sidebar (src/visuals/onboarding-screens.tsx), same Figma assets */
+  .side { width: 240px; flex: none; background: #0d1126; color: #fff; display: flex; flex-direction: column; }
+  .brand { height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 24px; }
+  .brand .logo { width: 148.7px; height: 32px; display: block; }
+  .icon-box { width: 32px; height: 32px; display: grid; place-items: center; }
+  .env-wrap { padding: 0 12px 16px; }
+  .env { display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 9px 13px; }
+  .env .txt { flex: 1; height: 56px; display: flex; flex-direction: column; justify-content: center; }
+  .env small { font-size: 12px; font-weight: 700; line-height: 16px; color: rgba(255,255,255,0.6); }
+  .env b { font-size: 14px; font-weight: 700; line-height: 20px; }
+  .rot { transform: rotate(-90deg); }
+  .divider { height: 1px; background: #23303e; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .nav { padding: 6px 6px 4px; }
+  .cell { padding: 6px; }
+  .navrow { height: 40px; width: 216px; display: flex; align-items: center; border-radius: 8px; padding: 0 12px; font-size: 14px; font-weight: 700; line-height: 20px; letter-spacing: 0.35px; }
+  .navrow .ic { padding-right: 8px; display: flex; }
+  .navrow .label { flex: 1; }
+  .badge-new { border-radius: 6px; background: #def7f2; color: #186756; padding: 4px 8px; font-size: 12px; font-weight: 500; line-height: 16px; letter-spacing: 0.35px; }
+  .grp-head { border-radius: 8px 8px 0 0; background: rgba(255,255,255,0.07); }
+  .grp-list { border-radius: 0 0 8px 8px; background: rgba(255,255,255,0.07); padding: 6px 0 0 16px; }
+  .subcell { height: 44px; padding: 0 0 4px 16px; }
+  .sub { height: 40px; width: 184px; display: flex; align-items: center; justify-content: space-between; border-radius: 8px 0 0 8px; padding: 0 4px 0 12px; font-size: 12px; line-height: 20px; letter-spacing: 0.35px; }
+  .sub.on { background: rgba(73,83,96,0.23); }
+  .ai { position: relative; width: 20px; height: 20px; overflow: hidden; display: block; }
+  .ai .a { position: absolute; top: 0; left: 5.56%; width: 88.88%; height: 100%; }
+  .ai .m { position: absolute; inset: 16.02% 35.97% 37.41% 17.46%; -webkit-mask: url(../../public/assets/showing-team/nav-ai-mask.svg) -0.621px -1.242px / 10.556px 10.556px no-repeat; mask: url(../../public/assets/showing-team/nav-ai-mask.svg) -0.621px -1.242px / 10.556px 10.556px no-repeat; }
+  .ai .m img { position: absolute; inset: 0; width: 100%; height: 100%; }
 
   /* main */
   .main { flex: 1; display: flex; flex-direction: column; }
@@ -56,29 +67,28 @@
 <body>
 <div class="app">
   <aside class="side">
-    <img class="logo" src="logo.svg" alt="Freshpaint">
-    <div class="ws"><span><small>Main</small><b>Production</b></span><i class="caret right"></i></div>
-
-    <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h16M7 5v0M7 19v0"/><rect x="3" y="3" width="18" height="18" rx="3" opacity="0"/></svg><span class="label">SDK Setup</span><i class="caret"></i></div>
-    <div class="group">
-      <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V14M9 20V10M14 20v-6M19 20V8M3 9l5-4 5 4 7-5"/></svg><span class="label">Marketing</span><i class="caret up"></i></div>
-      <div class="sub">Ad Performance</div>
-      <div class="sub">Audiences</div>
-      <div class="sub on">Attribution</div>
+    <div class="brand"><img class="logo" src="../../public/assets/showing-team/logo.svg" alt="Freshpaint"><span class="icon-box"><img src="../../public/assets/showing-team/nav-collapse.svg" width="18" height="18" alt=""></span></div>
+    <div class="env-wrap"><div class="env"><img src="../../public/assets/showing-team/nav-env.svg" width="20" height="20" alt=""><span class="txt"><small>Main</small><b>Production</b></span><img class="rot" src="../../public/assets/showing-team/chevron-env.svg" width="20" height="20" alt=""></div></div>
+    <div class="divider"></div>
+    <div class="nav">
+      <div class="cell"><div class="navrow"><span class="ic"><span class="ai"><img class="a" src="../../public/assets/showing-team/nav-ai.svg" alt=""><span class="m"><img src="../../public/assets/showing-team/nav-ai-spark.svg" alt=""></span></span></span><span class="label">Freshpaint AI</span><span style="padding-right:4px"><span class="badge-new">New</span></span></div></div>
+      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-sources.svg" width="20" height="20" alt=""></span><span class="label">Sources</span></div></div>
+      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-events.svg" width="20" height="20" alt=""></span><span class="label">Events</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
+      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-destinations.svg" width="20" height="20" alt=""></span><span class="label">Destinations</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
+      <div class="cell"><div class="grp-head"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-insights.svg" width="20" height="20" alt=""></span><span class="label">Insights</span><img src="../../public/assets/showing-team/chevron-up.svg" width="20" height="20" alt=""></div></div><div class="grp-list"><div class="subcell"><div class="sub on">Attribution</div></div><div class="subcell"><div class="sub">Web Analytics<span class="badge-new">New</span></div></div><div class="subcell"><div class="sub">Funnels<span class="badge-new">New</span></div></div><div class="subcell"><div class="sub">Heatmaps<span class="badge-new">New</span></div></div><div class="subcell"><div class="sub">Session Replay<span class="badge-new">New</span></div></div><div class="subcell"><div class="sub">Surveys<span class="badge-new">New</span></div></div></div></div>
+      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-audiences.svg" width="20" height="20" alt=""></span><span class="label">Audiences</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
+      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-consent.svg" width="20" height="20" alt=""></span><span class="label">Consent</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
+      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-short-links.svg" width="20" height="20" alt=""></span><span class="label">Short Links</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
+      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-internal-tools.svg" width="20" height="20" alt=""></span><span class="label">Internal Tools</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
     </div>
-    <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="9" width="6" height="6" rx="1"/><path d="M9 6h3v12H9M12 12h3"/></svg><span class="label">Integrations</span><i class="caret"></i></div>
-    <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 6h7a3 3 0 010 6H10a3 3 0 000 6h7"/></svg><span class="label">Events</span><i class="caret"></i></div>
-    <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h1M11 8h5M8 12h1M11 12h5M8 16h1M11 16h5"/></svg><span class="label">Forms</span></div>
-    <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg><span class="label">Video</span></div>
-    <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/></svg><span class="label">Settings</span><i class="caret"></i></div>
   </aside>
 
   <main class="main">
     <div class="top">
       <span class="crumb">Attribution</span>
       <span class="tools">
-        <span class="tool"><img src="bell.svg" alt=""><span class="badge">1</span></span>
-        <span class="tool"><img src="help.svg" alt=""></span>
+        <span class="tool"><img src="../../public/assets/showing-team/bell.svg" alt=""><span class="badge">1</span></span>
+        <span class="tool"><img src="../../public/assets/showing-team/help.svg" alt=""></span>
         <span class="tool"><span class="avatar">AN</span></span>
       </span>
     </div>
