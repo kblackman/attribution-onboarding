@@ -49,7 +49,7 @@ export const EVENT_SELECTOR = 'button.booked-appt'
 export const DASHBOARD_SCROLL = 7
 
 const STEPS = ['Create an event', 'Define conversion events', 'Connect ad sources', 'Enable AI']
-const PAGE_H = 900 - 65 // the main area under the header
+const PAGE_H = 900 - 56 // the main area under the top bar
 export const asset = (name: string) => `${import.meta.env.BASE_URL}assets/showing-team/${name}.svg`
 const Img = ({ name, size, className = '' }: { name: string; size: number; className?: string }) => (
   <img src={asset(name)} alt="" width={size} height={size} className={`block flex-none ${className}`} draggable={false} />
@@ -73,7 +73,7 @@ const STACK = '[grid-area:1/1]'
 export const ASSETS = [
   'logo', 'nav-collapse', 'nav-env', 'chevron-env', 'nav-ai', 'nav-ai-mask', 'nav-ai-spark', 'nav-sources', 'nav-events',
   'chevron-down', 'nav-destinations', 'nav-insights', 'chevron-up', 'nav-audiences', 'nav-consent', 'nav-short-links',
-  'nav-internal-tools', 'step-done', 'google-ads', 'plug', 'meta', 'bing-tile', 'arrow-right', 'close', 'plus', 'triangle-alert',
+  'nav-internal-tools', 'bell', 'help', 'step-done', 'google-ads', 'plug', 'meta', 'bing-tile', 'arrow-right', 'close', 'plus', 'triangle-alert',
 ]
 /** The product fonts, for the same reason (the page loads them with display=swap). */
 export const FONTS = ['400 14px Inter', '500 14px Inter', '600 14px Inter', '700 14px Inter', '400 14px Roboto', '500 14px Roboto', '700 14px Roboto']
@@ -83,7 +83,7 @@ export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string |
     <div className="relative flex h-[900px] w-[1440px] overflow-hidden bg-fp-bg font-fp text-fp-ink" style={{ fontSize: 14 }}>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="relative z-10 h-[65px] flex-none border-b border-fp-line bg-white" />
+        <TopBar />
         <div className="relative grid flex-1 overflow-hidden">
           <AnimatePresence initial={false}>
             {ui.screen === 'setup' && (
@@ -227,6 +227,27 @@ function NavRow({ label, icon, badge, chevron }: { label: string; icon: ReactNod
         </span>
       )}
       {chevron && <Img name={chevron === 'up' ? 'chevron-up' : 'chevron-down'} size={20} />}
+    </div>
+  )
+}
+
+/** The product's top bar (from the 2026 Insights frame), with the breadcrumb reading Attribution, per Kyle. */
+function TopBar() {
+  return (
+    <div className="relative z-10 flex h-[56px] flex-none items-center gap-[64px] border-b border-fp-line bg-white px-[32px] font-fp-ui">
+      <span className="flex-1 text-[12px] font-bold leading-[24px] underline">Attribution</span>
+      <span className="flex items-center gap-[4px]">
+        <span className="relative grid h-[48px] w-[48px] place-items-center">
+          <Img name="bell" size={24} />
+          <span className="absolute right-[7px] top-[7px] rounded-full border border-white bg-fp-indigo px-[5px] py-[2px] text-[10px] font-medium leading-[12px] text-white">1</span>
+        </span>
+        <span className="grid h-[48px] w-[48px] place-items-center">
+          <Img name="help" size={24} />
+        </span>
+        <span className="grid h-[48px] w-[48px] place-items-center">
+          <span className="grid h-[36px] w-[36px] place-items-center rounded-full border border-white bg-fp-indigo-soft text-[14px] leading-[20px] text-white">AN</span>
+        </span>
+      </span>
     </div>
   )
 }
