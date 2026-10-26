@@ -46,6 +46,8 @@ const STATES = {
   'ai-no-events': { widgets: NEWER({ recs: 'define' }), focus: 'recs' },
   'recs-processing': { widgets: NEWER({ recs: 'processing' }), focus: 'recs' },
   'not-enough-data': { widgets: NEWER({ recs: 'no-data' }), focus: 'recs' },
+  // setup done, waiting on data ingestion (Kyle's screenshot): empty chart and an empty table; circled across both
+  'waiting-on-data': { widgets: { header: 'manage', filters: 'model', kpis: 'conversions-empty', adsCta: 'connect', chart: 'empty', table: 'empty' }, focus: ['chart', 'table'], at: 20 },
   // no ad platforms connected: the Connect section sits between the chart and the table
   'no-ad-sources': { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: 'connect', table: 'full' }, focus: 'adsCta', at: 556 },
 }
@@ -77,6 +79,7 @@ const WIDGETS = {
         <div class="right"><span class="consent">Consent Mode <i class="toggle"></i></span><span class="primary">Manage Conversions</span></div>
       </div>`,
     title: () => `<div class="head"><h1>Attribution</h1></div>`,
+    manage: () => `<div class="head"><h1>Attribution</h1><div class="right"><span class="primary">Manage Conversions</span></div></div>`,
     docs: () => `
       <div class="head">
         <div>
@@ -221,6 +224,7 @@ const WIDGETS = {
       </div>`,
   },
 
+  // (chart and table empty variants live with their widgets below)
   // the No ad sources empty state: one column per ad platform (the product had Meta and Google; Microsoft added per Kyle)
   adsCta: {
     connect: () => `
@@ -262,6 +266,21 @@ const WIDGETS = {
   },
 }
 
+WIDGETS.chart.empty = () =>
+  WIDGETS.chart.full()
+    .replace(/<div class="v">84\.64%<\/div>/, '<div class="v"><span class="dash">-</span></div>')
+    .replace(/<div class="items">[\s\S]*?<\/div>/, '<div class="items"><span><i class="bing"></i>Google Ads <em>(0)</em></span><span><i class="google"></i>Meta Ads <em>(0)</em></span></div>')
+    .replace(/<div class="bars">[\s\S]*?<\/div>\s*<div class="xl">/, '<div class="bars"></div><div class="xl">')
+// the table's container with nothing in it yet (styled like the Define your events card). Copy is Claude's draft.
+WIDGETS.table.empty = () => `
+  <div class="tablebar">
+    <span class="muted" style="font-size:14px">Last 7 complete days</span>
+  </div>
+  <div class="card define nodata-table">
+    <h3>No data yet</h3>
+    <p>Once your data is processed, your sources and campaigns will show up here.</p>
+  </div>`
+
 function kpi(title, value, footLabel, footValue) {
   return `<div class="card kpi"><div class="t">${title}</div><div class="v">${value}</div><div class="f">${footLabel}<b style="font-weight:400">${footValue}</b></div></div>`
 }
@@ -284,11 +303,12 @@ page.innerHTML = Object.entries(state.widgets)
   .join('')
 
 // frame the capture on the empty state, and report its box for SHOTS
-const focus = page.querySelector(`[data-w="${state.focus}"]`)
-const box = focus.querySelector('.card, .nodata') || focus
+const boxes = [].concat(state.focus).map((w) => { const f = page.querySelector(`[data-w="${w}"]`); return f.querySelector('.card, .nodata') || f })
+const box = boxes[0]
 // no `at`: the page sits as it would on load (no scroll)
 if (state.at !== undefined) page.style.transform = `translateY(${state.at - box.offsetTop}px)`
-const r = box.getBoundingClientRect()
+const rs = boxes.map((b) => b.getBoundingClientRect())
+const r = { left: Math.min(...rs.map((q) => q.left)), top: Math.min(...rs.map((q) => q.top)), width: Math.max(...rs.map((q) => q.right)) - Math.min(...rs.map((q) => q.left)), height: Math.max(...rs.map((q) => q.bottom)) - Math.min(...rs.map((q) => q.top)) }
 const pct = (n, d) => Math.round((n / d) * 1000) / 10
 document.body.dataset.zone = JSON.stringify({ x: pct(r.left, 1512), y: pct(r.top, 982), w: pct(r.width, 1512), h: pct(r.height, 982) })
 </script>

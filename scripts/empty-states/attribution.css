@@ -141,3 +141,4 @@
   .nodata-icon { width: 46px; height: 46px; border-radius: 99px; background: #e8eaf6; display: grid; place-items: center; }
   .nodata h3 { margin-top: 18px; font-size: 20px; font-weight: 600; }
   .nodata p { margin-top: 12px; max-width: 520px; font-size: 15px; line-height: 23px; color: #5d6875; }
+  .nodata-table { margin-top: 16px; height: 200px; }

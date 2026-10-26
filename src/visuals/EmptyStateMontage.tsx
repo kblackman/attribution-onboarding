@@ -55,7 +55,8 @@ export const SHOTS: Shot[] = [
   // from Kyle's screen grabs, in the componentized Attribution shell: attribution.html?state=ai-off / ai-no-events
   { label: 'AI off', src: 'ai-off.png', aspect: 1512 / 982, empty: { x: 18, y: 18, w: 79.9, h: 25.3 } },
   { label: 'AI on, no events', src: 'ai-no-events.png', aspect: 1512 / 982, empty: { x: 18, y: 18, w: 79.9, h: 25.3 } },
-  { label: 'Waiting on data', placeholder: 'waiting', empty: Z.body, question: true, labelAt: { x: 70, y: 8 } },
+  // from Kyle's screenshot plus his notes (empty chart, empty table container): attribution.html?state=waiting-on-data
+  { label: 'Waiting on data', src: 'waiting-on-data.png', aspect: 1512 / 982, empty: { x: 18, y: 7.7, w: 79.9, h: 82.1 }, question: true, labelAt: { x: 62, y: 3.5 } },
 ]
 
 export const TIMING = {
