@@ -46,7 +46,8 @@ export const Z = {
 
 /** The six, in order. Swap in real screenshots here (see above). */
 export const SHOTS: Shot[] = [
-  { label: 'No events', placeholder: 'no-events', empty: Z.chart },
+  // recreated (no screen grab survived): scripts/empty-states/no-events.html, rendered by render.sh
+  { label: 'No events', src: 'no-events.png', aspect: 1512 / 982, empty: { x: 42, y: 31, w: 32, h: 36 } },
   { label: 'Events not defined', placeholder: 'events-undefined', empty: Z.kpis },
   { label: 'No ad sources', placeholder: 'no-ad-sources', empty: Z.side },
   { label: 'AI off', placeholder: 'ai-off', empty: Z.bottom },
