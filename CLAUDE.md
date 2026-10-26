@@ -238,7 +238,7 @@ Connecting the dots
 
 Checking my work
 - With the flow mapped as I understood it, I brought it to the team. I wanted to know two things: was I missing any steps, and what caused each empty state?
-- Their answers filled the gaps. The biggest surprise was that some empty states weren't indicative of a problem at all. The setup was complete, the account was just waiting on data ingestion. Though nothing communicated that to the user. (Kyle's wording, 2026-10-25)
+- Their answers filled the gaps. The biggest surprise was that some empty states weren't a sign of a problem at all. A customer could set everything up correctly and still see one while Attribution waited on data ingestion. Though explicitly nothing told them that. (rewritten with Kyle 2026-10-25)
 - With the flow confirmed, I could finally see the full path a customer had to take.
 - Counters: Times you left Attribution. Empty states hit.
 - Overlay (on a key press after the zoom-out, per Kyle): To set up Attribution properly, a new customer had to leave it three times, find their way back on their own, and push through six empty states. (Option C, chosen by Kyle 2026-10-25: the goal is a fully set-up Attribution, not the first recommendation.)
