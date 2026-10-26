@@ -121,6 +121,30 @@ export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string |
   )
 }
 
+/** The product's frame (sidebar, top bar) around any content, in the same 1440 x 900 space. */
+export function ProductFrame({ children }: { children: ReactNode }) {
+  return (
+    <div className="relative flex h-[900px] w-[1440px] overflow-hidden bg-fp-bg font-fp text-fp-ink" style={{ fontSize: 14 }}>
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <TopBar />
+        <div className="relative flex-1 overflow-hidden">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+/** The setup guide's heading and progress bar. */
+export function SetupHeading({ phase, reduced }: { phase: 1 | 2 | 3 | 4; reduced: boolean }) {
+  return (
+    <>
+      <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo-soft">SETUP GUIDE</p>
+      <h3 className="m-0 mt-[4px] text-[32px] font-semibold leading-normal tracking-[-0.64px]">Getting started with Attribution</h3>
+      <Progress phase={phase} reduced={reduced} />
+    </>
+  )
+}
+
 /* ---------- buttons (sizes and styles from the frames; hover states are ours, a step darker) ---------- */
 
 type Kind = 'primary' | 'outline' | 'ghost'
@@ -311,7 +335,7 @@ function Progress({ phase, reduced }: { phase: number; reduced: boolean }) {
 
 /* ---------- setup steps ---------- */
 
-function SetupCard({ n, title, optional, body, children }: { n: number; title: string; optional?: boolean; body: ReactNode; children: ReactNode }) {
+export function SetupCard({ n, title, optional, body, children }: { n: number; title: string; optional?: boolean; body: ReactNode; children: ReactNode }) {
   return (
     <div className="mt-[40px] flex min-h-[140px] flex-col gap-[40px] rounded-[12px] border border-black/[0.09] bg-white p-[40px] shadow-[0_0_3px_rgba(0,0,0,0.08)]">
       <div className="flex flex-col gap-[16px]">
@@ -327,7 +351,7 @@ function SetupCard({ n, title, optional, body, children }: { n: number; title: s
   )
 }
 
-function Footer({ hover, back = true, skip = false, label = 'Continue', enabled = true, arrow = true }: { hover: string | null; back?: boolean; skip?: boolean; label?: string; enabled?: boolean; arrow?: boolean }) {
+export function Footer({ hover, back = true, skip = false, label = 'Continue', enabled = true, arrow = true }: { hover: string | null; back?: boolean; skip?: boolean; label?: string; enabled?: boolean; arrow?: boolean }) {
   return (
     <div className="mt-[40px] flex items-center justify-between">
       {back ? (
@@ -372,6 +396,37 @@ const Avatar = ({ letter, dark = false, size = 32 }: { letter: string; dark?: bo
     {letter}
   </span>
 )
+
+export interface TrackedEvent {
+  name: string
+  selector?: string
+  funnel?: 'mid' | 'low'
+}
+
+/** The setup step's event list (after the first event): one row per event, then Add another. Shared with the tweaks-panel prototype. */
+export function EventList({ events, hover, reduced }: { events: TrackedEvent[]; hover: string | null; reduced: boolean }) {
+  return (
+    <>
+      <motion.ul layout className="m-0 flex list-none flex-col gap-[4px] p-0" transition={{ duration: reduced ? 0 : 0.45, ease: EASE_DECK }}>
+        <AnimatePresence initial={false}>
+          {events.map((e) => (
+            <motion.li key={e.name} layout {...fade(reduced)} exit={{ opacity: 0 }}>
+              <Row lead={<Avatar letter={e.name[0]} />} label={e.name} sub={e.selector}>
+                <Trash />
+              </Row>
+            </motion.li>
+          ))}
+        </AnimatePresence>
+      </motion.ul>
+      <motion.div layout className="mt-[20px] flex justify-center" transition={{ duration: reduced ? 0 : 0.45, ease: EASE_DECK }}>
+        <Button t="create" kind="outline" size="md" hover={hover}>
+          <Img name="plus" size={16} />
+          Add another
+        </Button>
+      </motion.div>
+    </>
+  )
+}
 
 const EventRow = ({ sub, children }: { sub?: string; children?: ReactNode }) => (
   <Row lead={<Avatar letter="B" />} label={EVENT_NAME} sub={sub}>
@@ -426,19 +481,7 @@ function SetupStep({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; r
         <SetupCard n={1} title="Create an event" body="Add at least one event you want to track. You can add more than one, but one is enough to continue.">
           {ui.events > 0 ? (
             // after the first event (Kyle's reference frame): the list, then Add another; the dashed zone is gone
-            <>
-              <motion.div {...fade(reduced)}>
-                <EventRow sub={EVENT_SELECTOR}>
-                  <Trash />
-                </EventRow>
-              </motion.div>
-              <div className="mt-[20px] flex justify-center">
-                <Button t="create" kind="outline" size="md" hover={hover}>
-                  <Img name="plus" size={16} />
-                  Add another
-                </Button>
-              </div>
-            </>
+            <EventList events={[{ name: EVENT_NAME, selector: EVENT_SELECTOR }]} hover={hover} reduced={reduced} />
           ) : (
             <div className="flex flex-col items-center justify-center rounded-[10px] border border-dashed border-fp-indigo-line bg-fp-indigo-tint py-[40px]">
               <Button t="create" kind="outline" size="md" hover={hover}>
@@ -662,14 +705,51 @@ const Select = ({ value, className = '' }: { value: string; className?: string }
 
 /* ---------- waiting room ---------- */
 
-function WaitingRoom({ reduced }: { reduced: boolean }) {
+/**
+ * The waiting room's "Events being tracked": Mid-funnel and Low-funnel groups, chips four across, so the list
+ * wraps to a new row after every four events. Shared with the tweaks-panel prototype.
+ */
+export function TrackedEvents({ events, reduced }: { events: TrackedEvent[]; reduced: boolean }) {
+  const tr = { duration: reduced ? 0 : 0.45, ease: EASE_DECK }
+  const groups = (['mid', 'low'] as const).map((f) => ({ f, list: events.filter((e) => (e.funnel ?? 'low') === f) })).filter((g) => g.list.length)
+  return (
+    <div className="flex flex-col gap-[4px]">
+      {groups.map(({ f, list }) => (
+        <motion.div key={f} layout transition={tr} className="rounded-[10px] border border-fp-line bg-white p-[16px]">
+          <p className="m-0 text-[12px] font-semibold tracking-[0.06em] text-fp-muted">{f === 'mid' ? 'MID-FUNNEL' : 'LOW-FUNNEL'}</p>
+          <ul className="m-0 mt-[14px] grid list-none grid-cols-4 gap-[6px] p-0">
+            <AnimatePresence initial={false}>
+              {list.map((e) => (
+                <motion.li
+                  key={e.name}
+                  layout
+                  initial={{ opacity: 0, scale: reduced ? 1 : 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={tr}
+                  className="flex min-w-0 items-center gap-[6px] rounded-[6px] border border-fp-line px-[6px] py-[7px] text-[11.5px] font-semibold"
+                >
+                  <Avatar letter={e.name[0]} dark={f === 'low'} size={20} />
+                  <span className="truncate">{e.name}</span>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </ul>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** The waiting room. `events` defaults to the walkthrough's one low-funnel event. */
+export function WaitingRoom({ reduced, events = [{ name: EVENT_NAME, funnel: 'low' }], compact = false }: { reduced: boolean; events?: TrackedEvent[]; compact?: boolean }) {
   return (
     <div className="mx-auto w-[700px] pt-[32px]">
       <div className="flex items-center gap-[18px]">
         <span className="text-[32px] font-semibold tracking-[-0.64px]">Attribution</span>
         <span className="rounded-full bg-fp-line px-[9px] py-[4px] text-[11px] font-semibold tracking-[0.02em]">PROCESSING</span>
       </div>
-      <div className="mt-[40px] flex flex-col items-center rounded-[12px] border border-black/[0.09] bg-white px-[100px] py-[40px] text-center shadow-[0_0_3px_rgba(0,0,0,0.08)]">
+      <div className={`flex flex-col items-center rounded-[12px] border border-black/[0.09] bg-white px-[100px] text-center shadow-[0_0_3px_rgba(0,0,0,0.08)] ${compact ? 'mt-[24px] py-[24px]' : 'mt-[40px] py-[40px]'}`}>
         <span className="relative grid h-[56px] w-[56px] place-items-center rounded-[8px] bg-fp-indigo-soft">
           {!reduced && (
             <motion.span
@@ -686,19 +766,15 @@ function WaitingRoom({ reduced }: { reduced: boolean }) {
           Everything's set up correctly. Attribution runs on a daily processing cycle, so your first charts and rankings will be ready after today's data is processed.
         </p>
       </div>
-      <div className="mt-[40px] flex items-center justify-between">
+      <div className={`flex items-center justify-between ${compact ? 'mt-[24px]' : 'mt-[40px]'}`}>
         <span className="text-[16px] font-semibold">Events being tracked</span>
         <span className="flex h-[36px] items-center gap-[6px] rounded-[6px] border border-fp-line-strong bg-white px-[12px] font-fp-ui text-[12px] font-medium">
           <Gear />
           Manage conversions
         </span>
       </div>
-      <div className="mt-[16px] rounded-[10px] border border-fp-line bg-white p-[16px]">
-        <p className="m-0 text-[12px] font-semibold tracking-[0.06em] text-fp-muted">LOW-FUNNEL</p>
-        <span className="mt-[14px] inline-flex items-center gap-[7px] rounded-[6px] border border-fp-line px-[8px] py-[7px] text-[12px] font-semibold">
-          <Avatar letter="B" dark size={20} />
-          {EVENT_NAME}
-        </span>
+      <div className="mt-[16px]">
+        <TrackedEvents events={events} reduced={reduced} />
       </div>
     </div>
   )
