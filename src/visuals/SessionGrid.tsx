@@ -13,7 +13,7 @@ import { SHOTS, type Shot } from './EmptyStateMontage'
   empty area as the tile lands. After the fourth, that tile zooms to fill the frame and holds.
   Generic avatars, no names or data. Each tile can show one of the montage's recreated screenshots (shot), fitted
   into the shared screen at its own proportions, circled on its empty area; tiles without one still draw the
-  placeholder. Per Kyle's copy the sessions showed No ad sources and AI off; AI off isn't built yet.
+  placeholder. Per Kyle's copy the sessions showed No ad sources and AI off.
   Tune the timing here (seconds).
 */
 export const TIMING = {
@@ -29,11 +29,12 @@ export const TIMING = {
 }
 const shot = (label: string) => SHOTS.find((s) => s.label === label && s.src)
 const NO_AD_SOURCES = shot('No ad sources')
+const AI_OFF = shot('AI off')
 // the last tile zooms to fill the frame, so it gets a real screenshot first
 const SESSIONS: { day: string; purpose: string; shot?: Shot }[] = [
   { day: 'Day 1', purpose: 'New feature', shot: NO_AD_SOURCES },
-  { day: 'Day 1', purpose: 'Bug walkthrough' }, // AI off, once it's built
-  { day: 'Day 2', purpose: 'Adoption check-in' }, // AI off, once it's built
+  { day: 'Day 1', purpose: 'Bug walkthrough', shot: AI_OFF },
+  { day: 'Day 2', purpose: 'Adoption check-in', shot: AI_OFF },
   { day: 'Day 2', purpose: 'New feature', shot: NO_AD_SOURCES },
 ]
 const tileAt = (i: number) => TIMING.start + i * TIMING.tileStagger
@@ -74,7 +75,7 @@ export function SessionGrid(props: VisualProps) {
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
       <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Placeholder shapes, final visual to come</PlaceholderBadge>
+        <PlaceholderBadge>Recreated screens, mock data</PlaceholderBadge>
       </div>
       <div
         className="relative overflow-hidden rounded-[14px]"

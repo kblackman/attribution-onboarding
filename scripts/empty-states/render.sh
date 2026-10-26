@@ -14,7 +14,7 @@ mkdir -p "$OUT"
 "$CHROME" $FLAGS --force-device-scale-factor=2 --screenshot="$OUT/no-events.png" "file://$PWD/no-events.html" 2>/dev/null
 echo "rendered no-events.png"
 
-for state in events-undefined no-ad-sources; do
+for state in events-undefined no-ad-sources ai-off ai-no-events recs-processing not-enough-data; do
   url="file://$PWD/attribution.html?state=$state"
   "$CHROME" $FLAGS --force-device-scale-factor=2 --screenshot="$OUT/$state.png" "$url" 2>/dev/null
   zone=$("$CHROME" $FLAGS --dump-dom "$url" 2>/dev/null | grep -o 'data-zone="[^"]*"' | sed 's/data-zone=//; s/&quot;/"/g; s/^"//; s/"$//')

@@ -98,3 +98,46 @@
   .define h3 { font-size: 17px; font-weight: 600; }
   .define p { margin-top: 14px; max-width: 480px; font-size: 15px; line-height: 21px; color: #5d6875; }
   .define .primary { margin-top: 20px; }
+
+  /* the newer page (AI recommendation states) */
+  .h1-sm { font-size: 26px; }
+  .docs { margin-top: 6px; font-size: 13px; color: #5d6875; display: flex; align-items: center; gap: 4px; }
+  .docs u { color: #3f51b5; text-underline-offset: 2px; }
+  .filters.bordered .select { border: 1px solid #c9ced4; border-radius: 4px; }
+  .kpis.credit { margin-top: 28px; }
+  .kpis.credit .kpi { height: 216px; }
+  .explain { margin-top: 16px; font-size: 12px; line-height: 18px; color: #5d6875; }
+  .explain u { color: #3f51b5; }
+  section[data-w="recs"] { display: block; }
+  .recs { margin-top: 28px; height: 248px; display: flex; overflow: hidden; border-radius: 16px; }
+  .recs-art { width: 380px; flex: none; position: relative; background: linear-gradient(90deg, #e9ecf9 0%, #f4f5fb 70%, #fff 100%); display: flex; align-items: center; padding-left: 70px; }
+  .recs-copy { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 40px 0 48px; }
+  .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 12px; letter-spacing: 1.6px; color: #5d6875; }
+  .new { font-style: normal; letter-spacing: 0.4px; font-size: 11px; font-weight: 600; color: #186756; background: #def7f2; border-radius: 4px; padding: 2px 6px; }
+  .recs-copy h2 { margin-top: 12px; font-size: 20px; font-weight: 600; }
+  .recs-copy p { margin-top: 12px; max-width: 600px; font-size: 14px; line-height: 21px; color: #5d6875; }
+  .recs-copy .actions { margin-top: 20px; display: flex; align-items: center; gap: 18px; }
+  .recs-copy .primary { height: 42px; padding: 0 20px; }
+  .ghost-btn { font-size: 14px; font-weight: 500; padding: 10px 14px; }
+  .ghost { position: absolute; width: 210px; height: 160px; border-radius: 10px; background: #fff; opacity: 0.55; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .g1 { left: 26px; top: 48px; transform: rotate(-6deg); }
+  .g2 { left: 130px; top: 38px; transform: rotate(5deg); }
+  .rec-card { position: relative; width: 236px; padding: 18px 18px 16px; border-radius: 8px; background: #fff; box-shadow: 0 6px 20px rgba(20,21,28,0.12); display: flex; flex-direction: column; gap: 10px; margin-left: -30px; }
+  .rec-card b { font-size: 14px; line-height: 19px; font-weight: 600; }
+  .rec-card .tip { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 6px; background: #f4f5fb; font-size: 11px; line-height: 14px; }
+  .steps { list-style: none; display: flex; flex-direction: column; gap: 22px; position: relative; padding-left: 0; }
+  .steps li { display: flex; align-items: center; gap: 14px; font-size: 14px; position: relative; }
+  .steps li + li::before { content: ''; position: absolute; left: 15px; top: -22px; width: 2px; height: 22px; background: #d5d8de; }
+  .steps li.done + li::before { background: #22c55e; }
+  .steps .dot { width: 32px; height: 32px; border-radius: 99px; display: grid; place-items: center; flex: none; font-size: 13px; }
+  .steps .done { color: #16a34a; font-weight: 500; }
+  .steps .done .dot { background: #22c55e; }
+  .steps .now { color: #1e2a6b; font-weight: 600; }
+  .steps .now .dot { background: #3f51b5; box-shadow: 0 0 0 5px rgba(63,81,181,0.18); }
+  .steps .next { color: #5d6875; }
+  .steps .next .dot { border: 1.5px solid #d5d8de; background: #fff; color: #8a919a; }
+  .weekly { margin-top: 36px; font-size: 22px; font-weight: 500; }
+  .nodata { margin-top: 16px; height: 236px; border: 1.5px dashed #d5d8de; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .nodata-icon { width: 46px; height: 46px; border-radius: 99px; background: #e8eaf6; display: grid; place-items: center; }
+  .nodata h3 { margin-top: 18px; font-size: 20px; font-weight: 600; }
+  .nodata p { margin-top: 12px; max-width: 520px; font-size: 15px; line-height: 23px; color: #5d6875; }

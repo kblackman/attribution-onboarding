@@ -33,11 +33,19 @@
 <script src="shell.js"></script>
 <script>
 /* ---------- the recipes ---------- */
+// the newer page around the recommendations section
+const NEWER = (extra) => ({ header: 'docs', ...extra, filters: 'bordered', kpis: 'credit', chart: 'full' })
+
 const STATES = {
   // Attribution fully set up, for reference (the screenshot this page was rebuilt from)
   before: { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: null, table: 'full' }, focus: 'header', at: 40 },
   // events exist but none is defined as mid or low funnel (from Kyle's screen grab), scrolled just enough to show the whole card
   'events-undefined': { widgets: { header: 'title', setupBanner: 'conversions', filters: 'model', kpis: 'conversions-empty', defineEvents: 'empty' }, focus: 'defineEvents', at: 680 },
+  // the AI recommendations states (Kyle's screen grabs of the newer page: docs line, Total Conversion Credit / ROAS / Total Spend, 30D)
+  'ai-off': { widgets: NEWER({ recs: 'promo' }), focus: 'recs' },
+  'ai-no-events': { widgets: NEWER({ recs: 'define' }), focus: 'recs' },
+  'recs-processing': { widgets: NEWER({ recs: 'processing' }), focus: 'recs' },
+  'not-enough-data': { widgets: NEWER({ recs: 'no-data' }), focus: 'recs' },
   // no ad platforms connected: the Connect section sits between the chart and the table
   'no-ad-sources': { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: 'connect', table: 'full' }, focus: 'adsCta', at: 556 },
 }
@@ -47,6 +55,17 @@ const info = '<svg class="info" viewBox="0 0 24 24" fill="none" stroke="#1e2125"
 const chevron = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e2125" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
 const plus = (c) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`
 const sort = '<svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 1l4 5H1zM5 13L1 8h8z" fill="#8a919a"/></svg>'
+const extLink = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg>'
+const bulb = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e2125" stroke-width="1.8" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0012 3z"/></svg>'
+const funnel = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 7.5V19l-4 1.5v-8z"/></svg>'
+const listCheck = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5d6875" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M11 6h10M11 12h10M11 18h10"/></svg>'
+const clock = (c) => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>`
+const calendarX = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3f51b5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4M10 13l4 4M14 13l-4 4"/></svg>'
+const tick = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+// the vertical 3-step tracker: [state, label, icon for the current step]
+function steps(list) {
+  return `<ol class="steps">${list.map(([st, label, icon], i) => `<li class="${st}"><span class="dot">${st === 'done' ? tick : st === 'now' ? icon : i + 1}</span>${label}</li>`).join('')}</ol>`
+}
 const rowArrow = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e2125" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'
 
 /* ---------- the widgets: variant name -> HTML ---------- */
@@ -58,6 +77,14 @@ const WIDGETS = {
         <div class="right"><span class="consent">Consent Mode <i class="toggle"></i></span><span class="primary">Manage Conversions</span></div>
       </div>`,
     title: () => `<div class="head"><h1>Attribution</h1></div>`,
+    docs: () => `
+      <div class="head">
+        <div>
+          <h1 class="h1-sm">Attribution</h1>
+          <p class="docs">Freshpaint Insights are based on a touch-based time cohorted analysis. Learn more <u>in our documentation</u> ${extLink}</p>
+        </div>
+        <div class="right"><span class="consent">Consent Mode <i class="toggle"></i></span><span class="primary">Manage Conversions</span></div>
+      </div>`,
   },
 
   // the prompt shown while no event is defined, then a rule above the filters
@@ -82,6 +109,7 @@ const WIDGETS = {
           <span>Custom</span><span class="on">7D</span><span>30D</span><span>3M</span><span class="off">6M</span><span class="off">12M</span><span class="range">Jan 26, 2026 - Feb 1, 2026</span>
         </span>
       </div>`,
+    bordered: () => WIDGETS.filters.full().replace('class="filters"', 'class="filters bordered"').replace('<span class="on">7D</span><span>30D</span>', '<span>7D</span><span class="on">30D</span>').replace('Jan 26, 2026 - Feb 1, 2026', 'Mar 21, 2026 - Apr 19, 2026'),
     model: () => WIDGETS.filters.full().replace(/<span class="field"><small>Group results by[\s\S]*?<\/span><\/span>/, ''),
   },
 
@@ -91,6 +119,12 @@ const WIDGETS = {
         ${kpi(`Total conversions ${info}`, '314', `<span>Conversion rate ${info}</span>`, '84.64%')}
         ${kpi('ROI', '91.17%', '<span>ROI last period</span>', '73%<span class="up">+3%</span>')}
         ${kpi('Total spend', '$5,796.56', '<span>Total spend last period</span>', '$80,000<span class="down">-6.7%</span>')}
+      </div>`,
+    credit: () => `
+      <div class="kpis credit">
+        <div class="card kpi"><div class="t">Total Conversion Credit ${info}</div><div class="v">1,347</div><p class="explain">Total Conversion Credit count may change based on which attribution model you select. Attribution models assign credit differently across touchpoints, so the same conversion may be included or excluded, causing your Total Conversion Credit to change. <u>Learn more</u> ${extLink}</p></div>
+        <div class="card kpi"><div class="t">ROAS</div><div class="v">91.17%</div></div>
+        <div class="card kpi"><div class="t">Total Spend</div><div class="v">$24,842.40</div></div>
       </div>`,
     'conversions-empty': () => `
       <div class="kpis half">
@@ -105,6 +139,53 @@ const WIDGETS = {
         <h3>Define your events</h3>
         <p>Once you define the mid- and low-funnel conversions, you'll see performance data here</p>
         <span class="primary">Setup Conversions</span>
+      </div>`,
+  },
+
+  // AI recommendations: the promo while AI is off, a 3-step tracker once it's on, and the no-data state
+  recs: {
+    promo: () => `
+      <div class="card recs">
+        <div class="recs-art">
+          <span class="ghost g1"></span><span class="ghost g2"></span>
+          <div class="rec-card">
+            <img src="../../public/assets/showing-team/google-ads.svg" width="17" height="16" alt="">
+            <b>Paid search is your lowest cost channel at $14 per conversion</b>
+            <span class="tip">${bulb}Increase budget by 15% to capture more demand.</span>
+          </div>
+        </div>
+        <div class="recs-copy">
+          <span class="eyebrow">RECOMMENDATION CARDS <i class="new">NEW!</i></span>
+          <h2>Smarter insights, every week</h2>
+          <p>Enable AI to unlock weekly, actionable recommendations that evolve with your marketing performance, helping you focus on what matters most.</p>
+          <div class="actions"><span class="primary">Enable AI</span><span class="ghost-btn">Hide for now</span></div>
+        </div>
+      </div>`,
+    define: () => `
+      <div class="card recs">
+        <div class="recs-art">${steps([['done', 'AI enabled'], ['now', 'Define your conversion events', funnel], ['next', 'Get weekly recommendations']])}</div>
+        <div class="recs-copy">
+          <span class="eyebrow">${listCheck}ONE MORE STEP</span>
+          <h2>Define your conversion events</h2>
+          <p>Freshpaint AI tailors every recommendation to the events that matter most to your business. Tell us which events represent mid-funnel and bottom-funnel conversions, and your first set of weekly insights will appear here.</p>
+          <div class="actions"><span class="primary">Set up conversion events</span></div>
+        </div>
+      </div>`,
+    processing: () => `
+      <div class="card recs">
+        <div class="recs-art">${steps([['done', 'AI enabled'], ['done', 'Conversion events defined'], ['now', 'Generating recommendations', clock('#fff')]])}</div>
+        <div class="recs-copy">
+          <span class="eyebrow">${clock('#5d6875')}PROCESSING</span>
+          <h2>Your first recommendations are on the way</h2>
+          <p>Freshpaint AI is analyzing your conversion data to build personalized recommendations. This usually takes up to 24 hours. We'll show your first set of insights right here once they're ready.</p>
+        </div>
+      </div>`,
+    'no-data': () => `
+      <div class="weekly">Weekly Recommendations</div>
+      <div class="nodata">
+        <span class="nodata-icon">${calendarX}</span>
+        <h3>Not enough recent data for recommendations</h3>
+        <p>We haven't recorded any conversion events in the last 60 days. Once your campaigns are active, recommendations will appear here.</p>
       </div>`,
   },
 
@@ -204,7 +285,7 @@ page.innerHTML = Object.entries(state.widgets)
 
 // frame the capture on the empty state, and report its box for SHOTS
 const focus = page.querySelector(`[data-w="${state.focus}"]`)
-const box = focus.querySelector('.card') || focus
+const box = focus.querySelector('.card, .nodata') || focus
 // no `at`: the page sits as it would on load (no scroll)
 if (state.at !== undefined) page.style.transform = `translateY(${state.at - box.offsetTop}px)`
 const r = box.getBoundingClientRect()
