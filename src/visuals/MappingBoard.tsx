@@ -8,7 +8,7 @@ import { ShotView, shotByLabel } from './EmptyStateMontage'
 
 /*
   Beat 6 visual ("Connecting the dots"): the method, not the result. A generic whiteboard (not FigJam's UI).
-  The six empty-state screenshots from the montage drop on as anchor points, circles and labels intact;
+  The empty-state screenshots from the montage drop on as anchor points, circles and labels intact;
   step boxes fill the gaps between them; arrows draw in to connect everything; handwritten magenta notes
   with arrows call out the friction points (Kyle's markup, as on the montage). Real screenshots swapped into SHOTS appear here too. Tune the timing here (seconds).
 */

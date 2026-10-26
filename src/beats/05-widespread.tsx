@@ -31,8 +31,8 @@ const beat: Beat = {
     trigger: 'auto',
     content: (
       <SpotlightLine>
-        <span>Six different empty states. </span>
-        <span><em>Were they evidence of six problems, or just one?</em></span>
+        <span>Nine different empty states. </span>
+        <span><em>Were they evidence of nine problems, or just one?</em></span>
       </SpotlightLine>
     ),
   },

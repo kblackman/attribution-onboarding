@@ -26,7 +26,7 @@ const beat: Beat = {
   visual: {
     component: MappingBoard,
     description:
-      'A whiteboard. The six empty-state screenshots from the montage drop on as anchor points, each still circled and labeled. Step boxes fill the gaps between them: Event Creation, Event Definition, Sources, AI settings. Arrows draw in to connect everything in order, and sticky notes pop up at three friction points. Placeholder shapes, no real customer data.',
+      'A whiteboard. The empty-state screenshots from the montage drop on as anchor points, each still circled and labeled. Step boxes fill the gaps between them: Event Creation, Event Definition, Sources, AI settings. Arrows draw in to connect everything in order, and sticky notes pop up at three friction points. Placeholder shapes, no real customer data.',
   },
 }
 

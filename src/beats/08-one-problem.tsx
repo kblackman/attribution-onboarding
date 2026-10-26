@@ -5,18 +5,18 @@ import { RequiredOptional } from '../components/RequiredOptional'
 // Evidence tier: a card, because it holds an artifact (the Required / Optional split).
 const beat: Beat = {
   slug: 'one-problem',
-  title: 'One problem, not six',
+  title: 'One problem, not nine',
   cardDense: true,
   card: (
     <div>
       {/* the payoff of the title ("Diagnosing the problem, not the symptom"): hero-size, same two-tone device */}
       <Reveal as="h2" className="m-0 text-display font-extrabold">
-        One problem, <span className="text-accent">not six</span>
+        One problem, <span className="text-accent">not nine</span>
       </Reveal>
       <div className="text-with-aside is-mid mt-[clamp(14px,calc(var(--u)*1.6),30px)] gap-y-[0.7em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-lead">
           <p className="m-0">
-            The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.
+            The map answered the question. The empty states weren't nine problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.
           </p>
         </Reveal>
         <Reveal order={2} className="twa-main">
