@@ -30,7 +30,7 @@ const typing = (field: 'name' | 'selector', text: string, start: number): Frame[
   Array.from(text, (_, i) => ({ at: start + i * TIMING.type, set: { [field]: text.slice(0, i + 1) } }))
 const typed = (start: number, text: string) => start + text.length * TIMING.type
 
-const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, funnel: 'none', error: false, later: false, ai: false, note: false, aiCollapsed: false, scroll: false, cursor: true }
+const INITIAL: FlowUI = { screen: 'setup', phase: 1, drawer: false, name: '', selector: '', focus: null, events: 0, funnel: 'none', error: false, later: false, rule: false, ai: false, note: false, aiCollapsed: false, scroll: false, cursor: true }
 
 const nameDone = typed(1.6, EVENT_NAME)
 const selDone = typed(nameDone + 1.2, EVENT_SELECTOR)
@@ -65,15 +65,16 @@ const SCRIPTS: Script[] = [
       { at: 0.15, click: true, set: { phase: 2 } },
       { at: 0.9, to: 'mid' },
       { at: 1.55, click: true, set: { funnel: 'mid', error: true } },
-      { at: 3.4, to: 'low' },
-      { at: 4.05, click: true, set: { funnel: 'low', error: false } },
-      { at: 4.8, to: 'continue' },
+      { at: 2.0, set: { rule: true } }, // circle the rule the error points to
+      { at: 3.9, to: 'low' },
+      { at: 4.55, click: true, set: { funnel: 'low', error: false } },
+      { at: 5.3, to: 'continue' },
     ],
   },
   // 5. Connect Ad Sources: the note that it can be set up later, then Skip for now
   {
     frames: [
-      { at: 0.15, click: true, set: { phase: 3 } },
+      { at: 0.15, click: true, set: { phase: 3, rule: false } },
       { at: 0.8, to: 'later' },
       { at: 1.1, set: { later: true } },
       { at: 2.6, to: 'skip' },

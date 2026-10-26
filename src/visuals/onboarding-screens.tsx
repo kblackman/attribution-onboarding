@@ -31,6 +31,8 @@ export interface FlowUI {
   error: boolean
   /** The hand-drawn circle around "You can always set this up later". */
   later: boolean
+  /** The hand-drawn circle around "Only one low-funnel event is required to continue". */
+  rule: boolean
   ai: boolean
   /** Kyle's handwritten note on the waiting room. */
   note: boolean
@@ -431,7 +433,21 @@ function SetupStep({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; r
   if (ui.phase === 2)
     return (
       <>
-        <SetupCard n={2} title="Define conversion events" body="Designate events as mid or low funnel. Only one low-funnel event is required to continue">
+        <SetupCard
+          n={2}
+          title="Define conversion events"
+          body={
+            <>
+              Designate events as mid or low funnel.{' '}
+              <span className="relative whitespace-nowrap">
+                Only one low-funnel event is required to continue
+                <span className="pointer-events-none absolute -inset-x-[14px] -top-[3px] -bottom-[7px]">
+                  <HandCircle show={ui.rule} reducedMotion={reduced} duration={0.7} variant={2} className="inset-0 h-full w-full" />
+                </span>
+              </span>
+            </>
+          }
+        >
           <EventRow>
             <span className="flex text-[12px] font-semibold">
               <Segment t="mid" on={ui.funnel === 'mid'} hover={hover} side="left">
@@ -464,7 +480,7 @@ function SetupStep({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; r
               Link the platforms you advertise on so Attribution can match spend and CPA to your conversions.{' '}
               <span data-t="later" className="relative whitespace-nowrap">
                 You can always set this up later
-                <span className="pointer-events-none absolute -inset-x-[16px] -inset-y-[12px]">
+                <span className="pointer-events-none absolute -inset-x-[14px] -top-[3px] -bottom-[7px]">
                   <HandCircle show={ui.later} reducedMotion={reduced} duration={0.7} variant={1} className="inset-0 h-full w-full" />
                 </span>
               </span>
