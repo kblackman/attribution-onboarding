@@ -10,6 +10,11 @@ const beat: Beat = {
     <Statement
       wide
       headline="Two moments, two patterns"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        "During setup, most users created one or two events. A simple list worked.",
+        "By 30 days, some had many more. So the waiting room uses a grid that wraps after every four.",
+      ]}
       body={
         <>
           <p>

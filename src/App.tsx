@@ -10,6 +10,7 @@ import { SectionIndex } from './components/SectionIndex'
 import { DUR } from './engine/motion'
 import { usePrefersReducedMotion } from './engine/reducedMotion'
 import { PresentationContext } from './engine/presentation'
+import { togglePresentMode } from './engine/presentMode'
 
 /*
   Performance: only beats within WINDOW of the current beat are mounted at all. A beat further back
@@ -62,6 +63,11 @@ export function App() {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return
       const k = e.key
+      if (k === 't' || k === 'T') {
+        e.preventDefault()
+        togglePresentMode()
+        return
+      }
       if (k === 's' || k === 'S') {
         e.preventDefault()
         if (menuOpen) closeMenu()

@@ -12,6 +12,11 @@ const beat: Beat = {
     <Statement
       wide
       headline="How it all started"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        "Over two days, I sat in on four customer research sessions.",
+        "Each time a customer shared their screen, their Attribution dashboard was only half set up.",
+      ]}
       body={
         <>
           <p>

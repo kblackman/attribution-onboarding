@@ -1,4 +1,5 @@
 import type { Beat } from '../engine/types'
+import { Tldr } from '../components/Tldr'
 import { Reveal } from '../components/Reveal'
 import { DataTable } from '../components/DataTable'
 import { Caption } from '../components/Caption'
@@ -15,14 +16,18 @@ const beat: Beat = {
       </Reveal>
       <div className="text-with-aside is-mid mt-[clamp(16px,calc(var(--u)*2.2),40px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-lead">
-          <p className="m-0">
-            Bringing Event Creation into the flow raised a new problem. Once users created events, they needed a list to review and define them. How long would that list get? I couldn't just design for the happy path.
-          </p>
+          <Tldr short="Once users created events, they needed a list. How long would it get?">
+            <p className="m-0">
+              Bringing Event Creation into the flow raised a new problem. Once users created events, they needed a list to review and define them. How long would that list get? I couldn't just design for the happy path.
+            </p>
+          </Tldr>
         </Reveal>
         <Reveal order={2} className="twa-main">
-          <p className="m-0">
-            All of Freshpaint's data lived in Snowflake, which had an agent layer that let me query it in plain language. I asked how many events users created at three points: during initial setup, after 24 hours, and after 30 days. I looked past day one because of the waiting room, the screen I designed to tell users their data was on its way. It lists every defined event, and some users might not reach it until weeks into setup. I asked for percentiles instead of an average, since an average would hide the edge cases.
-          </p>
+          <Tldr short="I asked Snowflake for percentiles at setup, 24 hours, and 30 days.">
+            <p className="m-0">
+              All of Freshpaint's data lived in Snowflake, which had an agent layer that let me query it in plain language. I asked how many events users created at three points: during initial setup, after 24 hours, and after 30 days. I looked past day one because of the waiting room, the screen I designed to tell users their data was on its way. It lists every defined event, and some users might not reach it until weeks into setup. I asked for percentiles instead of an average, since an average would hide the edge cases.
+            </p>
+          </Tldr>
         </Reveal>
         <Reveal order={2} className="twa-aside">
           <figure className="m-0 flex flex-col gap-2">

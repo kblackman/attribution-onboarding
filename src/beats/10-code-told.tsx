@@ -1,4 +1,5 @@
 import type { Beat } from '../engine/types'
+import { Tldr } from '../components/Tldr'
 import { Reveal } from '../components/Reveal'
 import { StepStatusList } from '../components/StepStatusList'
 import { SpotlightLine } from '../components/SpotlightLine'
@@ -22,9 +23,11 @@ const beat: Beat = {
       </Reveal>
       <div className="text-with-aside mt-[clamp(18px,calc(var(--u)*2.6),46px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-main">
-          <p className="m-0">
-            The drawer was fully self-contained. It had no dependency on the Events page, so surfacing it in Attribution's new setup flow took only a few lines of code, and it could stay in Events for anyone used to creating events there.
-          </p>
+          <Tldr short="The Event Creation drawer was self-contained, so it could move into the flow.">
+            <p className="m-0">
+              The drawer was fully self-contained. It had no dependency on the Events page, so surfacing it in Attribution's new setup flow took only a few lines of code, and it could stay in Events for anyone used to creating events there.
+            </p>
+          </Tldr>
         </Reveal>
         <Reveal order={2} className="twa-aside">
           <StepStatusList
@@ -37,9 +40,11 @@ const beat: Beat = {
           />
         </Reveal>
         <Reveal order={2} className="twa-rest">
-          <p className="m-0">
-            Moving the AI toggle into the flow was also a light lift, so it came along too. Connecting ad sources was heavier and stayed out of v1. Instead, I added an automatic redirect back to Attribution after the OAuth flow finished, so users no longer had to find their way back on their own.
-          </p>
+          <Tldr short="The AI toggle came along too. Ad sources stayed out of v1, with a redirect back to Attribution.">
+            <p className="m-0">
+              Moving the AI toggle into the flow was also a light lift, so it came along too. Connecting ad sources was heavier and stayed out of v1. Instead, I added an automatic redirect back to Attribution after the OAuth flow finished, so users no longer had to find their way back on their own.
+            </p>
+          </Tldr>
         </Reveal>
       </div>
     </div>

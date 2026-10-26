@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Reveal } from './Reveal'
+import { usePresentMode } from '../engine/presentMode'
 
 interface StatementProps {
   headline: string
@@ -9,6 +10,8 @@ interface StatementProps {
   wide?: boolean
   /** Center the headline and body (default left, the Story tier). */
   align?: 'left' | 'center'
+  /** Present mode's short version: a few lines, shown instead of the body, set larger. Kyle approves the wording. */
+  tldr?: ReactNode[]
 }
 
 /**
@@ -16,19 +19,28 @@ interface StatementProps {
  * from beat to beat. The beat's punchline doesn't live here: give it the Moments treatment as a
  * cardOverlay with SpotlightLine.
  */
-export function Statement({ headline, body, wide = false, align = 'left' }: StatementProps) {
+export function Statement({ headline, body, wide = false, align = 'left', tldr }: StatementProps) {
   const center = align === 'center'
+  const short = usePresentMode() && tldr
   return (
     <div className={`flex flex-col ${center ? 'items-center text-center' : ''}`}>
       <Reveal as="h2" className="m-0 text-story font-extrabold">
         {headline}
       </Reveal>
-      <Reveal
-        order={1}
-        className={`mt-[clamp(18px,calc(var(--u)*2.6),46px)] flex flex-col gap-[0.65em] text-statement text-fg-muted text-pretty sm:gap-[0.8em] [&_p]:m-0 ${wide ? 'max-w-[64ch]' : 'max-w-[46ch]'}`}
-      >
-        {typeof body === 'string' ? <p>{body}</p> : body}
-      </Reveal>
+      {short ? (
+        <Reveal order={1} className="mt-[clamp(18px,calc(var(--u)*2.6),46px)] flex max-w-[34ch] flex-col gap-[0.6em] text-kicker text-fg text-pretty [&_p]:m-0">
+          {tldr.map((line, i) => (
+            <p key={i}>{line}</p>
+          ))}
+        </Reveal>
+      ) : (
+        <Reveal
+          order={1}
+          className={`mt-[clamp(18px,calc(var(--u)*2.6),46px)] flex flex-col gap-[0.65em] text-statement text-fg-muted text-pretty sm:gap-[0.8em] [&_p]:m-0 ${wide ? 'max-w-[64ch]' : 'max-w-[46ch]'}`}
+        >
+          {typeof body === 'string' ? <p>{body}</p> : body}
+        </Reveal>
+      )}
     </div>
   )
 }

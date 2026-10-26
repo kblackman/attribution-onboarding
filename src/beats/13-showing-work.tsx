@@ -11,6 +11,11 @@ const beat: Beat = {
     <Statement
       wide
       headline="Showing my work"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        "I built a tweaks panel into the prototype to stress-test both with real data loads.",
+        "It later became part of our shared prototyping skill.",
+      ]}
       body={
         <p>
           Then I stress-tested both. I built a tweaks panel into the prototype that swapped between real customer data loads and updated the UI on the fly. I knew Eng would ask how it scaled, and I wanted to show my work. The panel later became part of our shared prototyping skill, so every new prototype came with one.

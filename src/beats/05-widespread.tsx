@@ -11,6 +11,12 @@ const beat: Beat = {
     <Statement
       wide
       headline="How widespread was it?"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        "I looked inside roughly 20 of our 200+ customer accounts.",
+        "Almost every one was half set up or not set up at all.",
+        <em className="font-semibold text-accent">And it wasn't one empty state. It was many.</em>,
+      ]}
       body={
         <>
           <p>

@@ -9,6 +9,12 @@ const beat: Beat = {
   card: (
     <Statement
       headline="Checking the hunch"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        "I asked the team if they'd noticed. They had.",
+        "So I asked whether anything was planned to address it.",
+        <em className="font-semibold text-accent">Nothing was.</em>,
+      ]}
       body={
         <>
           <p>

@@ -9,6 +9,11 @@ const beat: Beat = {
   card: (
     <Statement
       headline="The problem"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        "Freshpaint's platform was powerful, but customers had no self-serve way to get set up.",
+        "Getting set up meant dense documentation or a call with CS.",
+      ]}
       body="Freshpaint's healthcare marketing analytics platform was powerful, but it had no self-serve system in place to help customers reach the value they'd paid for. Setup flows were confusing and offered little to no guidance. Getting set up correctly meant reading dense documentation or booking a call with CS or an account manager."
     />
   ),

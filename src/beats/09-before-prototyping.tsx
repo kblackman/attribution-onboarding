@@ -10,6 +10,11 @@ const beat: Beat = {
     <Statement
       wide
       headline="Checking before prototyping"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        "Front-loading setup meant pulling every required step into one guided flow.",
+        "The biggest question: could Event Creation's drawer move into it?",
+      ]}
       body={
         <>
           <p>

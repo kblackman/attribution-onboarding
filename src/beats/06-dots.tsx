@@ -11,6 +11,11 @@ const beat: Beat = {
     <Statement
       wide
       headline="Connecting the dots"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        "I screenshotted every empty state I found.",
+        "Then I used them as anchors in FigJam and mapped the setup flow from start to finish.",
+      ]}
       body={
         <>
           <p>

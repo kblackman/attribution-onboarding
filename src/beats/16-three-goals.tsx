@@ -21,6 +21,12 @@ const beat: Beat = {
     <Statement
       wide
       headline="Three goals, one solution"
+      // present mode (T): draft, awaiting Kyle's approval
+      tldr={[
+        <><span className="tabular-nums text-fg-soft">01</span> Own onboarding.</>,
+        <><span className="tabular-nums text-fg-soft">02</span> Set users up for success.</>,
+        <><span className="tabular-nums text-fg-soft">03</span> Build something reusable.</>,
+      ]}
       body={
         <>
           <p>This effort had three goals.</p>

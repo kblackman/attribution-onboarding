@@ -1,4 +1,5 @@
 import type { Beat } from '../engine/types'
+import { Tldr } from '../components/Tldr'
 import { Reveal } from '../components/Reveal'
 import { ChatThread, type ChatMessage } from '../components/ChatThread'
 import { TEAM_THREAD } from '../visuals/TeamChat'
@@ -42,12 +43,16 @@ const beat: Beat = {
       {/* the thread gets the wider column here, so its messages wrap less */}
       <div className="text-with-aside is-chat mt-[clamp(14px,calc(var(--u)*1.6),30px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-main flex flex-col gap-[0.8em]">
-          <p className="m-0">
-            With the prototype done, I had more than an idea to pitch. I had something the team could see and react to. I'd built it to sell the solution, not just to test it.
-          </p>
-          <p className="m-0">
-            Instead of dropping a link in Slack, I asked for a meeting. I wanted our PM, front-end and back-end engineers, and eng lead on the same call, so I could walk them through it and answer their questions live.
-          </p>
+          <Tldr short="With the prototype done, I had something the team could see and react to.">
+            <p className="m-0">
+              With the prototype done, I had more than an idea to pitch. I had something the team could see and react to. I'd built it to sell the solution, not just to test it.
+            </p>
+          </Tldr>
+          <Tldr short="So instead of a Slack link, I asked for a meeting.">
+            <p className="m-0">
+              Instead of dropping a link in Slack, I asked for a meeting. I wanted our PM, front-end and back-end engineers, and eng lead on the same call, so I could walk them through it and answer their questions live.
+            </p>
+          </Tldr>
         </Reveal>
         <Reveal order={2} className="twa-aside">
           <ChatThread channel="team-indigo" earlier={EARLIER} divider="Later" messages={MESSAGES} compact start={TIMING.start} stagger={TIMING.stagger} />
