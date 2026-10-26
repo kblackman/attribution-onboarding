@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, type CSSProperties } from 'react'
 import { motion } from 'motion/react'
 
 /*
@@ -32,9 +32,11 @@ interface HandCircleProps {
   /** A dashed stroke, to mark one circle as different from the rest (e.g. an open question). */
   dashed?: boolean
   className?: string
+  /** Inline placement (e.g. a percent box), when a class can't express it. */
+  style?: CSSProperties
 }
 
-export function HandCircle({ show, delay = 0, duration = 0.8, instant = false, reducedMotion = false, variant = 0, dashed = false, className = '' }: HandCircleProps) {
+export function HandCircle({ show, delay = 0, duration = 0.8, instant = false, reducedMotion = false, variant = 0, dashed = false, className = '', style }: HandCircleProps) {
   const id = useId().replace(/:/g, '')
   const d = SHAPES[variant % SHAPES.length]
 
@@ -45,6 +47,7 @@ export function HandCircle({ show, delay = 0, duration = 0.8, instant = false, r
         viewBox="0 0 200 120"
         preserveAspectRatio="none"
         className={`pointer-events-none absolute overflow-visible ${className}`}
+        style={style}
         initial={false}
         animate={{ opacity: show ? 1 : 0 }}
         transition={{ duration: instant ? 0 : 0.3, delay: show && !instant ? delay : 0 }}
@@ -58,7 +61,8 @@ export function HandCircle({ show, delay = 0, duration = 0.8, instant = false, r
   const half = instant ? 0 : duration / 2
   const sweep = { originX: 0.5, originY: 0.5 }
   return (
-    <svg viewBox="0 0 200 120" preserveAspectRatio="none" className={`pointer-events-none absolute overflow-visible ${className}`} aria-hidden="true">
+    <svg viewBox="0 0 200 120" preserveAspectRatio="none" className={`pointer-events-none absolute overflow-visible ${className}`}
+        style={style} aria-hidden="true">
       <defs>
         <clipPath id={`${id}-r`}>
           <rect x="100" y="-200" width="400" height="600" />

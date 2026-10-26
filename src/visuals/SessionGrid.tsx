@@ -1,16 +1,20 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { useVisualPlayback } from '../engine/useVisualPlayback'
 import { HandCircle } from '../components/HandCircle'
 import { PlaceholderBadge } from '../components/Placeholder'
+import { SHOTS, type Shot } from './EmptyStateMontage'
 
 /*
   Beat 3 visual: a 2x2 video-call grid that builds one tile at a time. Each tile is a research session
   with a customer sharing the same half-set-up Attribution dashboard; a hand-drawn circle marks its
   empty area as the tile lands. After the fourth, that tile zooms to fill the frame and holds.
-  Generic avatars, no names or data. Placeholder shapes. Tune the timing here (seconds).
+  Generic avatars, no names or data. Each tile can show one of the montage's recreated screenshots (shot), fitted
+  into the shared screen at its own proportions, circled on its empty area; tiles without one still draw the
+  placeholder. Per Kyle's copy the sessions showed No ad sources and AI off; AI off isn't built yet.
+  Tune the timing here (seconds).
 */
 export const TIMING = {
   start: 0.5, // first tile
@@ -23,11 +27,14 @@ export const TIMING = {
   reducedHold: 0.3, // reduced motion: all tiles and circles fade in together, no zoom
   reducedFade: 0.6,
 }
-const SESSIONS = [
-  { day: 'Day 1', purpose: 'New feature' },
-  { day: 'Day 1', purpose: 'Bug walkthrough' },
-  { day: 'Day 2', purpose: 'Adoption check-in' },
-  { day: 'Day 2', purpose: 'New feature' },
+const shot = (label: string) => SHOTS.find((s) => s.label === label && s.src)
+const NO_AD_SOURCES = shot('No ad sources')
+// the last tile zooms to fill the frame, so it gets a real screenshot first
+const SESSIONS: { day: string; purpose: string; shot?: Shot }[] = [
+  { day: 'Day 1', purpose: 'New feature', shot: NO_AD_SOURCES },
+  { day: 'Day 1', purpose: 'Bug walkthrough' }, // AI off, once it's built
+  { day: 'Day 2', purpose: 'Adoption check-in' }, // AI off, once it's built
+  { day: 'Day 2', purpose: 'New feature', shot: NO_AD_SOURCES },
 ]
 const tileAt = (i: number) => TIMING.start + i * TIMING.tileStagger
 const ZOOM_AT = tileAt(SESSIONS.length - 1) + TIMING.circleDelay + TIMING.circleDraw + TIMING.zoomAfter
@@ -93,7 +100,7 @@ export function SessionGrid(props: VisualProps) {
               >
                 <Tile
                   {...s}
-                  circle={
+                  circle={(className, style) => (
                     <HandCircle
                       show={on}
                       instant={instant}
@@ -101,9 +108,10 @@ export function SessionGrid(props: VisualProps) {
                       delay={reduced ? TIMING.reducedHold : tileAt(i) + TIMING.circleDelay}
                       duration={TIMING.circleDraw}
                       variant={i}
-                      className="left-[51%] top-[36%] h-[68%] w-[52%]"
+                      className={className}
+                      style={style}
                     />
-                  }
+                  )}
                 />
               </motion.div>
             )
@@ -115,7 +123,9 @@ export function SessionGrid(props: VisualProps) {
 }
 
 /** One call tile: session stamp, the shared screen, and two generic participant thumbnails. */
-function Tile({ day, purpose, circle }: { day: string; purpose: string; circle: ReactNode }) {
+const PAD = 3 // the circle sits this far (percent of the screenshot) outside its empty area
+
+function Tile({ day, purpose, shot, circle }: { day: string; purpose: string; shot?: Shot; circle: (className: string, style?: CSSProperties) => ReactNode }) {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[12px] border border-hairline bg-card-to" style={{ containerType: 'size' }}>
       {/* in flow, so on small tiles the labels push the screen down instead of covering it */}
@@ -126,10 +136,25 @@ function Tile({ day, purpose, circle }: { day: string; purpose: string; circle: 
 
       <div className="relative min-h-0 flex-1">
       {/* shared screen */}
-      <div className="absolute bottom-[3cqw] left-[3cqw] right-[22cqw] top-0 rounded-[1.2cqw] bg-surface">
-        <HalfSetUpDashboard />
-        {circle}
-      </div>
+      {shot?.src ? (
+        <div className="absolute bottom-[3cqw] left-[3cqw] right-[22cqw] top-0 grid place-items-center" style={{ containerType: 'size' }}>
+          {/* the screenshot at its own proportions, as large as the screen area allows */}
+          <div className="relative" style={{ width: `min(100cqw, ${100 * (shot.aspect ?? 1.6)}cqh)`, aspectRatio: String(shot.aspect ?? 1.6) }}>
+            <img src={`${import.meta.env.BASE_URL}assets/hunch/${shot.src}`} alt="" draggable={false} className="block h-full w-full rounded-[1.2cqw] object-cover" />
+            {circle('', {
+              left: `${shot.empty.x - PAD}%`,
+              top: `${shot.empty.y - PAD}%`,
+              width: `${shot.empty.w + PAD * 2}%`,
+              height: `${shot.empty.h + PAD * 2}%`,
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className="absolute bottom-[3cqw] left-[3cqw] right-[22cqw] top-0 rounded-[1.2cqw] bg-surface">
+          <HalfSetUpDashboard />
+          {circle('left-[51%] top-[36%] h-[68%] w-[52%]')}
+        </div>
+      )}
 
       {/* participants: generic avatars only */}
       <div className="absolute right-[3cqw] top-0 flex w-[16cqw] flex-col gap-[2cqw]">
