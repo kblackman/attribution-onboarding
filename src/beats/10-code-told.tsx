@@ -11,8 +11,8 @@ const beat: Beat = {
   // the official kickoff of the prototype (Kyle, 2026-10-25): lands on the next press, the card pushes back
   cardOverlay: (
     <SpotlightLine>
-      <span>Then I opened Claude Code </span>
-      <span><em>and started building.</em></span>
+      <span>I had all the info I needed. </span>
+      <span><em>Time to start building.</em></span>
     </SpotlightLine>
   ),
   card: (

@@ -42,11 +42,12 @@ const FLOW: Item[] = [
   { kind: 'shot', shot: 4, x: 10, y: 74 }, // AI on, no events
 ]
 // friction points: a handwritten note above or below a step (index into FLOW), with an arrow to it.
-// Wording derived from the case study, to confirm with Kyle.
+// Kyle's wording (2026-10-25), each under a "UX Gap:" label.
+const NOTE_LABEL = 'UX Gap:'
 const NOTES: { at: number; text: string; side: 'above' | 'below'; r: number }[] = [
-  { at: 1, text: 'Leaves Attribution to create events', side: 'above', r: -4 },
+  { at: 1, text: 'Leaving Attribution to create events', side: 'above', r: -4 },
   { at: 6, text: 'No way back after connecting', side: 'below', r: 3 },
-  { at: 8, text: 'Leaves Attribution to turn on AI', side: 'below', r: -3 },
+  { at: 8, text: 'Leaving Attribution to turn on AI', side: 'below', r: -3 },
 ]
 
 const shots = FLOW.filter((f) => f.kind === 'shot')
@@ -161,6 +162,7 @@ export function MappingBoard(props: VisualProps) {
                   className="block text-center font-[family-name:var(--font-hand)] text-[clamp(11px,1.75cqw,30px)] font-bold leading-[1.05] text-annotation"
                   style={{ transform: `rotate(${n.r}deg)` }}
                 >
+                  <span className="block">{NOTE_LABEL}</span>
                   {n.text}
                 </span>
                 <svg viewBox="0 0 30 34" className={`h-[3.2cqw] w-[2.8cqw] overflow-visible ${n.side === 'below' ? 'mb-[0.3cqw] rotate-180' : 'mt-[0.3cqw]'}`} aria-hidden="true">
