@@ -79,7 +79,7 @@ export function MappingBoard(props: VisualProps) {
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
       <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Placeholder board, final map to come</PlaceholderBadge>
+        <PlaceholderBadge>Recreated screens, mock data</PlaceholderBadge>
       </div>
       <div
         className="relative overflow-hidden rounded-[1.2cqw] bg-surface-2 shadow-[0_24px_60px_rgba(0,0,0,0.45)]"
@@ -87,7 +87,7 @@ export function MappingBoard(props: VisualProps) {
           aspectRatio: '16 / 10',
           width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))',
           containerType: 'size',
-          backgroundImage: 'radial-gradient(var(--color-line-strong) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(var(--color-caption) 1.4px, transparent 1.4px)', // whiteboard dots, visible but quiet
           backgroundSize: '2.2cqw 2.2cqw',
         }}
         aria-hidden="true"

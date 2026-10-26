@@ -27,7 +27,7 @@ const beat: Beat = {
     component: LoadPrototype,
     steps: LOADS.length,
     description:
-      'The prototype with its tweaks panel, a small floating panel with a four-option toggle: Low, Average, High, Outlier. Low shows 1 event in the setup step\'s simple list; Average shows 2 events in the same list. High shows 15 events in the waiting room\'s grid, wrapping to a new row after every 4 events; Outlier shows 22 events in the same grid. Mock event names, placeholder UI.',
+      'The prototype with its tweaks panel, a small floating panel with a four-option toggle: Low, Median, High, Outlier. Low shows 1 event in the setup step\'s simple list; Median shows 4 events in the same list. High shows 12 events in the waiting room\'s grid, wrapping to a new row after every 4 events; Outlier shows 55 events in the same grid, and the page scrolls to show them all. Mock event names.',
   },
 }
 

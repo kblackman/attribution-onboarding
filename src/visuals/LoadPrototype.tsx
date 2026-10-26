@@ -1,14 +1,16 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { VisualProps } from '../engine/types'
+import { EASE_DECK } from '../engine/motion'
 import { PlaceholderBadge } from '../components/Placeholder'
 import { TweaksPanel } from '../components/TweaksPanel'
 import { EventList, Footer, ProductFrame, SetupCard, SetupHeading, WaitingRoom, type TrackedEvent } from './onboarding-screens'
 
 /*
   "Showing my work" visual: the prototype with its tweaks panel. Each key press switches the data load
-  (Low, Average, High, Outlier) and the UI updates on the fly, in the product's real patterns (Kyle's Figma):
-  Low and Average in the setup step's event list (Create an event, after the first event); High and Outlier
+  (Low, Median, High, Outlier: Kyle's Snowflake numbers for funnel events per customer, p10 1, median 4,
+  p90 12, max 55) and the UI updates on the fly, in the product's real patterns (Kyle's Figma):
+  Low and Median in the setup step's event list (Create an event, after the first event); High and Outlier
   in the waiting room's Events being tracked, a grid that wraps after every four. Built from the
   walkthrough's own components (onboarding-screens.tsx), in its 1440 x 900 space, scaled to the frame.
   With no key press it moves on by itself, forward only. Mock event names. Tune the timing here (seconds).
@@ -16,10 +18,10 @@ import { EventList, Footer, ProductFrame, SetupCard, SetupHeading, WaitingRoom, 
 export const TIMING = { auto: 2.2 }
 
 export const LOADS = [
-  { id: 'low', label: 'Low', count: 1, view: 'list' as const },
-  { id: 'average', label: 'Average', count: 2, view: 'list' as const },
-  { id: 'high', label: 'High', count: 15, view: 'grid' as const },
-  { id: 'outlier', label: 'Outlier', count: 22, view: 'grid' as const },
+  { id: 'low', label: 'Low', count: 1, view: 'list' as const }, // p10
+  { id: 'median', label: 'Median', count: 4, view: 'list' as const }, // 2 mid, 2 low
+  { id: 'high', label: 'High', count: 12, view: 'grid' as const }, // p90
+  { id: 'outlier', label: 'Outlier', count: 55, view: 'grid' as const }, // the max
 ]
 
 // mock event names only; no customer data. Every third one is low funnel, the rest mid.
@@ -28,6 +30,12 @@ const EVENTS: TrackedEvent[] = [
   'Newsletter signup', 'Location searched', 'Provider profile viewed', 'Insurance checked', 'Callback requested',
   'Chat opened', 'Video played', 'Quiz completed', 'Review submitted', 'Referral sent', 'Portal login',
   'Refill requested', 'Waitlist joined', 'Coupon applied', 'Checkout started', 'Survey completed',
+  'Directions clicked', 'Phone number clicked', 'Email signup', 'Brochure downloaded', 'Webinar registered',
+  'Webinar attended', 'Free consult booked', 'Consult attended', 'Intake form started', 'Intake form completed',
+  'Symptom checker used', 'Cost estimate viewed', 'Financing applied', 'Gift card purchased', 'Membership started',
+  'Membership renewed', 'Class booked', 'Class attended', 'Virtual visit started', 'Prescription transferred',
+  'Lab results viewed', 'Message sent', 'Reminder confirmed', 'Appointment rescheduled', 'Appointment canceled',
+  'Second location viewed', 'Careers page viewed', 'Testimonial viewed',
 ].map((name, i) => ({ name, selector: `button.${name.toLowerCase().replace(/[^a-z]+/g, '-')}`, funnel: i % 3 === 0 ? 'low' : 'mid' }))
 
 const W = 1440
@@ -86,8 +94,10 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
                     </motion.div>
                   ) : (
                     // the waiting room: every defined event, four across
-                    <motion.div key="grid" className="relative bg-fp-bg [grid-area:1/1]" {...swap}>
-                      <WaitingRoom reduced={reduced} events={events} compact />
+                    <motion.div key="grid" className="relative overflow-hidden bg-fp-bg [grid-area:1/1]" {...swap}>
+                      <PageScroll by={events.length} reduced={reduced}>
+                        <WaitingRoom reduced={reduced} events={events} compact />
+                      </PageScroll>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -105,6 +115,23 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
           reducedMotion={reduced}
         />
       </div>
+    </div>
+  )
+}
+
+/** When the page outgrows the screen (55 events), scroll it so the end of the grid shows, as a user would. */
+function PageScroll({ by, reduced, children }: { by: number; reduced: boolean; children: ReactNode }) {
+  const outer = useRef<HTMLDivElement>(null)
+  const inner = useRef<HTMLDivElement>(null)
+  const [y, setY] = useState(0)
+  useLayoutEffect(() => {
+    if (outer.current && inner.current) setY(-Math.max(0, inner.current.offsetHeight + 32 - outer.current.clientHeight))
+  }, [by])
+  return (
+    <div ref={outer} className="absolute inset-0">
+      <motion.div ref={inner} initial={false} animate={{ y }} transition={{ duration: reduced ? 0 : 1.2, delay: reduced ? 0 : 0.5, ease: EASE_DECK }}>
+        {children}
+      </motion.div>
     </div>
   )
 }

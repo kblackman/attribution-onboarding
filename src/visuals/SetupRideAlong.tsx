@@ -68,7 +68,7 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
       <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Placeholder screens, final map to come</PlaceholderBadge>
+        <PlaceholderBadge>Recreated screens, mock data</PlaceholderBadge>
       </div>
       {/* wrapper: the map frame, plus counters (inside the frame on wide screens, below it on phones) */}
       <div
