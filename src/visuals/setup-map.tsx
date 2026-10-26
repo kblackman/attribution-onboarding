@@ -1,7 +1,7 @@
 import { useId, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
-import { SHOTS, ShotView, Z, type Shot } from './EmptyStateMontage'
+import { ShotView, shotByLabel, type Shot } from './EmptyStateMontage'
 import { HandCircle } from '../components/HandCircle'
 
 /*
@@ -50,25 +50,25 @@ const DRAWER_W = 220
 export const nodeSize = (n: MapNode) =>
   n.kind === 'attribution' ? { w: ATTR_W, h: (ATTR_W * 10) / 16 } : n.kind === 'page' ? { w: PAGE_W, h: 150 } : { w: DRAWER_W, h: 132 }
 
-const shot = (i: number, patch: Partial<Shot> = {}): Shot => ({ ...SHOTS[i], ...patch })
+const shot = (label: string, patch: Partial<Shot> = {}): Shot => ({ ...shotByLabel(label), ...patch })
 
 export const NODES: MapNode[] = [
-  { id: 'attr-1', kind: 'attribution', x: 0, y: 0, shot: shot(0) }, // No events
+  { id: 'attr-1', kind: 'attribution', x: 0, y: 0, shot: shot('No events') }, // No events
   { id: 'events', kind: 'page', x: 360, y: -330, title: 'Events', detail: 'Leave Attribution' },
   { id: 'event-creation', kind: 'drawer', x: 700, y: -330, title: 'Event Creation', detail: 'Create an event, save', feature: 'save' },
-  { id: 'attr-2', kind: 'attribution', x: 1040, y: 0, shot: shot(1), hiddenButton: true }, // Events not defined
+  { id: 'attr-2', kind: 'attribution', x: 1040, y: 0, shot: shot('Events not defined'), hiddenButton: true }, // Events not defined
   { id: 'event-definition', kind: 'drawer', x: 1040, y: 330, title: 'Manage conversions', detail: 'Mark events as mid or low funnel', feature: 'funnel' },
-  { id: 'attr-3', kind: 'attribution', x: 1400, y: 0, shot: shot(5, { label: 'Data ingestion', labelAt: { x: 70, y: 8 } }) }, // wait
-  { id: 'attr-4', kind: 'attribution', x: 1760, y: 0, shot: shot(2) }, // No ad sources
+  { id: 'attr-3', kind: 'attribution', x: 1400, y: 0, shot: shot('Waiting on data', { label: 'Data ingestion', labelAt: { x: 70, y: 8 } }) }, // wait
+  { id: 'attr-4', kind: 'attribution', x: 1760, y: 0, shot: shot('No ad sources') }, // No ad sources
   { id: 'sources', kind: 'page', x: 2100, y: -330, title: 'Sources', detail: 'Connect ad sources', feature: 'oauth' },
-  { id: 'attr-5', kind: 'attribution', x: 2440, y: 0, shot: shot(3) }, // AI off
+  { id: 'attr-5', kind: 'attribution', x: 2440, y: 0, shot: shot('AI off') }, // AI off
   { id: 'ai-settings', kind: 'page', x: 2780, y: -330, title: 'Freshpaint AI settings', detail: 'Turn on AI', feature: 'toggle' },
   {
     id: 'attr-6',
     kind: 'attribution',
     x: 3120,
     y: 0,
-    shot: { label: 'Card generation', placeholder: 'ai-no-events', empty: Z.bottom, question: true },
+    shot: shot('Recommendations processing', { label: 'Card generation', question: true }),
   }, // wait: cards take a full day
 ]
 

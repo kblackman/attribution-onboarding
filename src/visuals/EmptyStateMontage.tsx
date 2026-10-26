@@ -9,7 +9,7 @@ import { PlaceholderBadge } from '../components/Placeholder'
   Beat 4 visual: the empty-state montage, as a stack of screenshots on a table. One large screenshot falls
   and lands slightly askew; its empty area gets a hand-drawn magenta circle, a handwritten label, and an
   arrow. The next falls on top, a little offset, and the one beneath dims as it's covered. The first six
-  land slowly enough to read; "Waiting on data" is marked differently (dashed circle, question mark)
+  land slowly enough to read (now nine: several widgets have more than one empty state); "Waiting on data" is marked differently (dashed circle, question mark)
   because a later beat calls back to it. Then more keep coming, faster and faster, until the stack holds.
 
   SWAPPING IN REAL SCREENSHOTS: put the file in public/assets/hunch/, then on its entry in SHOTS set
@@ -44,24 +44,35 @@ export const Z = {
   body: { x: 4, y: 17, w: 92, h: 77 },
 }
 
-/** The six, in order. Swap in real screenshots here (see above). */
+/**
+ * Every empty state, in the order they fall. Each is a recreated screen (scripts/empty-states/, rendered by
+ * render.sh): No events from no-events.html, the rest from attribution.html?state=<name>. Several are the same
+ * widget in different states, depending on what's set up (per Kyle). Waiting on data stays last: it's marked
+ * differently (dashed circle, question mark) because a later beat calls back to it. Other visuals look shots
+ * up by label (shotByLabel), so the order is free to change.
+ */
 export const SHOTS: Shot[] = [
-  // recreated (no screen grab survived): scripts/empty-states/no-events.html, rendered by render.sh
   { label: 'No events', src: 'no-events.png', aspect: 1512 / 982, empty: { x: 42, y: 31, w: 32, h: 36 } },
-  // from Kyle's screen grab, in the componentized Attribution shell: attribution.html?state=events-undefined
   { label: 'Events not defined', src: 'events-undefined.png', aspect: 1512 / 982, empty: { x: 18, y: 74.9, w: 79.9, h: 23 } },
-  // recreated in the componentized Attribution shell: scripts/empty-states/attribution.html?state=no-ad-sources
-  { label: 'No ad sources', src: 'no-ad-sources.png', aspect: 1512 / 982, empty: { x: 18, y: 62.3, w: 79.9, h: 25.5 } },
-  // from Kyle's screen grabs, in the componentized Attribution shell: attribution.html?state=ai-off / ai-no-events
+  { label: 'No ad sources', src: 'no-ad-sources.png', aspect: 1512 / 982, empty: { x: 18, y: 53.9, w: 79.9, h: 25.5 } },
+  { label: 'Requires API connection', src: 'no-ad-sources-table.png', aspect: 1512 / 982, empty: { x: 18, y: 62.3, w: 79.9, h: 35.2 } },
   { label: 'AI off', src: 'ai-off.png', aspect: 1512 / 982, empty: { x: 18, y: 18, w: 79.9, h: 25.3 } },
   { label: 'AI on, no events', src: 'ai-no-events.png', aspect: 1512 / 982, empty: { x: 18, y: 18, w: 79.9, h: 25.3 } },
-  // from Kyle's screenshot plus his notes (empty chart, empty table container): attribution.html?state=waiting-on-data
+  { label: 'Recommendations processing', src: 'recs-processing.png', aspect: 1512 / 982, empty: { x: 18, y: 18, w: 79.9, h: 25.3 } },
+  { label: 'Not enough recent data', src: 'not-enough-data.png', aspect: 1512 / 982, empty: { x: 18, y: 23, w: 79.9, h: 24 } },
   { label: 'Waiting on data', src: 'waiting-on-data.png', aspect: 1512 / 982, empty: { x: 18, y: 7.7, w: 79.9, h: 82.1 }, question: true, labelAt: { x: 62, y: 3.5 } },
 ]
 
+/** A shot by its label (so other visuals don't depend on the montage's order). */
+export const shotByLabel = (label: string): Shot => {
+  const s = SHOTS.find((x) => x.label === label)
+  if (!s) throw new Error(`No empty-state shot labeled "${label}" in SHOTS (EmptyStateMontage.tsx).`)
+  return s
+}
+
 export const TIMING = {
   start: 0.5,
-  sixGap: 1.9, // between the first six, slow enough to read each label
+  sixGap: 1.5, // between the first wave (every shot once), slow enough to read each label
   fall: 0.55,
   circleAfter: 0.45, // circle starts this long after its screenshot begins to fall
   circleDraw: 0.6,
@@ -81,13 +92,13 @@ const MAX_H = 52
 
 const asset = (file: string) => `${import.meta.env.BASE_URL}assets/hunch/${file}`
 
-// the whole stack: the six, then repeats of the first five (no labels), each with a resting offset and tilt
+// the whole stack: every shot once, then repeats of the unmarked ones (no labels), each with a resting offset and tilt
 const STACK = (() => {
   let seed = 11
   const rand = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280)
   const items: { shot: Shot; at: number; quick: boolean; dx: number; dy: number; r: number }[] = []
   SHOTS.forEach((shot, i) => items.push({ shot, at: TIMING.start + i * TIMING.sixGap, quick: false, dx: 0, dy: 0, r: 0 }))
-  let t = TIMING.start + 5 * TIMING.sixGap
+  let t = TIMING.start + (SHOTS.length - 1) * TIMING.sixGap
   let gap = TIMING.dupFirstGap + 1.2
   const repeats = SHOTS.filter((s) => !s.question)
   for (let i = 0; i < TIMING.dupCount; i++) {

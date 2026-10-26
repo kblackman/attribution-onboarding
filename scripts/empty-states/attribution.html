@@ -36,6 +36,10 @@
 // the newer page around the recommendations section
 const NEWER = (extra) => ({ header: 'docs', ...extra, filters: 'bordered', kpis: 'credit', chart: 'full' })
 
+// no ad platforms connected (Kyle's full page, very lightly filled): Connect section above the chart, and a table
+// whose spend columns need an API connection
+const NO_ADS = { header: 'manage', filters: 'model', kpis: 'conversions-empty', adsCta: 'connect', chart: 'light', table: 'unconnected' }
+
 const STATES = {
   // Attribution fully set up, for reference (the screenshot this page was rebuilt from)
   before: { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: null, table: 'full' }, focus: 'header', at: 40 },
@@ -49,7 +53,9 @@ const STATES = {
   // setup done, waiting on data ingestion (Kyle's screenshot): empty chart and an empty table; circled across both
   'waiting-on-data': { widgets: { header: 'manage', filters: 'model', kpis: 'conversions-empty', adsCta: 'connect', chart: 'empty', table: 'empty' }, focus: ['chart', 'table'], at: 20 },
   // no ad platforms connected: the Connect section sits between the chart and the table
-  'no-ad-sources': { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: 'connect', table: 'full' }, focus: 'adsCta', at: 556 },
+  'no-ad-sources': { widgets: NO_ADS, focus: 'adsCta' },
+  // the same page, framed on the table: spend reads Requires API Connection, with a Connect row under each source
+  'no-ad-sources-table': { widgets: NO_ADS, focus: 'table', at: 556 },
 }
 
 /* ---------- small parts ---------- */
@@ -271,6 +277,39 @@ WIDGETS.chart.empty = () =>
     .replace(/<div class="v">84\.64%<\/div>/, '<div class="v"><span class="dash">-</span></div>')
     .replace(/<div class="items">[\s\S]*?<\/div>/, '<div class="items"><span><i class="bing"></i>Google Ads <em>(0)</em></span><span><i class="google"></i>Meta Ads <em>(0)</em></span></div>')
     .replace(/<div class="bars">[\s\S]*?<\/div>\s*<div class="xl">/, '<div class="bars"></div><div class="xl">')
+// lightly filled: two sources with a little data, no low-funnel yet (mock numbers)
+WIDGETS.chart.light = () =>
+  WIDGETS.chart.empty()
+    .replace('<div class="bars"></div>', `<div class="bars">${bar([['google', 19], ['bing', 81]])}${bar([['google', 17], ['bing', 83]])}${bar([])}</div>`)
+    .replace('<span>Impressions</span>', '')
+
+// no ad platform connected: spend needs an API connection, and each source gets a Connect row (mock numbers and event names)
+WIDGETS.table.unconnected = () => `
+  <div class="tablebar">
+    <span class="muted" style="font-size:14px">Last 7 complete days</span>
+    <span class="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e2125" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>Search insights data</span>
+  </div>
+  <div class="card table unconnected">
+    <div class="tr h">
+      <span>Source <svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 2l4 5H1z" fill="#8a919a"/></svg></span>
+      <span><span class="u">Landing page views</span>${sort}</span>
+      <span><span class="stack">Mid-funnel conversions<small>PageView, form_submit</small></span>${sort}</span>
+      <span><span class="stack">Low-funnel conversions<small>Booked Appointment</small></span>${sort}</span>
+      <span><span class="u">CPA ($)</span>${sort}</span>
+      <span><span class="u">Total spend ($)</span>${sort}</span>
+    </div>
+    ${[
+      ['Google Ads', '3,842', '2,516', 'Connect to the Google Ads Conversions API (CAPI) to view campaign and spend data.', 'Connect Google Ads'],
+      ['Meta Ads', '912', '488', 'Connect to Meta Insights to view campaign and spend data.', 'Connect Meta'],
+    ].map(([name, lpv, mid, note, cta]) => `
+      <div class="tr"><span>${name}</span><span>${lpv}</span><span>${mid}</span><span>0</span><span class="req">Requires API Connection</span><span class="req">Requires API Connection</span></div>
+      <div class="note"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3f51b5"/><path d="M12 11v6M12 7.5v.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>${note} <u>${cta}</u></div>`).join('')}
+    <div class="pager">
+      <span class="rpp">Rows per page: <span class="num">10 ${chevron}</span></span>
+      <span class="nav"><span style="color:#1e2125">1-2 of 2</span><span>«</span><span>‹</span><span>›</span><span>»</span></span>
+    </div>
+  </div>`
+
 // the table's container with nothing in it yet (styled like the Define your events card). Copy is Claude's draft.
 WIDGETS.table.empty = () => `
   <div class="tablebar">

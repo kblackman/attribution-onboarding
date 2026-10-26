@@ -142,3 +142,9 @@
   .nodata h3 { margin-top: 18px; font-size: 20px; font-weight: 600; }
   .nodata p { margin-top: 12px; max-width: 520px; font-size: 15px; line-height: 23px; color: #5d6875; }
   .nodata-table { margin-top: 16px; height: 200px; }
+
+  /* No ad sources: the table without an ad connection */
+  .table.unconnected .tr { grid-template-columns: 1.1fr 1.15fr 1.7fr 1.7fr 1.3fr 1.3fr; }
+  .req { color: #a3acb7; font-size: 13px; }
+  .note { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; border-top: 1px solid #e3e5e8; background: #f4f5fb; font-size: 14px; }
+  .note u { font-weight: 600; text-underline-offset: 2px; margin-left: 2px; }

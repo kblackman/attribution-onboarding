@@ -4,7 +4,7 @@ import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { useVisualPlayback } from '../engine/useVisualPlayback'
 import { PlaceholderBadge } from '../components/Placeholder'
-import { SHOTS, ShotView } from './EmptyStateMontage'
+import { ShotView, shotByLabel } from './EmptyStateMontage'
 
 /*
   Beat 6 visual ("Connecting the dots"): the method, not the result. A generic whiteboard (not FigJam's UI).
@@ -28,18 +28,18 @@ export const TIMING = {
 // layout in percent of the board (x of width, y of height); a two-row snake, left to right then back
 const SHOT_W = 14 // cqw
 const STEP_W = 11 // cqw
-type Item = { kind: 'shot'; shot: number; x: number; y: number } | { kind: 'step'; label: string; x: number; y: number }
+type Item = { kind: 'shot'; shot: string; x: number; y: number } | { kind: 'step'; label: string; x: number; y: number }
 const FLOW: Item[] = [
-  { kind: 'shot', shot: 0, x: 10, y: 28 }, // No events
+  { kind: 'shot', shot: 'No events', x: 10, y: 28 }, // No events
   { kind: 'step', label: 'Event Creation', x: 28, y: 28 },
-  { kind: 'shot', shot: 1, x: 46, y: 28 }, // Events not defined
+  { kind: 'shot', shot: 'Events not defined', x: 46, y: 28 }, // Events not defined
   { kind: 'step', label: 'Event Definition', x: 64, y: 28 },
-  { kind: 'shot', shot: 5, x: 84, y: 28 }, // Waiting on data
-  { kind: 'shot', shot: 2, x: 84, y: 74 }, // No ad sources
+  { kind: 'shot', shot: 'Waiting on data', x: 84, y: 28 }, // Waiting on data
+  { kind: 'shot', shot: 'No ad sources', x: 84, y: 74 }, // No ad sources
   { kind: 'step', label: 'Sources', x: 64, y: 74 },
-  { kind: 'shot', shot: 3, x: 46, y: 74 }, // AI off
+  { kind: 'shot', shot: 'AI off', x: 46, y: 74 }, // AI off
   { kind: 'step', label: 'AI settings', x: 28, y: 74 },
-  { kind: 'shot', shot: 4, x: 10, y: 74 }, // AI on, no events
+  { kind: 'shot', shot: 'AI on, no events', x: 10, y: 74 }, // AI on, no events
 ]
 // friction points: a handwritten note above or below a step (index into FLOW), with an arrow to it.
 // Kyle's wording (2026-10-25), each under a "UX Gap:" label.
@@ -129,7 +129,7 @@ export function MappingBoard(props: VisualProps) {
                   animate={on ? { opacity: 1, scale: 1, y: '0%' } : { opacity: 0, scale: reduced ? 1 : 1.2, y: reduced ? '0%' : '-10%' }}
                   transition={at(d, 0.5)}
                 >
-                  <ShotView shot={SHOTS[f.shot]} show={on} instant={!playing} reducedMotion={reduced} delay={d + 0.3} circleDuration={0.45} variant={n} />
+                  <ShotView shot={shotByLabel(f.shot)} show={on} instant={!playing} reducedMotion={reduced} delay={d + 0.3} circleDuration={0.45} variant={n} />
                 </motion.div>
               </Placed>
             )
