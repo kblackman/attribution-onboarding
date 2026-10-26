@@ -1,12 +1,20 @@
 import type { Beat } from '../engine/types'
 import { Reveal } from '../components/Reveal'
 import { StepStatusList } from '../components/StepStatusList'
+import { SpotlightLine } from '../components/SpotlightLine'
 
 // Evidence tier: a card, because it holds an artifact (the v1 status list).
 const beat: Beat = {
   slug: 'code-told',
   title: 'What the code told me',
   cardDense: true,
+  // the official kickoff of the prototype (Kyle, 2026-10-25): lands on the next press, the card pushes back
+  cardOverlay: (
+    <SpotlightLine>
+      <span>Then I opened Claude Code </span>
+      <span><em>and started building.</em></span>
+    </SpotlightLine>
+  ),
   card: (
     <div>
       <Reveal as="h2" className="m-0 text-story font-extrabold">
