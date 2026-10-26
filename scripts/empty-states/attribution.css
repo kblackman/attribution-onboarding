@@ -1,0 +1,82 @@
+/* The old Attribution page's widgets (before the redesign), recreated from Kyle's screenshot. Inter. */
+  .main { min-width: 0; }
+  .viewport { flex: 1; overflow: hidden; position: relative; }
+  .scroll { position: relative; padding: 40px 32px 48px; color: #1e2125; }
+  .muted { color: #5d6875; }
+  .info { width: 18px; height: 18px; flex: none; }
+
+  .head { display: flex; align-items: center; justify-content: space-between; }
+  .head h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.2px; }
+  .head .right { display: flex; align-items: center; gap: 24px; }
+  .consent { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #5d6875; }
+  .toggle { width: 34px; height: 18px; border-radius: 99px; background: #c9ced4; position: relative; }
+  .toggle::after { content: ''; position: absolute; left: 1px; top: 1px; width: 16px; height: 16px; border-radius: 99px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.25); }
+  .primary { height: 48px; padding: 0 24px; border-radius: 4px; background: #3f51b5; color: #fff; font-size: 14px; font-weight: 500; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+
+  .filters { margin-top: 40px; height: 80px; border-radius: 12px; background: #f4f5fb; display: flex; align-items: center; padding: 0 16px; gap: 18px; }
+  .filters .lbl { align-self: flex-end; margin-bottom: 16px; font-size: 15px; font-weight: 600; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field small { font-size: 13px; color: #4a4f57; display: flex; align-items: center; gap: 6px; }
+  .select { width: 255px; height: 34px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 14px 0 16px; font-size: 15px; }
+  .dates { margin-left: auto; height: 50px; border-radius: 8px; background: #fff; display: flex; align-items: center; gap: 4px; padding: 0 12px; font-size: 13px; font-weight: 600; color: #5d6875; }
+  .dates span { padding: 7px 9px; border-radius: 6px; }
+  .dates .on { background: #e8eaf6; color: #1e2125; }
+  .dates .off { color: #c3c8d0; }
+  .dates .range { font-weight: 400; padding-left: 10px; }
+
+  .kpis { margin-top: 52px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+  .card { border: 1px solid #e3e5e8; border-radius: 6px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+  .kpi { padding: 22px 21px 22px; }
+  .kpi .t { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; }
+  .kpi .v { margin-top: 10px; font-size: 34px; font-weight: 600; letter-spacing: -0.3px; }
+  .kpi .f { margin-top: 18px; padding-top: 34px; border-top: 1px solid #e3e5e8; display: flex; align-items: center; justify-content: space-between; font-size: 15px; }
+  .kpi .f > span { display: flex; align-items: center; gap: 10px; }
+  .up { color: #1f9d55; margin-left: 6px; }
+  .down { color: #d93030; margin-left: 6px; }
+
+  .section { margin-top: 64px; font-size: 24px; font-weight: 600; }
+  .chart { margin-top: 26px; height: 504px; display: flex; }
+  .legend { width: 360px; flex: none; padding: 22px 21px; border-right: 1px solid #e3e5e8; margin: 20px 0; padding-top: 2px; }
+  .legend .t { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; }
+  .legend .v { margin-top: 18px; font-size: 34px; font-weight: 600; }
+  .hint { margin-top: 42px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5d6875; }
+  .items { margin-top: 30px; display: flex; flex-direction: column; gap: 20px; font-size: 15px; }
+  .items span { display: flex; align-items: center; gap: 9px; }
+  .items i { width: 12px; height: 12px; border-radius: 2px; display: block; }
+  .items em { font-style: normal; color: #a3acb7; }
+  .plot { flex: 1; position: relative; padding: 22px 21px 0 24px; }
+  .outline { position: absolute; right: 21px; top: 22px; height: 48px; padding: 0 24px; border: 1.5px solid #3f51b5; border-radius: 4px; color: #3f51b5; font-size: 13px; font-weight: 600; display: flex; align-items: center; }
+  .axis { position: absolute; left: 24px; right: 30px; top: 100px; height: 345px; }
+  .grid { position: absolute; left: 60px; right: 0; border-top: 1px solid #eceef1; }
+  .grid b { position: absolute; left: -54px; top: -8px; width: 44px; text-align: right; font-size: 12px; font-weight: 400; color: #5d6875; }
+  .base { border-top-color: #1e2125; }
+  .ylabel { position: absolute; left: -14px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); font-size: 12px; color: #5d6875; }
+  .bars { position: absolute; left: 60px; right: 0; top: 0; bottom: 0; display: flex; justify-content: space-around; align-items: flex-end; }
+  .bar { width: 108px; height: 100%; display: flex; flex-direction: column-reverse; }
+  .bar i { display: block; }
+  .xl { position: absolute; left: 60px; right: 0; top: 357px; display: flex; justify-content: space-around; font-size: 12px; }
+  .xl span { width: 160px; text-align: center; }
+  .bing { background: #6a75cf; } .google { background: #f27b7b; } .meta { background: #fdde7b; } .mntn { background: #7ee0c9; }
+
+  /* the empty state: one column per ad platform, divided like the product's two-column version */
+  .cta { margin-top: 32px; height: 250px; display: grid; grid-template-columns: repeat(3, 1fr); padding: 34px 0; }
+  .cta > div { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 22px; }
+  .cta > div + div { border-left: 1px solid #e3e5e8; }
+  .cta h3 { font-size: 17px; font-weight: 600; }
+  .cta p { margin-top: 14px; font-size: 15px; line-height: 23px; color: #5d6875; max-width: 360px; min-height: 46px; }
+  .cta .btn { margin-top: 20px; height: 46px; padding: 0 24px 0 18px; border: 1.5px solid #3f51b5; border-radius: 4px; color: #3f51b5; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+
+  .tablebar { margin-top: 70px; display: flex; align-items: flex-end; justify-content: space-between; }
+  .search { width: 232px; height: 48px; border: 1px solid #c9ced4; border-radius: 4px; display: flex; align-items: center; gap: 12px; padding: 0 16px; font-size: 15px; color: #6b7280; }
+  .table { margin-top: 16px; }
+  .tr { display: grid; grid-template-columns: 1.15fr 1.2fr 1.65fr 1.7fr 1.7fr 1fr 1.35fr 0.85fr; column-gap: 12px; align-items: center; padding: 0 16px; border-top: 1px solid #e3e5e8; height: 53px; font-size: 14px; }
+  .tr.h { border-top: 0; height: 70px; font-weight: 600; }
+  .tr.h > span { display: flex; align-items: center; gap: 8px; }
+  .tr.h .stack { display: block; }
+  .tr.h .u { text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
+  .tr.h small { display: block; font-size: 11px; font-weight: 400; color: #5d6875; }
+  .tr .src { display: flex; align-items: center; gap: 12px; }
+  .pager { display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 16px; border-top: 1px solid #e3e5e8; font-size: 14px; }
+  .pager .rpp { display: flex; align-items: center; gap: 12px; }
+  .pager .num { height: 40px; width: 82px; border: 1px solid #e3e5e8; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 16px; }
+  .pager .nav { display: flex; align-items: center; gap: 30px; color: #c3c8d0; }

@@ -1,0 +1,185 @@
+<!doctype html>
+<!--
+  The old Attribution page (before the redesign), componentized, so each empty state is a quick swap.
+  Recreated from Kyle's screenshot of the demo account (minus the old Recommendation Cards row), in the
+  walkthrough's shell (shell.css / shell.js), page content in Inter, mock data.
+
+  HOW IT WORKS
+  - WIDGETS: one function per widget (header, filters, kpis, chart, adsCta, table). Each takes a variant
+    name; 'full' is the populated widget. Add an empty-state variant to a widget when Kyle sends a
+    screenshot of it.
+  - STATES: each empty state is a recipe: which variant every widget uses (null hides it), and which
+    widget is the empty state (`focus`). The capture scrolls so the focus widget sits at `at` px below the
+    top bar, and writes its box (percent of the 1512 x 982 frame) to data-zone, for SHOTS in
+    src/visuals/EmptyStateMontage.tsx.
+  - Open attribution.html?state=<name>. render.sh renders every state to public/assets/hunch/<name>.png
+    and prints each zone.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=block">
+<link rel="stylesheet" href="shell.css">
+<link rel="stylesheet" href="attribution.css">
+</head>
+<body>
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <div id="topbar"></div>
+    <div class="viewport content"><div class="scroll" id="page"></div></div>
+  </main>
+</div>
+<script src="shell.js"></script>
+<script>
+/* ---------- the recipes ---------- */
+const STATES = {
+  // Attribution fully set up, for reference (the screenshot this page was rebuilt from)
+  before: { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: null, table: 'full' }, focus: 'header', at: 40 },
+  // no ad platforms connected: the Connect section sits between the chart and the table
+  'no-ad-sources': { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: 'connect', table: 'full' }, focus: 'adsCta', at: 556 },
+}
+
+/* ---------- small parts ---------- */
+const info = '<svg class="info" viewBox="0 0 24 24" fill="none" stroke="#1e2125" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5" stroke-linecap="round"/></svg>'
+const chevron = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e2125" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+const plus = (c) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`
+const sort = '<svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 1l4 5H1zM5 13L1 8h8z" fill="#8a919a"/></svg>'
+const rowArrow = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1e2125" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'
+
+/* ---------- the widgets: variant name -> HTML ---------- */
+const WIDGETS = {
+  header: {
+    full: () => `
+      <div class="head">
+        <h1>Attribution</h1>
+        <div class="right"><span class="consent">Consent Mode <i class="toggle"></i></span><span class="primary">Manage Conversions</span></div>
+      </div>`,
+  },
+
+  filters: {
+    full: () => `
+      <div class="filters">
+        <span class="lbl">Filters:</span>
+        <span class="field"><small>Group results by</small><span class="select">Source &amp; campaign ${chevron}</span></span>
+        <span class="field"><small>Attribution model ${info}</small><span class="select">Last touch ${chevron}</span></span>
+        <span class="dates">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5d6875" stroke-width="1.7" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>
+          <span>Custom</span><span class="on">7D</span><span>30D</span><span>3M</span><span class="off">6M</span><span class="off">12M</span><span class="range">Jan 26, 2026 - Feb 1, 2026</span>
+        </span>
+      </div>`,
+  },
+
+  kpis: {
+    full: () => `
+      <div class="kpis">
+        ${kpi(`Total conversions ${info}`, '314', `<span>Conversion rate ${info}</span>`, '84.64%')}
+        ${kpi('ROI', '91.17%', '<span>ROI last period</span>', '73%<span class="up">+3%</span>')}
+        ${kpi('Total spend', '$5,796.56', '<span>Total spend last period</span>', '$80,000<span class="down">-6.7%</span>')}
+      </div>`,
+  },
+
+  chart: {
+    full: () => `
+      <div class="section">Performance</div>
+      <div class="card chart">
+        <div class="legend">
+          <div class="t">Conversion rate ${info}</div>
+          <div class="v">84.64%</div>
+          <div class="hint"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#8a919a"/><path d="M9.5 9.5a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17v.3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Click on each source to toggle visibility in graph</div>
+          <div class="items">
+            <span><i class="bing"></i>Bing Ads <em>(27.79)</em></span>
+            <span><i class="google"></i>Google Ads <em>(162.61)</em></span>
+            <span><i class="meta"></i>Meta Ads <em>(123.41)</em></span>
+            <span><i class="mntn"></i>MNTN <em>(0.7)</em></span>
+          </div>
+        </div>
+        <div class="plot">
+          <span class="outline">Toggle to linear view</span>
+          <div class="axis">
+            <span class="ylabel">Percentage</span>
+            ${['100%', '80%', '60%', '40%', '20%', '0%'].map((l, i) => `<div class="grid${i === 5 ? ' base' : ''}" style="top:${i * 20}%"><b>${l}</b></div>`).join('')}
+            <div class="bars">
+              ${bar([['mntn', 100]])}
+              ${bar([['mntn', 6], ['meta', 17], ['google', 58], ['bing', 19]])}
+              ${bar([['mntn', 1], ['meta', 11], ['google', 74], ['bing', 14]])}
+              ${bar([['mntn', 0.5], ['meta', 39], ['google', 52], ['bing', 8.5]])}
+            </div>
+            <div class="xl"><span>Impressions</span><span>Landing page views</span><span>Mid-funnel conversions</span><span>Low-funnel conversions</span></div>
+          </div>
+        </div>
+      </div>`,
+  },
+
+  // the No ad sources empty state: one column per ad platform (the product had Meta and Google; Microsoft added per Kyle)
+  adsCta: {
+    connect: () => `
+      <div class="card cta">
+        ${connect('Meta', 'Get campaign and spend data by connecting to our Meta Insights integration.', 'Connect Meta')}
+        ${connect('Google', 'Get campaign and spend data by connecting to our Google Ads Conversions API integration.', 'Connect Google Ads')}
+        ${connect('Microsoft', 'Get campaign and spend data by connecting to our Microsoft Advertising integration.', 'Connect Microsoft Ads')}
+      </div>`,
+  },
+
+  table: {
+    full: () => `
+      <div class="tablebar">
+        <span class="muted" style="font-size:14px">Last 7 complete days</span>
+        <span class="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e2125" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>Search insights data</span>
+      </div>
+      <div class="card table">
+        <div class="tr h">
+          <span>Source <svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 2l4 5H1z" fill="#8a919a"/></svg></span>
+          <span><span class="u">Impressions</span>${sort}</span>
+          <span><span class="u">Landing page views</span>${sort}</span>
+          <span><span class="stack">Mid-funnel conversions<small>Booked Appointment</small></span>${sort}</span>
+          <span><span class="stack">Low-funnel conversions<small>Attended Appointment</small></span>${sort}</span>
+          <span><span class="u">CPA ($)</span>${sort}</span>
+          <span><span class="u">Total spend ($)</span>${sort}</span>
+          <span>ROI ${sort}</span>
+        </div>
+        ${[
+          ['Bing Ads', '-', '70', '28.91', '27.79', '26.88', '746.90', '46.861'],
+          ['Google Ads', '-', '217', '154.13', '162.6', '16.20', '2,634.46', '46.501'],
+          ['Meta Ads', '-', '63', '23.87', '123.41', '17.11', '2,111.90', '159.098'],
+          ['MNTN', '2,239,132', '21', '1.61', '0.7', '433.30', '303.31', '115.392'],
+        ].map(([name, ...v]) => `<div class="tr"><span class="src">${rowArrow}${name}</span>${v.map((x) => `<span>${x}</span>`).join('')}</div>`).join('')}
+        <div class="pager">
+          <span class="rpp">Rows per page: <span class="num">10 ${chevron}</span></span>
+          <span class="nav"><span style="color:#1e2125">1-4 of 4</span><span>«</span><span>‹</span><span>›</span><span>»</span></span>
+        </div>
+      </div>`,
+  },
+}
+
+function kpi(title, value, footLabel, footValue) {
+  return `<div class="card kpi"><div class="t">${title}</div><div class="v">${value}</div><div class="f">${footLabel}<b style="font-weight:400">${footValue}</b></div></div>`
+}
+function bar(parts) {
+  return `<div class="bar">${parts.map(([k, h]) => `<i class="${k}" style="height:${h}%"></i>`).join('')}</div>`
+}
+function connect(platform, body, button) {
+  return `<div><h3>Connect Your ${platform} Ad Integration</h3><p>${body}</p><span class="btn">${plus('#3f51b5')}${button}</span></div>`
+}
+
+/* ---------- build ---------- */
+const params = new URLSearchParams(location.search)
+const name = params.get('state') || 'no-ad-sources'
+// ?focus=<widget>&at=<px> frames any widget instead (for checking a widget, not for the montage)
+const state = { ...STATES[name], ...(params.get('focus') && { focus: params.get('focus'), at: Number(params.get('at') || 40) }) }
+const page = document.getElementById('page')
+page.innerHTML = Object.entries(state.widgets)
+  .filter(([, variant]) => variant)
+  .map(([w, variant]) => `<section data-w="${w}">${WIDGETS[w][variant]()}</section>`)
+  .join('')
+
+// frame the capture on the empty state, and report its box for SHOTS
+const focus = page.querySelector(`[data-w="${state.focus}"]`)
+const box = focus.querySelector('.card') || focus
+page.style.transform = `translateY(${state.at - box.offsetTop}px)`
+const r = box.getBoundingClientRect()
+const pct = (n, d) => Math.round((n / d) * 1000) / 10
+document.body.dataset.zone = JSON.stringify({ x: pct(r.left, 1512), y: pct(r.top, 982), w: pct(r.width, 1512), h: pct(r.height, 982) })
+</script>
+</body>
+</html>

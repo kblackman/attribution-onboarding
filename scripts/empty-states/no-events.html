@@ -9,49 +9,8 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=block">
+<link rel="stylesheet" href="shell.css">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 1512px; height: 982px; overflow: hidden; font-family: Roboto, sans-serif; color: #1e2125; background: #fff; }
-  .app { display: flex; height: 982px; }
-
-  /* sidebar: an exact port of the walkthrough's Sidebar (src/visuals/onboarding-screens.tsx), same Figma assets */
-  .side { width: 240px; flex: none; background: #0d1126; color: #fff; display: flex; flex-direction: column; }
-  .brand { height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 24px; }
-  .brand .logo { width: 148.7px; height: 32px; display: block; }
-  .icon-box { width: 32px; height: 32px; display: grid; place-items: center; }
-  .env-wrap { padding: 0 12px 16px; }
-  .env { display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 9px 13px; }
-  .env .txt { flex: 1; height: 56px; display: flex; flex-direction: column; justify-content: center; }
-  .env small { font-size: 12px; font-weight: 700; line-height: 16px; color: rgba(255,255,255,0.6); }
-  .env b { font-size: 14px; font-weight: 700; line-height: 20px; }
-  .rot { transform: rotate(-90deg); }
-  .divider { height: 1px; background: #23303e; border-bottom: 1px solid rgba(255,255,255,0.15); }
-  .nav { padding: 6px 6px 4px; }
-  .cell { padding: 6px; }
-  .navrow { height: 40px; width: 216px; display: flex; align-items: center; border-radius: 8px; padding: 0 12px; font-size: 14px; font-weight: 700; line-height: 20px; letter-spacing: 0.35px; }
-  .navrow .ic { padding-right: 8px; display: flex; }
-  .navrow .label { flex: 1; }
-  .badge-new { border-radius: 6px; background: #def7f2; color: #186756; padding: 4px 8px; font-size: 12px; font-weight: 500; line-height: 16px; letter-spacing: 0.35px; }
-  .grp-head { border-radius: 8px 8px 0 0; background: rgba(255,255,255,0.07); }
-  .grp-list { border-radius: 0 0 8px 8px; background: rgba(255,255,255,0.07); padding: 6px 0 0 16px; }
-  .subcell { height: 44px; padding: 0 0 4px 16px; }
-  .sub { height: 40px; width: 184px; display: flex; align-items: center; justify-content: space-between; border-radius: 8px 0 0 8px; padding: 0 4px 0 12px; font-size: 12px; line-height: 20px; letter-spacing: 0.35px; }
-  .sub.on { background: rgba(73,83,96,0.23); }
-  .ai { position: relative; width: 20px; height: 20px; overflow: hidden; display: block; }
-  .ai .a { position: absolute; top: 0; left: 5.56%; width: 88.88%; height: 100%; }
-  .ai .m { position: absolute; inset: 16.02% 35.97% 37.41% 17.46%; -webkit-mask: url(../../public/assets/showing-team/nav-ai-mask.svg) -0.621px -1.242px / 10.556px 10.556px no-repeat; mask: url(../../public/assets/showing-team/nav-ai-mask.svg) -0.621px -1.242px / 10.556px 10.556px no-repeat; }
-  .ai .m img { position: absolute; inset: 0; width: 100%; height: 100%; }
-
-  /* main */
-  .main { flex: 1; display: flex; flex-direction: column; }
-  .top { height: 56px; flex: none; border-bottom: 1px solid #dde0e4; display: flex; align-items: center; padding: 0 32px; }
-  .crumb { flex: 1; font-size: 12px; font-weight: 700; line-height: 24px; }
-  .tools { display: flex; align-items: center; gap: 4px; }
-  .tool { width: 48px; height: 48px; display: grid; place-items: center; position: relative; }
-  .tool img { width: 24px; height: 24px; }
-  .badge { position: absolute; right: 7px; top: 7px; background: #3f51b5; color: #fff; border: 1px solid #fff; border-radius: 99px; font-size: 10px; font-weight: 500; line-height: 12px; padding: 2px 5px; }
-  .avatar { width: 36px; height: 36px; border-radius: 99px; background: #6473c9; color: #fff; display: grid; place-items: center; font-size: 14px; }
-
   .empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding-bottom: 80px; }
   .art { position: relative; width: 136px; height: 136px; }
   .card { position: absolute; background: #f4f6f8; border-radius: 6.6px; box-shadow: 0 0.8px 1.6px rgba(0,0,0,0.2); display: grid; place-items: center; }
@@ -66,34 +25,12 @@
 </head>
 <body>
 <div class="app">
-  <aside class="side">
-    <div class="brand"><img class="logo" src="../../public/assets/showing-team/logo.svg" alt="Freshpaint"><span class="icon-box"><img src="../../public/assets/showing-team/nav-collapse.svg" width="18" height="18" alt=""></span></div>
-    <div class="env-wrap"><div class="env"><img src="../../public/assets/showing-team/nav-env.svg" width="20" height="20" alt=""><span class="txt"><small>Main</small><b>Production</b></span><img class="rot" src="../../public/assets/showing-team/chevron-env.svg" width="20" height="20" alt=""></div></div>
-    <div class="divider"></div>
-    <div class="nav">
-      <div class="cell"><div class="navrow"><span class="ic"><span class="ai"><img class="a" src="../../public/assets/showing-team/nav-ai.svg" alt=""><span class="m"><img src="../../public/assets/showing-team/nav-ai-spark.svg" alt=""></span></span></span><span class="label">Freshpaint AI</span><span style="padding-right:4px"><span class="badge-new">New</span></span></div></div>
-      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-sources.svg" width="20" height="20" alt=""></span><span class="label">Sources</span></div></div>
-      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-events.svg" width="20" height="20" alt=""></span><span class="label">Events</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
-      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-destinations.svg" width="20" height="20" alt=""></span><span class="label">Destinations</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
-      <div class="cell"><div class="grp-head"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-insights.svg" width="20" height="20" alt=""></span><span class="label">Insights</span><img src="../../public/assets/showing-team/chevron-up.svg" width="20" height="20" alt=""></div></div><div class="grp-list"><div class="subcell"><div class="sub on">Attribution</div></div><div class="subcell"><div class="sub">Web Analytics<span class="badge-new">New</span></div></div><div class="subcell"><div class="sub">Funnels<span class="badge-new">New</span></div></div><div class="subcell"><div class="sub">Heatmaps<span class="badge-new">New</span></div></div><div class="subcell"><div class="sub">Session Replay<span class="badge-new">New</span></div></div><div class="subcell"><div class="sub">Surveys<span class="badge-new">New</span></div></div></div></div>
-      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-audiences.svg" width="20" height="20" alt=""></span><span class="label">Audiences</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
-      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-consent.svg" width="20" height="20" alt=""></span><span class="label">Consent</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
-      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-short-links.svg" width="20" height="20" alt=""></span><span class="label">Short Links</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
-      <div class="cell"><div class="navrow"><span class="ic"><img src="../../public/assets/showing-team/nav-internal-tools.svg" width="20" height="20" alt=""></span><span class="label">Internal Tools</span><img src="../../public/assets/showing-team/chevron-down.svg" width="20" height="20" alt=""></div></div>
-    </div>
-  </aside>
+  <aside id="sidebar"></aside>
 
   <main class="main">
-    <div class="top">
-      <span class="crumb">Attribution</span>
-      <span class="tools">
-        <span class="tool"><img src="../../public/assets/showing-team/bell.svg" alt=""><span class="badge">1</span></span>
-        <span class="tool"><img src="../../public/assets/showing-team/help.svg" alt=""></span>
-        <span class="tool"><span class="avatar">AN</span></span>
-      </span>
-    </div>
+    <div id="topbar"></div>
 
-    <div class="empty">
+    <div class="empty content-roboto">
       <!-- the events illustration: two tilted tiles, as on "No integrations connected", with event glyphs -->
       <div class="art">
         <div class="card a">
@@ -113,5 +50,6 @@
     </div>
   </main>
 </div>
+<script src="shell.js"></script>
 </body>
 </html>

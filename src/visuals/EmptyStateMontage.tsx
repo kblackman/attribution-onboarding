@@ -49,7 +49,8 @@ export const SHOTS: Shot[] = [
   // recreated (no screen grab survived): scripts/empty-states/no-events.html, rendered by render.sh
   { label: 'No events', src: 'no-events.png', aspect: 1512 / 982, empty: { x: 42, y: 31, w: 32, h: 36 } },
   { label: 'Events not defined', placeholder: 'events-undefined', empty: Z.kpis },
-  { label: 'No ad sources', placeholder: 'no-ad-sources', empty: Z.side },
+  // recreated in the componentized Attribution shell: scripts/empty-states/attribution.html?state=no-ad-sources
+  { label: 'No ad sources', src: 'no-ad-sources.png', aspect: 1512 / 982, empty: { x: 18, y: 62.3, w: 79.9, h: 25.5 } },
   { label: 'AI off', placeholder: 'ai-off', empty: Z.bottom },
   { label: 'AI on, no events', placeholder: 'ai-no-events', empty: Z.bottom },
   { label: 'Waiting on data', placeholder: 'waiting', empty: Z.body, question: true, labelAt: { x: 70, y: 8 } },
