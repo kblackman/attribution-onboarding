@@ -4,7 +4,7 @@ import { TagRow } from '../components/TagRow'
 import { BeginRow } from '../components/BeginRow'
 import { HeroBackdrop } from '../components/HeroBackdrop'
 import { HorizonLine } from '../components/HorizonLine'
-import { AttributionPage } from '../visuals/AttributionResolve'
+import { HeroSetupFlow } from '../visuals/HeroSetupFlow'
 
 const beat: Beat = {
   slug: 'title',
@@ -13,8 +13,8 @@ const beat: Beat = {
   align: 'center',
   card: (
     <>
-    <HeroBackdrop placeholderLabel="Placeholder imagery">
-      <AttributionPage mode="done" reduced={false} width="100%" />
+    <HeroBackdrop>
+      <HeroSetupFlow />
     </HeroBackdrop>
     <div className="relative flex max-w-[1280px] flex-col items-center">
       <Reveal as="h1" className="m-0 text-hero font-extrabold">
