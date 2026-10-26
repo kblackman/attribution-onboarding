@@ -10,11 +10,12 @@ import { BOUNDS, EdgesView, Legend, NODES, NodeView, PATH, UNIT, firstStep, node
   per key press, the camera following it; with no key press it moves on by itself every AUTO seconds (only
   while going forward; after a step back it waits). Counters tick up in the corner. After the last step,
   one more press (or the auto-advance) zooms out to the whole map; the overlay then waits for a key press. The map lives in setup-map.tsx.
+  Any step Kyle takes himself (arrow keys, Next, swipe) turns the auto-advance off until the visual is left, so he can take over.
 */
 export const RIDE_STEPS = PATH.length + 1 // the 14 steps, then the zoom-out
 export const TIMING = {
-  auto: 2, // seconds per step without a key press
-  camera: 0.9,
+  auto: 2.6, // seconds per step without a key press
+  camera: 1.1,
   zoomSettle: 1.4, // after the zoom-out, before the overlay
   follow: 1.35, // camera zoom while following the marker
 }
@@ -25,16 +26,25 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
   const zoomed = sub >= PATH.length
   const at = Math.min(sub, PATH.length - 1)
   const prev = useRef(-1)
+  // a step the auto-advance didn't take is the presenter's: stop auto-advancing until the visual is left
+  const manual = useRef(false)
+  const autoTo = useRef(-1)
   const forward = prev.current === sub - 1
   // only count steps taken while this visual is on screen; before that, the first active step is an arrival
   useEffect(() => {
+    if (!active) manual.current = false
+    else if (prev.current !== -1 && sub !== prev.current && sub !== autoTo.current) manual.current = true
     prev.current = active ? sub : -1
   }, [sub, active])
 
   // auto-advance, forward only; on the zoomed-out map, hand over to the overlay once it settles
   useEffect(() => {
-    if (!active || startFinished) return
-    const t = window.setTimeout(() => (zoomed ? onComplete() : requestNext(sub)), (zoomed ? TIMING.zoomSettle : TIMING.auto) * 1000)
+    if (!active || startFinished || (manual.current && !zoomed)) return
+    const t = window.setTimeout(() => {
+      if (zoomed) return onComplete()
+      autoTo.current = sub + 1
+      requestNext(sub)
+    }, (zoomed ? TIMING.zoomSettle : TIMING.auto) * 1000)
     return () => window.clearTimeout(t)
   }, [active, startFinished, sub, zoomed, onComplete, requestNext])
 

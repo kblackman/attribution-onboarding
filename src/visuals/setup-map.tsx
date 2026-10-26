@@ -47,8 +47,9 @@ export interface MapEdge {
 const ATTR_W = 260
 const PAGE_W = 230
 const DRAWER_W = 220
+const DRAWER_H = 160 // tall enough for a two-line detail (Manage conversions) above its pills
 export const nodeSize = (n: MapNode) =>
-  n.kind === 'attribution' ? { w: ATTR_W, h: (ATTR_W * 10) / 16 } : n.kind === 'page' ? { w: PAGE_W, h: 150 } : { w: DRAWER_W, h: 132 }
+  n.kind === 'attribution' ? { w: ATTR_W, h: (ATTR_W * 10) / 16 } : n.kind === 'page' ? { w: PAGE_W, h: 150 } : { w: DRAWER_W, h: DRAWER_H }
 
 const shot = (label: string, patch: Partial<Shot> = {}): Shot => ({ ...shotByLabel(label), ...patch })
 
@@ -174,7 +175,7 @@ function PageNode({ node, on, reducedMotion }: { node: MapNode; on: boolean; red
   return (
     <div
       className="relative overflow-hidden rounded-[1.2cqw] bg-surface text-ink shadow-[0_18px_40px_rgba(0,0,0,0.45)]"
-      style={{ containerType: 'inline-size', aspectRatio: node.kind === 'drawer' ? `${DRAWER_W} / 132` : `${PAGE_W} / 150` }}
+      style={{ containerType: 'inline-size', aspectRatio: node.kind === 'drawer' ? `${DRAWER_W} / ${DRAWER_H}` : `${PAGE_W} / 150` }}
     >
       <div className="flex h-[15%] items-center gap-[3%] border-b border-line px-[5%]">
         <span className="block aspect-square h-[46%] rounded-[20%] bg-product-ink" />
