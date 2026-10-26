@@ -12,16 +12,16 @@ const beat: Beat = {
       headline="Two moments, two patterns"
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
-        "During setup, most users created one or two events. A simple list worked.",
-        "By 30 days, some had many more. So the waiting room uses a grid that wraps after every four.",
+        "Most customers defined only a handful of events. A simple list worked.",
+        "Nearly a quarter had 10 or more, and one had 55. So the waiting room uses a grid that wraps after every four.",
       ]}
       body={
         <>
           <p>
-            Most users created only one or two events during initial setup, with no sign of anyone creating them in bulk. A simple list covered the majority and could still stretch if needed.
+            Most customers defined only a handful of events. Half had four or fewer, and two or three was the most common. A simple list covered the majority during setup and could still stretch if needed.
           </p>
           <p>
-            The waiting room told a different story. The 24-hour numbers barely changed, but by 30 days, users had created more events. For anyone reaching the waiting room weeks into setup, a list would get bulky. So I designed a grid that wraps to a new row after every four events.
+            The long tail told a different story. Nearly a quarter of customers had 10 or more, and one had 55. The waiting room lists every defined event, so for those customers a list would get bulky. So I designed a grid that wraps to a new row after every four events.
           </p>
         </>
       }

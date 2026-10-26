@@ -23,9 +23,9 @@ const beat: Beat = {
           </Tldr>
         </Reveal>
         <Reveal order={2} className="twa-main">
-          <Tldr short="I asked Snowflake for percentiles at setup, 24 hours, and 30 days.">
+          <Tldr short="I asked Snowflake how many funnel events each customer had defined.">
             <p className="m-0">
-              All of Freshpaint's data lived in Snowflake, which had an agent layer that let me query it in plain language. I asked how many events users created at three points: during initial setup, after 24 hours, and after 30 days. I looked past day one because of the waiting room, the screen I designed to tell users their data was on its way. It lists every defined event, and some users might not reach it until weeks into setup. I asked for percentiles instead of an average, since an average would hide the edge cases.
+              All of Freshpaint's data lived in Snowflake, which had an agent layer that let me query it in plain language. I asked how many funnel events each customer had defined, and asked for percentiles instead of an average, since an average would hide the edge cases.
             </p>
           </Tldr>
         </Reveal>
@@ -34,15 +34,17 @@ const beat: Beat = {
             <div className="rounded-[14px] border border-hairline-strong bg-white/[0.04] px-[clamp(14px,calc(var(--u)*1.6),26px)] py-[clamp(4px,calc(var(--u)*0.6),10px)] [&_td:first-child]:whitespace-normal [&_td]:py-[clamp(12px,calc(var(--u)*1.3),22px)] [&_td]:text-[clamp(15px,calc(var(--u)*1.3),24px)]">
               <DataTable
                 hideHeader
-                caption="Events created per user, at three points in setup"
-                columns={['When', 'Events per user']}
+                caption="Funnel events per customer, across 124 customers"
+                columns={['Measure', 'Funnel events']}
                 rows={[
-                  ['Initial setup and 24 hours', 'Mostly 1 to 2 events, occasionally a few more'],
-                  ['30 days', 'Some around 15, outliers 20+'],
+                  ['Median', '4 events (2 mid, 2 low)'],
+                  ['Middle 80%', '1 to 12'],
+                  ['10 or more', '23% of customers'],
+                  ['Most', '55'],
                 ]}
               />
             </div>
-            <Caption>Approximate ranges.</Caption>
+            <Caption>Funnel events per customer, across 124 customers.</Caption>
           </figure>
         </Reveal>
       </div>
