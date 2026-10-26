@@ -44,7 +44,7 @@ const STATES = {
   // Attribution fully set up, for reference (the screenshot this page was rebuilt from)
   before: { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: null, table: 'full' }, focus: 'header', at: 40 },
   // events exist but none is defined as mid or low funnel (from Kyle's screen grab), scrolled just enough to show the whole card
-  'events-undefined': { widgets: { header: 'title', setupBanner: 'conversions', filters: 'model', kpis: 'conversions-empty', defineEvents: 'empty' }, focus: 'defineEvents', at: 680 },
+  'events-undefined': { widgets: { header: 'title', setupBanner: 'conversions', filters: 'model', kpis: 'conversions-empty', defineEvents: 'empty' }, focus: ['defineEvents', 'setupBanner'], at: 680 },
   // the AI recommendations states (Kyle's screen grabs of the newer page: docs line, Total Conversion Credit / ROAS / Total Spend, 30D)
   'ai-off': { widgets: NEWER({ recs: 'promo' }), focus: 'recs' },
   'ai-no-events': { widgets: NEWER({ recs: 'define' }), focus: 'recs' },
@@ -350,6 +350,8 @@ const rs = boxes.map((b) => b.getBoundingClientRect())
 const r = { left: Math.min(...rs.map((q) => q.left)), top: Math.min(...rs.map((q) => q.top)), width: Math.max(...rs.map((q) => q.right)) - Math.min(...rs.map((q) => q.left)), height: Math.max(...rs.map((q) => q.bottom)) - Math.min(...rs.map((q) => q.top)) }
 const pct = (n, d) => Math.round((n / d) * 1000) / 10
 document.body.dataset.zone = JSON.stringify({ x: pct(r.left, 1512), y: pct(r.top, 982), w: pct(r.width, 1512), h: pct(r.height, 982) })
+// with several focus widgets, each one's box too (extra circles: Shot.also)
+if (rs.length > 1) document.body.dataset.zones = JSON.stringify(rs.map((q) => ({ x: pct(q.left, 1512), y: pct(q.top, 982), w: pct(q.width, 1512), h: pct(q.height, 982) })))
 </script>
 </body>
 </html>

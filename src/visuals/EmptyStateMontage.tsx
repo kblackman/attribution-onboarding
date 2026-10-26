@@ -22,6 +22,8 @@ export interface Shot {
   label: string
   /** The empty area to circle, in percent of the image. */
   empty: Zone
+  /** More symptoms on the same screen: circled too, without a label (the label points at `empty`). */
+  also?: Zone[]
   /** File in public/assets/hunch/. Leave out to show the placeholder dashboard. */
   src?: string
   /** Image width / height. Placeholders are 16 / 10. */
@@ -53,7 +55,7 @@ export const Z = {
  */
 export const SHOTS: Shot[] = [
   { label: 'No events', src: 'no-events.png', aspect: 1512 / 982, empty: { x: 42, y: 31, w: 32, h: 36 } },
-  { label: 'Events not defined', src: 'events-undefined.png', aspect: 1512 / 982, empty: { x: 18, y: 74.9, w: 79.9, h: 23 } },
+  { label: 'Events not defined', src: 'events-undefined.png', aspect: 1512 / 982, empty: { x: 18, y: 74.9, w: 79.9, h: 23 }, also: [{ x: 18, y: 14.7, w: 79.9, h: 15.9 }] },
   { label: 'No ad sources', src: 'no-ad-sources.png', aspect: 1512 / 982, empty: { x: 18, y: 53.9, w: 79.9, h: 25.5 } },
   { label: 'Requires API connection', src: 'no-ad-sources-table.png', aspect: 1512 / 982, empty: { x: 18, y: 62.3, w: 79.9, h: 35.2 } },
   { label: 'AI off', src: 'ai-off.png', aspect: 1512 / 982, empty: { x: 18, y: 18, w: 79.9, h: 25.3 } },
@@ -123,7 +125,7 @@ export function EmptyStateMontage(props: VisualProps) {
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
       <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Placeholder dashboards, final screens to come</PlaceholderBadge>
+        <PlaceholderBadge>Recreated screens, mock data</PlaceholderBadge>
       </div>
       <div
         className="relative"
@@ -217,6 +219,19 @@ export function ShotView({ shot, showLabel = true, show, instant = false, reduce
         circleDuration={circleDuration}
         variant={variant}
       />
+      {shot.also?.map((zone, k) => (
+        <Annotation
+          key={k}
+          zone={zone}
+          aspect={aspect}
+          show={show}
+          instant={instant}
+          reducedMotion={reducedMotion}
+          delay={delay + circleDuration * 0.5 * (k + 1)}
+          circleDuration={circleDuration}
+          variant={variant + k + 1}
+        />
+      ))}
     </div>
   )
 }

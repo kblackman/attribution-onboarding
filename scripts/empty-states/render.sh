@@ -17,6 +17,6 @@ echo "rendered no-events.png"
 for state in events-undefined no-ad-sources no-ad-sources-table ai-off ai-no-events recs-processing not-enough-data waiting-on-data; do
   url="file://$PWD/attribution.html?state=$state"
   "$CHROME" $FLAGS --force-device-scale-factor=2 --screenshot="$OUT/$state.png" "$url" 2>/dev/null
-  zone=$("$CHROME" $FLAGS --dump-dom "$url" 2>/dev/null | grep -o 'data-zone="[^"]*"' | sed 's/data-zone=//; s/&quot;/"/g; s/^"//; s/"$//')
+  zone=$("$CHROME" $FLAGS --dump-dom "$url" 2>/dev/null | grep -o 'data-zones*="[^"]*"' | sed 's/&quot;/"/g' | tr '\n' ' ')
   echo "rendered $state.png  empty: $zone"
 done
