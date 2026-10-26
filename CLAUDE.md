@@ -273,6 +273,7 @@ What the code told me
 - The drawer was fully self-contained. It had no dependency on the Events page, so surfacing it in Attribution's new setup flow took only a few lines of code, and it could stay in Events for anyone used to creating events there.
 - Moving the AI toggle into the flow was also a light lift, so it came along too. Connecting ad sources was heavier and stayed out of v1. Instead, I added an automatic redirect back to Attribution after the OAuth flow finished, so users no longer had to find their way back on their own.
 - Status list: Event Creation, moved into the flow (done). Enable AI, moved into the flow (done). Connect ad sources, auto-redirect back (full move planned later) (partial).
+- Present mode (Kyle's bullets, 2026-10-26; "so bring in" read as "to bring in"): The Event Creation drawer was self-contained, so it could easily be surfaced in the flow / The AI toggle was easy to pull in, so it came along as well / The lift to move Ad sources into the flow was too heavy to bring in for v1, redirect back to Attribution instead
 - Card overlay (Moment, the official kickoff of the prototype, Kyle 2026-10-25): I had all the info I needed. / Time to start building. ("Time to start building." emphasized)
 
 Designing for real numbers

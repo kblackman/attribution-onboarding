@@ -23,7 +23,16 @@ const beat: Beat = {
       </Reveal>
       <div className="text-with-aside mt-[clamp(18px,calc(var(--u)*2.6),46px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-main">
-          <Tldr short="The Event Creation drawer was self-contained, so it could move into the flow.">
+          <Tldr
+            short={
+              // Kyle's bullets, 2026-10-26
+              <ul className="m-0 flex list-disc flex-col gap-[0.5em] pl-[1.1em]">
+                <li>The Event Creation drawer was self-contained, so it could easily be surfaced in the flow</li>
+                <li>The AI toggle was easy to pull in, so it came along as well</li>
+                <li>The lift to move Ad sources into the flow was too heavy to bring in for v1, redirect back to Attribution instead</li>
+              </ul>
+            }
+          >
             <p className="m-0">
               The drawer was fully self-contained. It had no dependency on the Events page, so surfacing it in Attribution's new setup flow took only a few lines of code, and it could stay in Events for anyone used to creating events there.
             </p>
@@ -40,7 +49,7 @@ const beat: Beat = {
           />
         </Reveal>
         <Reveal order={2} className="twa-rest">
-          <Tldr short="The AI toggle came along too. Ad sources stayed out of v1, with a redirect back to Attribution.">
+          <Tldr short={null}>
             <p className="m-0">
               Moving the AI toggle into the flow was also a light lift, so it came along too. Connecting ad sources was heavier and stayed out of v1. Instead, I added an automatic redirect back to Attribution after the OAuth flow finished, so users no longer had to find their way back on their own.
             </p>

@@ -9,5 +9,6 @@ export function Tldr({ short, children, className = 'text-statement' }: { short:
   const present = usePresentMode()
   if (!present) return <>{children}</>
   if (short === null) return null
-  return <p className={`m-0 text-fg ${className}`}>{short}</p>
+  // a string is one line; anything else (a list) brings its own markup
+  return typeof short === 'string' ? <p className={`m-0 text-fg ${className}`}>{short}</p> : <div className={`text-fg ${className}`}>{short}</div>
 }
