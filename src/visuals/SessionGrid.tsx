@@ -28,14 +28,14 @@ export const TIMING = {
   reducedFade: 0.6,
 }
 const shot = (label: string) => SHOTS.find((s) => s.label === label && s.src)
-const NO_AD_SOURCES = shot('No ad sources')
-const AI_OFF = shot('AI off')
-// the last tile zooms to fill the frame, so it gets a real screenshot first
+// four different half-set-up dashboards (Kyle: vary them): two missing ad sources, two without Recommendation Cards.
+// Waiting states (processing, not enough data) stay out: a later beat reveals those weren't setup problems.
+// The last tile zooms to fill the frame.
 const SESSIONS: { day: string; purpose: string; shot?: Shot }[] = [
-  { day: 'Day 1', purpose: 'New feature', shot: NO_AD_SOURCES },
-  { day: 'Day 1', purpose: 'Bug walkthrough', shot: AI_OFF },
-  { day: 'Day 2', purpose: 'Adoption check-in', shot: AI_OFF },
-  { day: 'Day 2', purpose: 'New feature', shot: NO_AD_SOURCES },
+  { day: 'Day 1', purpose: 'New feature', shot: shot('Requires API connection') },
+  { day: 'Day 1', purpose: 'Bug walkthrough', shot: shot('AI off') },
+  { day: 'Day 2', purpose: 'Adoption check-in', shot: shot('AI on, no events') },
+  { day: 'Day 2', purpose: 'New feature', shot: shot('No ad sources') },
 ]
 const tileAt = (i: number) => TIMING.start + i * TIMING.tileStagger
 const ZOOM_AT = tileAt(SESSIONS.length - 1) + TIMING.circleDelay + TIMING.circleDraw + TIMING.zoomAfter
