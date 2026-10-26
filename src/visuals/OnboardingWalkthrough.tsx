@@ -101,7 +101,8 @@ const SCRIPTS: Script[] = [
   {
     frames: [
       { at: 0.8, set: { screen: 'dashboard' } },
-      // a beat to read the AI card before the cursor comes for it
+      // park the hidden cursor off the frame, then a beat to read the AI card before it glides in for it
+      { at: 1.0, to: 'offscreen' },
       { at: 3.0, to: 'hide', set: { cursor: true } },
       { at: 3.9, click: true, set: { aiCollapsed: true } },
       { at: 4.5, set: { cursor: false } },
@@ -130,6 +131,8 @@ SCRIPTS.reduce(
 const W = 1440
 // where the cursor waits before its first move: just past the frame's bottom-right corner
 const OFFSCREEN = { x: 1500, y: 960 }
+/** A frame target that parks the cursor off the frame (while hidden), so its next move glides in. */
+const OFFSCREEN_TARGET = 'offscreen'
 const H = 900
 
 // fetch the product fonts and every icon once, as soon as the walkthrough mounts (a step before it shows),
@@ -208,7 +211,8 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
   // before its first target the cursor waits off the frame (bottom right), so it glides in on the first step
   const [pos, setPos] = useState({ ...OFFSCREEN, jump: true })
   useLayoutEffect(() => {
-    if (!target) {
+    // no target yet, or sent off the frame while hidden: wait just past the bottom-right corner
+    if (!target || target === OFFSCREEN_TARGET) {
       setPos({ ...OFFSCREEN, jump: true })
       return
     }
