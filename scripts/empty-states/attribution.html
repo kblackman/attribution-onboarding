@@ -36,6 +36,8 @@
 const STATES = {
   // Attribution fully set up, for reference (the screenshot this page was rebuilt from)
   before: { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: null, table: 'full' }, focus: 'header', at: 40 },
+  // events exist but none is defined as mid or low funnel (from Kyle's screen grab), scrolled just enough to show the whole card
+  'events-undefined': { widgets: { header: 'title', setupBanner: 'conversions', filters: 'model', kpis: 'conversions-empty', defineEvents: 'empty' }, focus: 'defineEvents', at: 680 },
   // no ad platforms connected: the Connect section sits between the chart and the table
   'no-ad-sources': { widgets: { header: 'full', filters: 'full', kpis: 'full', chart: 'full', adsCta: 'connect', table: 'full' }, focus: 'adsCta', at: 556 },
 }
@@ -55,6 +57,18 @@ const WIDGETS = {
         <h1>Attribution</h1>
         <div class="right"><span class="consent">Consent Mode <i class="toggle"></i></span><span class="primary">Manage Conversions</span></div>
       </div>`,
+    title: () => `<div class="head"><h1>Attribution</h1></div>`,
+  },
+
+  // the prompt shown while no event is defined, then a rule above the filters
+  setupBanner: {
+    conversions: () => `
+      <div class="banner">
+        <h2>Set up your conversion events</h2>
+        <p>Choose the mid- and lower-funnel events that matter, for accurate insights</p>
+        <div class="actions"><span class="primary">Setup Conversions</span><span class="link">Dismiss</span></div>
+      </div>
+      <hr class="rule">`,
   },
 
   filters: {
@@ -68,6 +82,7 @@ const WIDGETS = {
           <span>Custom</span><span class="on">7D</span><span>30D</span><span>3M</span><span class="off">6M</span><span class="off">12M</span><span class="range">Jan 26, 2026 - Feb 1, 2026</span>
         </span>
       </div>`,
+    model: () => WIDGETS.filters.full().replace(/<span class="field"><small>Group results by[\s\S]*?<\/span><\/span>/, ''),
   },
 
   kpis: {
@@ -76,6 +91,20 @@ const WIDGETS = {
         ${kpi(`Total conversions ${info}`, '314', `<span>Conversion rate ${info}</span>`, '84.64%')}
         ${kpi('ROI', '91.17%', '<span>ROI last period</span>', '73%<span class="up">+3%</span>')}
         ${kpi('Total spend', '$5,796.56', '<span>Total spend last period</span>', '$80,000<span class="down">-6.7%</span>')}
+      </div>`,
+    'conversions-empty': () => `
+      <div class="kpis half">
+        ${kpi(`Total conversions ${info}`, '<span class="dash">-</span>', `<span>Conversion rate ${info}</span>`, '-')}
+      </div>`,
+  },
+
+  // no event defined: the chart's place holds this prompt instead
+  defineEvents: {
+    empty: () => `
+      <div class="card define">
+        <h3>Define your events</h3>
+        <p>Once you define the mid- and low-funnel conversions, you'll see performance data here</p>
+        <span class="primary">Setup Conversions</span>
       </div>`,
   },
 
@@ -176,7 +205,8 @@ page.innerHTML = Object.entries(state.widgets)
 // frame the capture on the empty state, and report its box for SHOTS
 const focus = page.querySelector(`[data-w="${state.focus}"]`)
 const box = focus.querySelector('.card') || focus
-page.style.transform = `translateY(${state.at - box.offsetTop}px)`
+// no `at`: the page sits as it would on load (no scroll)
+if (state.at !== undefined) page.style.transform = `translateY(${state.at - box.offsetTop}px)`
 const r = box.getBoundingClientRect()
 const pct = (n, d) => Math.round((n / d) * 1000) / 10
 document.body.dataset.zone = JSON.stringify({ x: pct(r.left, 1512), y: pct(r.top, 982), w: pct(r.width, 1512), h: pct(r.height, 982) })

@@ -80,3 +80,21 @@
   .pager .rpp { display: flex; align-items: center; gap: 12px; }
   .pager .num { height: 40px; width: 82px; border: 1px solid #e3e5e8; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 16px; }
   .pager .nav { display: flex; align-items: center; gap: 30px; color: #c3c8d0; }
+
+  /* Events not defined */
+  .banner { margin-top: 44px; border: 1px solid #c5cae9; border-radius: 6px; background: #f3f4fb; box-shadow: 0 1px 3px rgba(0,0,0,0.07); padding: 20px 18px 18px; }
+  .banner h2 { font-size: 21px; font-weight: 600; }
+  .banner p { margin-top: 16px; font-size: 14px; color: #5d6875; }
+  .banner .actions { margin-top: 16px; display: flex; align-items: center; gap: 20px; }
+  .banner .primary, .define .primary { height: 42px; padding: 0 21px; }
+  .link { color: #3f51b5; font-size: 14px; font-weight: 500; }
+  .rule { border: 0; border-top: 1px solid #e3e5e8; margin-top: 43px; }
+  .rule + * { margin-top: 0; }
+  .filters:first-child { margin-top: 43px; }
+  section[data-w="filters"] .filters { margin-top: 43px; }
+  .kpis.half { grid-template-columns: 1fr 1fr; margin-top: 44px; }
+  .dash { font-weight: 700; }
+  .define { margin-top: 43px; height: 226px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .define h3 { font-size: 17px; font-weight: 600; }
+  .define p { margin-top: 14px; max-width: 480px; font-size: 15px; line-height: 21px; color: #5d6875; }
+  .define .primary { margin-top: 20px; }

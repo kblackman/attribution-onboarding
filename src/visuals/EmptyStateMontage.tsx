@@ -48,7 +48,8 @@ export const Z = {
 export const SHOTS: Shot[] = [
   // recreated (no screen grab survived): scripts/empty-states/no-events.html, rendered by render.sh
   { label: 'No events', src: 'no-events.png', aspect: 1512 / 982, empty: { x: 42, y: 31, w: 32, h: 36 } },
-  { label: 'Events not defined', placeholder: 'events-undefined', empty: Z.kpis },
+  // from Kyle's screen grab, in the componentized Attribution shell: attribution.html?state=events-undefined
+  { label: 'Events not defined', src: 'events-undefined.png', aspect: 1512 / 982, empty: { x: 18, y: 74.9, w: 79.9, h: 23 } },
   // recreated in the componentized Attribution shell: scripts/empty-states/attribution.html?state=no-ad-sources
   { label: 'No ad sources', src: 'no-ad-sources.png', aspect: 1512 / 982, empty: { x: 18, y: 62.3, w: 79.9, h: 25.5 } },
   { label: 'AI off', placeholder: 'ai-off', empty: Z.bottom },
