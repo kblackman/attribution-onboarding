@@ -24,7 +24,7 @@ const beat: Beat = {
         <Reveal order={2} className="flex flex-col gap-[0.6em]">
           <h3 className="m-0 text-label font-normal uppercase tracking-[0.12em] text-accent">After the redesign</h3>
           <p className="m-0 text-accent">
-            Users moved from the setup flow to the waiting room to a working dashboard on their first try. The only empty states left were the unavoidable ones, and each told users why it was there and what to do next.
+            Users moved through a clear setup flow, one step at a time. Each step explained what it was for and helped them reach a complete setup with much less friction than before.
           </p>
           <p className="m-0 mt-[0.4em] text-[0.7em] font-semibold text-accent">9 possible empty states reduced to 3.</p>
         </Reveal>

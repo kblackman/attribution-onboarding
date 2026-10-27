@@ -328,7 +328,7 @@ Section card: 05 Impact. Tagline: What changed, and what the team kept using.
 
 The result
 - Before the redesign: Users ran into six empty states while getting set up, and none of them guided them toward the next step.
-- After the redesign: Users moved from the setup flow to the waiting room to a working dashboard on their first try. The only empty states left were the unavoidable ones, and each told users why it was there and what to do next.
+- After the redesign: Users moved through a clear setup flow, one step at a time. Each step explained what it was for and helped them reach a complete setup with much less friction than before. (Kyle's rewrite, polished as option A, 2026-10-27)
 - Small line under After: 9 possible empty states reduced to 3.
 
 Bigger than Attribution (final beat)
