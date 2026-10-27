@@ -4,7 +4,7 @@ import { AttributionResolve } from '../visuals/AttributionResolve'
 
 /*
   05 Impact, "The result": a frameless statement (Kyle's brief) split into Before and After, the After column
-  in accent as the screen's one yellow moment. Then the empty Attribution page resolves widget by widget.
+  in accent as the screen's one yellow moment. Then 04 Solution's Attribution dashboard resolves section by section.
 */
 const beat: Beat = {
   slug: 'the-result',
@@ -34,7 +34,7 @@ const beat: Beat = {
   visual: {
     component: AttributionResolve,
     description:
-      'An Attribution dashboard with every widget empty. One by one, the widgets resolve into populated data: the four KPI cards, then a line chart, a bar chart, and a table, until the whole dashboard is working. Placeholder shapes and mock data only.',
+      'The new Attribution dashboard, as the setup flow leaves it, starts with every section loading. One by one they resolve: the setup progress banner, the AI recommendations bar, the filters, then the Source performance chart with its bars growing. The page scrolls down as the banner to connect ad sources and the source table resolve, until the whole dashboard is working. Rebuilt from the Figma designs, mock data.',
   },
 }
 

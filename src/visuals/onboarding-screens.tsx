@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { createContext, useContext, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import { HandCircle } from '../components/HandCircle'
@@ -864,7 +864,79 @@ const UNPAID: { name: string; values: string[] }[] = [
 ]
 const TOTALS = ['200,985', '20,690.60', '5,523.20', '2,442.20', '—', '—']
 
-function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; aiCollapsed: boolean; hover: string | null; reduced: boolean }) {
+/**
+ * Optional build-up for the dashboard (05 Impact, "The result"): with a provider, each section starts as a
+ * loading card and resolves at its own moment (`at(order)`, seconds). Without one (the walkthrough), sections
+ * render as they are.
+ */
+export interface DashboardResolve {
+  mode: 'empty' | 'play' | 'done'
+  reduced: boolean
+  at: (order: number) => number
+}
+export const DashboardResolveContext = createContext<DashboardResolve | null>(null)
+
+function useResolveTransition(order: number, extra = 0, duration = 0.6) {
+  const r = useContext(DashboardResolveContext)
+  if (!r) return null
+  const filled = r.mode !== 'empty'
+  const transition = r.mode === 'play' ? { duration: r.reduced ? 0.4 : duration, delay: r.at(order) + extra, ease: EASE_DECK } : { duration: 0 }
+  return { filled, reduced: r.reduced, transition }
+}
+
+/** One dashboard section: a loading card that resolves into the section. */
+function Resolve({ order, className = '', children }: { order: number; className?: string; children: ReactNode }) {
+  const r = useResolveTransition(order)
+  if (!r) return <div className={className}>{children}</div>
+  return (
+    <div className={`relative ${className}`}>
+      <motion.div
+        className="absolute inset-0 flex flex-col justify-center gap-[10px] rounded-[10px] border border-fp-line bg-white px-[20px]"
+        initial={false}
+        animate={{ opacity: r.filled ? 0 : 1 }}
+        transition={r.transition}
+        aria-hidden="true"
+      >
+        <span className="block h-[10px] w-[180px] rounded-full bg-fp-line" />
+        <span className="block h-[10px] w-[320px] rounded-full bg-fp-bg" />
+      </motion.div>
+      <motion.div initial={false} animate={{ opacity: r.filled ? 1 : 0, y: r.filled || r.reduced ? 0 : 10 }} transition={r.transition}>
+        {children}
+      </motion.div>
+    </div>
+  )
+}
+
+/** A chart bar that grows from the baseline when the dashboard resolves. */
+function GrowBar({ order, i, children }: { order: number; i: number; children: ReactNode }) {
+  const r = useResolveTransition(order, 0.25 + i * 0.08, 0.8)
+  return (
+    <motion.div
+      className="flex h-full flex-1 origin-bottom flex-col-reverse overflow-hidden rounded-t-[3px]"
+      initial={false}
+      animate={{ scaleY: !r || r.filled || r.reduced ? 1 : 0 }}
+      transition={r?.transition ?? { duration: 0 }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+export function Dashboard({
+  scroll,
+  aiCollapsed,
+  hover,
+  reduced,
+  scrollSeconds = DASHBOARD_SCROLL,
+  scrollDelay = 0,
+}: {
+  scroll: boolean
+  aiCollapsed: boolean
+  hover: string | null
+  reduced: boolean
+  scrollSeconds?: number
+  scrollDelay?: number
+}) {
   const ref = useRef<HTMLDivElement>(null)
   const [travel, setTravel] = useState(0)
   // measured when the scroll starts, after the AI card has collapsed
@@ -878,7 +950,7 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
       initial={false}
       // reduced motion: no scroll (a jump would skip the top of the page); it stays on the header and chart
       animate={{ y: scroll && !reduced ? -travel : 0 }}
-      transition={{ duration: DASHBOARD_SCROLL, ease: [0.45, 0, 0.35, 1] }}
+      transition={{ duration: scrollSeconds, delay: scrollDelay, ease: [0.45, 0, 0.35, 1] }}
     >
       <div className="flex items-center justify-between">
         <span className="text-[30px] font-semibold tracking-[-0.6px]">Attribution</span>
@@ -891,7 +963,8 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
           ))}
         </span>
       </div>
-      <div className="mt-[22px] flex items-center gap-[14px] rounded-[10px] border border-fp-line bg-white px-[16px] py-[14px]">
+      <Resolve order={0} className="mt-[22px]">
+      <div className="flex items-center gap-[14px] rounded-[10px] border border-fp-line bg-white px-[16px] py-[14px]">
         <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
           <circle cx="13" cy="13" r="10" fill="none" className="stroke-fp-line" strokeWidth="3" />
           <circle cx="13" cy="13" r="10" fill="none" className="stroke-fp-green" strokeWidth="3" strokeDasharray="47 63" transform="rotate(-90 13 13)" strokeLinecap="round" />
@@ -902,15 +975,19 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
         </span>
         <span className="ml-auto text-[12.5px] font-semibold text-fp-indigo">Resume setup ›</span>
       </div>
+      </Resolve>
       <div className="mt-[22px] flex gap-[20px] border-b border-fp-line text-[12.5px]">
         <span className="border-b-2 border-fp-indigo pb-[8px] font-semibold text-fp-indigo">Overview</span>
         <span className="pb-[8px] text-fp-muted">Journeys</span>
       </div>
 
-      <AiWaiting collapsed={aiCollapsed} hover={hover} reduced={reduced} />
+      <Resolve order={1} className="mt-[24px]">
+        <AiWaiting collapsed={aiCollapsed} hover={hover} reduced={reduced} />
+      </Resolve>
 
       {/* filters */}
-      <div className="mt-[28px] flex items-end justify-between">
+      <Resolve order={2} className="mt-[28px]">
+      <div className="flex items-end justify-between">
         <span className="flex gap-[16px]">
           <span className="flex flex-col gap-[6px] text-[11px] text-fp-muted">
             Group results by
@@ -930,9 +1007,11 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
           <span className="px-[8px]">Last 30 days</span>
         </span>
       </div>
+      </Resolve>
 
       {/* source performance */}
-      <div className="mt-[14px] rounded-[10px] border border-fp-line bg-white px-[20px] pb-[18px] pt-[16px]">
+      <Resolve order={3} className="mt-[14px]">
+      <div className="rounded-[10px] border border-fp-line bg-white px-[20px] pb-[18px] pt-[16px]">
         <div className="flex items-center justify-between">
           <span className="text-[14px] font-semibold">Source performance</span>
           <span className="flex rounded-[6px] border border-fp-line text-[11px]">
@@ -942,11 +1021,11 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
         </div>
         <div className="mt-[18px] flex h-[300px] items-end gap-[90px] border-b border-fp-line px-[60px]">
           {BARS.map((b) => (
-            <div key={b.label} className="flex h-full flex-1 flex-col-reverse overflow-hidden rounded-t-[3px]">
+            <GrowBar key={b.label} order={3} i={BARS.indexOf(b)}>
               {b.parts.map((p, i) => (
                 <span key={i} className={`block ${SERIES_BG[i]}`} style={{ height: `${p}%` }} />
               ))}
-            </div>
+            </GrowBar>
           ))}
         </div>
         <div className="mt-[8px] flex gap-[90px] px-[60px] text-center text-[11px] text-fp-muted">
@@ -968,9 +1047,11 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
           ))}
         </div>
       </div>
+      </Resolve>
 
       {/* unlock spend: the way back to the skipped step (after Kyle's reference: gradient, caret pointing at the table) */}
-      <div className="relative mt-[36px] flex items-center gap-[8px] rounded-[12px] bg-linear-to-r from-fp-indigo to-fp-indigo-soft px-[20px] py-[20px] text-white">
+      <Resolve order={4} className="mt-[36px]">
+      <div className="relative flex items-center gap-[8px] rounded-[12px] bg-linear-to-r from-fp-indigo to-fp-indigo-soft px-[20px] py-[20px] text-white">
         <span className="grid h-[38px] w-[38px] flex-none place-items-center rounded-full bg-white/25">
           <Lock size={18} />
         </span>
@@ -995,9 +1076,11 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
         <span className="flex h-[36px] flex-none items-center rounded-[6px] border border-white/80 px-[9px] text-[12px] font-medium">+ 3 more sources</span>
         <span className="absolute -bottom-[9px] left-[44px] h-0 w-0 border-x-[10px] border-t-[10px] border-x-transparent border-t-fp-indigo" aria-hidden="true" />
       </div>
+      </Resolve>
 
       {/* source table */}
-      <div className="mt-[10px] rounded-[10px] border border-fp-line bg-white">
+      <Resolve order={5} className="mt-[10px]">
+      <div className="rounded-[10px] border border-fp-line bg-white">
         <div className="flex items-center justify-between px-[16px] py-[14px]">
           <span className="flex h-[32px] w-[220px] items-center rounded-[6px] border border-fp-line px-[10px] text-[11.5px] text-fp-faint">Search sources or campaigns</span>
           <span className="flex h-[32px] items-center rounded-[6px] border border-fp-line-strong px-[12px] font-fp-ui text-[11.5px] font-medium">Export CSV</span>
@@ -1025,6 +1108,7 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
         ))}
         <TableRow total cells={['Totals', ...TOTALS]} />
       </div>
+      </Resolve>
     </motion.div>
   )
 }
@@ -1038,7 +1122,7 @@ function Dashboard({ scroll, aiCollapsed, hover, reduced }: { scroll: boolean; a
 function AiWaiting({ collapsed, hover, reduced }: { collapsed: boolean; hover: string | null; reduced: boolean }) {
   const tr = { duration: reduced ? 0 : 0.45, ease: EASE_DECK }
   return (
-    <motion.div className="relative mt-[24px] overflow-hidden rounded-[12px] border border-fp-line bg-white" initial={false} animate={{ height: collapsed ? 54 : 316 }} transition={tr}>
+    <motion.div className="relative overflow-hidden rounded-[12px] border border-fp-line bg-white" initial={false} animate={{ height: collapsed ? 54 : 316 }} transition={tr}>
       <span
         data-t="hide"
         className={`absolute right-[28px] flex items-center gap-[6px] rounded-[6px] px-[8px] py-[5px] text-[13px] font-semibold transition-[background-color,top] duration-200 ${hover === 'hide' ? 'bg-fp-hover' : ''}`}
