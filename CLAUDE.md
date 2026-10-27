@@ -110,7 +110,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Keep the Beats section below current.
 - Commit after each beat with a message naming it.
 - Run locally: `npm run dev`. Build: `npm run build`.
-- Deploy: GitHub Pages via `.github/workflows/deploy.yml` (pushes to `main`). Vite `base: './'` so any repo path works. Don't create the GitHub repo or push until Kyle says to. Pages needs the repo to be public.
+- Deploy: GitHub Pages via `.github/workflows/deploy.yml` (every push to `main` redeploys). Vite `base: './'` so any repo path works. Repo: https://github.com/kblackman/attribution-onboarding (public, created 2026-10-27 at Kyle's request). Live at https://kblackman.github.io/attribution-onboarding/. Push only when Kyle says to.
 
 ## Decisions
 - 2026-10-23: Deploy to GitHub Pages (Kyle's call over Vercel), matching his decks.
