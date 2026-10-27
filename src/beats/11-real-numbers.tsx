@@ -1,6 +1,7 @@
 import type { Beat } from '../engine/types'
 import { Tldr } from '../components/Tldr'
 import { Reveal } from '../components/Reveal'
+import { AsideGlide, TextWithAside } from '../components/TextWithAside'
 import { DataTable } from '../components/DataTable'
 import { Caption } from '../components/Caption'
 
@@ -14,7 +15,7 @@ const beat: Beat = {
       <Reveal as="h2" className="m-0 text-story font-extrabold">
         Designing for real numbers
       </Reveal>
-      <div className="text-with-aside is-mid mt-[clamp(16px,calc(var(--u)*2.2),40px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
+      <TextWithAside className="is-mid mt-[clamp(16px,calc(var(--u)*2.2),40px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-lead">
           <Tldr short="Once users created events, they needed a list. How long would it get?">
             <p className="m-0">
@@ -30,24 +31,26 @@ const beat: Beat = {
           </Tldr>
         </Reveal>
         <Reveal order={2} className="twa-aside">
-          <figure className="m-0 flex flex-col gap-2">
-            <div className="rounded-[14px] border border-hairline-strong bg-white/[0.04] px-[clamp(14px,calc(var(--u)*1.6),26px)] py-[clamp(4px,calc(var(--u)*0.6),10px)] [&_td:first-child]:whitespace-normal [&_td]:py-[clamp(12px,calc(var(--u)*1.3),22px)] [&_td]:text-[clamp(15px,calc(var(--u)*1.3),24px)]">
-              <DataTable
-                hideHeader
-                caption="Funnel events per customer, across 124 customers"
-                columns={['Measure', 'Funnel events']}
-                rows={[
-                  ['Median', '4 events (2 mid, 2 low)'],
-                  ['Middle 80%', '1 to 12'],
-                  ['10 or more', '23% of customers'],
-                  ['Most', '55'],
-                ]}
-              />
-            </div>
-            <Caption>Funnel events per customer, across 124 customers.</Caption>
-          </figure>
+          <AsideGlide>
+            <figure className="m-0 flex flex-col gap-2">
+              <div className="rounded-[14px] border border-hairline-strong bg-white/[0.04] px-[clamp(14px,calc(var(--u)*1.6),26px)] py-[clamp(4px,calc(var(--u)*0.6),10px)] [&_td:first-child]:whitespace-normal [&_td]:py-[clamp(12px,calc(var(--u)*1.3),22px)] [&_td]:text-[clamp(15px,calc(var(--u)*1.3),24px)]">
+                <DataTable
+                  hideHeader
+                  caption="Funnel events per customer, across 124 customers"
+                  columns={['Measure', 'Funnel events']}
+                  rows={[
+                    ['Median', '4 events (2 mid, 2 low)'],
+                    ['Middle 80%', '1 to 12'],
+                    ['10 or more', '23% of customers'],
+                    ['Most', '55'],
+                  ]}
+                />
+              </div>
+              <Caption>Funnel events per customer, across 124 customers.</Caption>
+            </figure>
+          </AsideGlide>
         </Reveal>
-      </div>
+      </TextWithAside>
     </div>
   ),
 }

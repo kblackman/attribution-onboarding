@@ -232,3 +232,7 @@ body {
 @media (max-width: 720px) {
   .text-with-aside.is-mid { grid-template-areas: "lead" "main" "aside" "rest"; }
 }
+/* present mode (TextWithAside): every short point in the text column, the artifact beside them, top-aligned */
+@media (min-width: 721px) {
+  .text-with-aside.is-mid.is-present { grid-template-areas: "lead aside" "main aside" "rest aside"; grid-template-rows: auto auto 1fr; align-items: start; }
+}
