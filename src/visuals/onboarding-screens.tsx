@@ -256,10 +256,10 @@ function NavRow({ label, icon, badge, chevron }: { label: string; icon: ReactNod
 }
 
 /** The product's top bar (from the 2026 Insights frame), with the breadcrumb reading Attribution, per Kyle. */
-function TopBar() {
+export function TopBar({ crumb = 'Attribution' }: { crumb?: string }) {
   return (
     <div className="relative z-10 flex h-[56px] flex-none items-center gap-[64px] border-b border-fp-line bg-white px-[32px] font-fp-ui">
-      <span className="flex-1 text-[12px] font-bold leading-[24px] underline">Attribution</span>
+      <span className="flex-1 text-[12px] font-bold leading-[24px] underline">{crumb}</span>
       <span className="flex items-center gap-[4px]">
         <span className="relative grid h-[48px] w-[48px] place-items-center">
           <Img name="bell" size={24} />
@@ -304,24 +304,25 @@ function AiIcon() {
   )
 }
 
-function Progress({ phase, reduced }: { phase: number; reduced: boolean }) {
+/** The stepped progress indicator. `phase` 5 shows every step done; `labels` replaces the Attribution steps. */
+export function Progress({ phase, reduced, labels = STEPS, className = 'mt-[40px]' }: { phase: number; reduced: boolean; labels?: ReactNode[]; className?: string }) {
   return (
-    <div className="mt-[40px] flex flex-col gap-[10px]">
+    <div className={`flex flex-col gap-[10px] ${className}`}>
       <div className="relative h-[8px] overflow-hidden rounded-[12px] bg-fp-line">
         <motion.div
           className="absolute inset-0 origin-left rounded-full bg-fp-indigo-soft"
           initial={false}
-          animate={{ scaleX: phase / 4 }}
+          animate={{ scaleX: Math.min(1, phase / 4) }}
           transition={{ duration: reduced ? 0 : 0.6, ease: EASE_DECK }}
         />
       </div>
       <div className="flex">
-        {STEPS.map((label, i) => {
+        {labels.map((label, i) => {
           const n = i + 1
           const done = n < phase
           const now = n === phase
           return (
-            <span key={label} className={`flex w-[175px] items-center justify-center gap-[8px] text-[12px] font-semibold ${done || now ? 'text-fp-ink' : 'text-fp-faint'}`}>
+            <span key={i} className={`flex w-[175px] items-center justify-center gap-[8px] text-[12px] font-semibold ${done || now ? 'text-fp-ink' : 'text-fp-faint'}`}>
               {done && <Img name="step-done" size={18} />}
               {now && <span className="grid h-[18px] w-[18px] place-items-center rounded-full bg-fp-indigo-soft text-[10px] font-bold text-white">{n}</span>}
               {label}
@@ -741,6 +742,37 @@ export function TrackedEvents({ events, reduced }: { events: TrackedEvent[]; red
   )
 }
 
+/** The waiting room's processing card (pulse icon, title, body). Shared with the reuse visual in 05 Impact. */
+export function ProcessingCard({
+  reduced,
+  className = 'mt-[40px] py-[40px]',
+  title = 'Listening for conversions',
+  body = "Everything's set up correctly. Attribution runs on a daily processing cycle, so your first charts and rankings will be ready after today's data is processed.",
+}: {
+  reduced: boolean
+  className?: string
+  title?: ReactNode
+  body?: ReactNode
+}) {
+  return (
+    <div className={`flex flex-col items-center rounded-[12px] border border-black/[0.09] bg-white px-[100px] text-center shadow-[0_0_3px_rgba(0,0,0,0.08)] ${className}`}>
+      <span className="relative grid h-[56px] w-[56px] place-items-center rounded-[8px] bg-fp-indigo-soft">
+        {!reduced && (
+          <motion.span
+            className="absolute h-[22px] w-[22px] rounded-full bg-white/50"
+            animate={{ scale: [1, 1.9], opacity: [0.7, 0] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
+          />
+        )}
+        <span className="block h-[22px] w-[22px] rounded-full bg-white/35" />
+        <span className="absolute block h-[9px] w-[9px] rounded-full bg-white" />
+      </span>
+      <div className="mt-[26px] text-[18px] font-semibold">{title}</div>
+      <div className="mt-[14px] w-full text-[14px] leading-[20px]">{body}</div>
+    </div>
+  )
+}
+
 /** The waiting room. `events` defaults to the walkthrough's one low-funnel event. */
 export function WaitingRoom({ reduced, events = [{ name: EVENT_NAME, funnel: 'low' }], compact = false }: { reduced: boolean; events?: TrackedEvent[]; compact?: boolean }) {
   return (
@@ -749,23 +781,7 @@ export function WaitingRoom({ reduced, events = [{ name: EVENT_NAME, funnel: 'lo
         <span className="text-[32px] font-semibold tracking-[-0.64px]">Attribution</span>
         <span className="rounded-full bg-fp-line px-[9px] py-[4px] text-[11px] font-semibold tracking-[0.02em]">PROCESSING</span>
       </div>
-      <div className={`flex flex-col items-center rounded-[12px] border border-black/[0.09] bg-white px-[100px] text-center shadow-[0_0_3px_rgba(0,0,0,0.08)] ${compact ? 'mt-[24px] py-[24px]' : 'mt-[40px] py-[40px]'}`}>
-        <span className="relative grid h-[56px] w-[56px] place-items-center rounded-[8px] bg-fp-indigo-soft">
-          {!reduced && (
-            <motion.span
-              className="absolute h-[22px] w-[22px] rounded-full bg-white/50"
-              animate={{ scale: [1, 1.9], opacity: [0.7, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }}
-            />
-          )}
-          <span className="block h-[22px] w-[22px] rounded-full bg-white/35" />
-          <span className="absolute block h-[9px] w-[9px] rounded-full bg-white" />
-        </span>
-        <p className="m-0 mt-[26px] text-[18px] font-semibold">Listening for conversions</p>
-        <p className="m-0 mt-[14px] text-[14px] leading-[20px]">
-          Everything's set up correctly. Attribution runs on a daily processing cycle, so your first charts and rankings will be ready after today's data is processed.
-        </p>
-      </div>
+      <ProcessingCard reduced={reduced} className={compact ? 'mt-[24px] py-[24px]' : 'mt-[40px] py-[40px]'} />
       <div className={`flex items-center justify-between ${compact ? 'mt-[24px]' : 'mt-[40px]'}`}>
         <span className="text-[16px] font-semibold">Events being tracked</span>
         <span className="flex h-[36px] items-center gap-[6px] rounded-[6px] border border-fp-line-strong bg-white px-[12px] font-fp-ui text-[12px] font-medium">
