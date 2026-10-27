@@ -1,5 +1,6 @@
 import type { Beat } from '../engine/types'
 import { Tldr } from '../components/Tldr'
+import { BulletItem, BulletList } from '../components/Bullets'
 import { Reveal } from '../components/Reveal'
 import { StepStatusList } from '../components/StepStatusList'
 import { SpotlightLine } from '../components/SpotlightLine'
@@ -26,11 +27,11 @@ const beat: Beat = {
           <Tldr
             short={
               // Kyle's bullets, 2026-10-26
-              <ul className="m-0 flex list-disc flex-col gap-[0.5em] pl-[1.1em]">
-                <li>The Event Creation drawer was self-contained, so it could easily be surfaced in the flow</li>
-                <li>The AI toggle was easy to pull in, so it came along as well</li>
-                <li>The lift to move Ad sources into the flow was too heavy to bring in for v1, redirect back to Attribution instead</li>
-              </ul>
+              <BulletList className="gap-[0.5em]">
+                <BulletItem>The Event Creation drawer was self-contained, so it could easily be surfaced in the flow</BulletItem>
+                <BulletItem>The AI toggle was easy to pull in, so it came along as well</BulletItem>
+                <BulletItem>The lift to move Ad sources into the flow was too heavy to bring in for v1, redirect back to Attribution instead</BulletItem>
+              </BulletList>
             }
           >
             <p className="m-0">
