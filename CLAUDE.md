@@ -264,7 +264,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 ### Beat 5 copy (verbatim): How widespread was it?
 - Headline: How widespread was it? (chosen by Kyle)
 - Body: Before pushing further, I wanted to know how widespread it was. Our masquerade tool let us see a customer's actual account, populated with their own data, so I used it to look inside roughly 20 of our 200+. What I found shocked me. Almost every account was either half set up or not set up at all. The fully configured ones were few and far between. (Kyle's rewrite 2026-11-04; typos fixed: "used to to", "customers", "setup" as a verb.)
-- Closing line (own paragraph, accent): And it wasn't one empty state. It was many.
+- Closing line (own paragraph, accent): It seemed like each dashboard was missing something different… (Kyle, 2026-11-04; was "And it wasn't one empty state. It was many.", which didn't follow from the paragraph)
 - Montage labels, in order: No events. Events not defined. No ad sources. Requires API connection. AI off. AI on, no events. Recommendations processing. Not enough recent data. Waiting on data. (Three labels added by Claude 2026-10-26, confirmed by Kyle.)
 - Overlay (auto after the stack, holds for a key press): Nine different empty states. Were they evidence of nine problems, or just one? (updated by Kyle 2026-10-25; six became nine 2026-10-26, Kyle picked option A)
 
