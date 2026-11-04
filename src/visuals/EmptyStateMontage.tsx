@@ -74,7 +74,7 @@ export const shotByLabel = (label: string): Shot => {
 
 export const TIMING = {
   start: 0.5,
-  sixGap: 1.5, // between the first wave (every shot once), slow enough to read each label
+  sixGap: 2.4, // between the first wave (every shot once). Each label is fully in about 1.4s after its shot starts falling, so this leaves about a second to read it before the next shot covers it (was 1.5, too quick, Kyle 2026-11-04)
   fall: 0.55,
   circleAfter: 0.45, // circle starts this long after its screenshot begins to fall
   circleDraw: 0.6,
