@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import { usePrefersReducedMotion } from '../engine/reducedMotion'
-import { SECTIONS, sectionNumber } from '../sections'
 import { RevealContext } from './Reveal'
 
 /*
@@ -11,7 +10,8 @@ import { RevealContext } from './Reveal'
   horizon, so things rise over it rather than fade in: first the giant outlined numeral (slowest, far
   behind), then an amber sun glow, then the word. The word comes up as a dark silhouette with a warm rim,
   backlit by the sun, and brightens to white as it clears. Then the horizon pulls back to the motif's usual
-  length, and the tagline and chapter row land.
+  length, and the tagline lands. The sun and the light along the line build from the first moment, so
+  nothing new lights up at the end. Below the line the glow fades out softly instead of stopping at a hard edge.
   Plays once per visit; stepping back in shows it settled. Reduced motion: everything fades in together.
   Tune here (seconds from the start of the sequence; positions in percent of each element's own height).
 */
@@ -22,8 +22,9 @@ export const TIMING = {
   numeral: 0.2, // giant numeral rises, slowest
   numeralDur: 3.4,
   numeralRest: '24%', // how far the numeral stays sunk below the horizon at rest
-  sun: 0.3, // sun glow rises
-  sunDur: 2.6,
+  sun: 0.1, // sun glow rises from the moment the line draws, done as the word clears
+  sunDur: 2.5,
+  bloomDur: 1.2, // the light along the horizon, with the line
   word: 0.6, // the word rises over the horizon
   wordDur: 2.0,
   light: 1.5, // the word brightens from silhouette to white
@@ -33,7 +34,6 @@ export const TIMING = {
   settle: 2.6, // horizon pulls back to its usual length
   settleDur: 1.0,
   tagline: 2.9,
-  chapters: 3.3,
   reducedFade: 0.5,
 }
 
@@ -54,10 +54,11 @@ interface Props {
   number: string
   label: string
   tagline?: string
+  /** Position among the sections (unused here since the chapter row was dropped; kept for the classic version). */
   index: number
 }
 
-export function SunriseTitle({ number, label, tagline, index }: Props) {
+export function SunriseTitle({ number, label, tagline }: Props) {
   const { revealed, lead } = useContext(RevealContext)
   const reduce = usePrefersReducedMotion()
   const vw = useViewportWidth()
@@ -82,6 +83,26 @@ export function SunriseTitle({ number, label, tagline, index }: Props) {
       />
 
       <div className="relative flex w-full flex-col items-center text-center">
+        <div className="relative flex w-full flex-col items-center">
+        {/* the sun: an amber glow that climbs behind the word. Not clipped like the sky: below the horizon it
+            fades out over FADE, so there is no hard shelf where it meets the line */}
+        <div
+          className="pointer-events-none absolute bottom-[calc(-1*var(--fade))] left-1/2 h-[calc(min(70vh,1100px)+var(--fade))] w-[min(90vw,1500px)] -translate-x-1/2 [--fade:9vh]"
+          style={{ maskImage: 'linear-gradient(to bottom, #000 calc(100% - var(--fade)), transparent)', WebkitMaskImage: 'linear-gradient(to bottom, #000 calc(100% - var(--fade)), transparent)' }}
+          aria-hidden="true"
+        >
+          <motion.div
+            className="absolute inset-x-0 bottom-[var(--fade)] h-[min(70vh,1100px)]"
+            style={{
+              background:
+                'radial-gradient(closest-side, color-mix(in srgb, var(--color-accent) 30%, transparent), color-mix(in srgb, var(--color-accent) 9%, transparent) 55%, transparent)',
+            }}
+            initial={false}
+            animate={revealed ? { y: '38%', opacity: 1 } : { y: reduce ? '38%' : '72%', opacity: 0 }}
+            transition={stage(TIMING.sun, TIMING.sunDur)}
+          />
+        </div>
+
         {/* the sky: everything above the horizon. Clipped only at the bottom edge, so things rise over the line */}
         <div className="relative flex justify-center px-6" style={{ clipPath: 'inset(-100vh -100vw 0 -100vw)' }}>
           {/* giant outlined numeral, far behind, rising slowest and staying partly sunk */}
@@ -96,19 +117,6 @@ export function SunriseTitle({ number, label, tagline, index }: Props) {
             {number}
           </motion.span>
 
-          {/* the sun: an amber glow that climbs behind the word, cut off at the horizon */}
-          <motion.div
-            className="pointer-events-none absolute bottom-0 left-1/2 h-[min(70vh,1100px)] w-[min(90vw,1500px)]"
-            style={{
-              x: '-50%',
-              background:
-                'radial-gradient(closest-side, color-mix(in srgb, var(--color-accent) 30%, transparent), color-mix(in srgb, var(--color-accent) 9%, transparent) 55%, transparent)',
-            }}
-            aria-hidden="true"
-            initial={false}
-            animate={revealed ? { y: '38%', opacity: 1 } : { y: reduce ? '38%' : '85%', opacity: 0 }}
-            transition={stage(TIMING.sun, TIMING.sunDur)}
-          />
 
           {/* the word: rises from below the horizon. pb leaves room for descenders above the line */}
           <h2 className="relative m-0 pb-[0.16em] text-[clamp(56px,calc(var(--u)*13),260px)] font-extrabold leading-[0.95] tracking-[-0.045em]">
@@ -151,12 +159,16 @@ export function SunriseTitle({ number, label, tagline, index }: Props) {
           >
             {/* the line itself */}
             <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, transparent, var(--color-accent) 38%, var(--color-accent) 62%, transparent)' }} />
-            {/* a soft bloom so it reads as lit, not drawn */}
-            <div
-              className="absolute inset-x-0 top-1/2 h-[44px] -translate-y-1/2"
-              style={{ background: 'radial-gradient(closest-side, color-mix(in srgb, var(--color-accent) 38%, transparent), transparent)' }}
-            />
           </motion.div>
+          {/* the light along the horizon: fixed at the settled length, so it doesn't squeeze brighter when the line pulls back */}
+          <motion.div
+            className="absolute left-1/2 top-1/2 h-[44px] -translate-x-1/2 -translate-y-1/2"
+            style={{ width: settledWidth(vw) * 1.3, background: 'radial-gradient(closest-side, color-mix(in srgb, var(--color-accent) 34%, transparent), transparent)' }}
+            initial={false}
+            animate={{ opacity: revealed ? 1 : 0 }}
+            transition={stage(TIMING.line, TIMING.bloomDur)}
+          />
+        </div>
         </div>
 
         <div className="flex flex-col items-center px-6">
@@ -171,26 +183,6 @@ export function SunriseTitle({ number, label, tagline, index }: Props) {
             </motion.p>
           )}
 
-          {/* chapter row: where this section sits in the case study */}
-          <motion.div
-            className="mt-[clamp(28px,calc(var(--u)*4.4),80px)] flex items-center gap-[clamp(14px,calc(var(--u)*1.8),28px)] text-label tabular-nums"
-            initial={false}
-            animate={{ opacity: revealed ? 1 : 0 }}
-            transition={stage(TIMING.chapters, 0.9)}
-          >
-            <span className="sr-only">
-              Section {index + 1} of {SECTIONS.length}
-            </span>
-            {SECTIONS.map((s, i) => (
-              <span
-                key={s.id}
-                aria-hidden="true"
-                className={`border-b pb-1 ${i === index ? 'border-accent text-fg' : 'border-transparent text-fg-soft'} ${i > index ? 'opacity-50' : ''}`}
-              >
-                {sectionNumber(s.id)}
-              </span>
-            ))}
-          </motion.div>
         </div>
       </div>
     </>
