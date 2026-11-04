@@ -7,7 +7,7 @@ import { usePresentation } from '../engine/presentation'
 export function BeginRow({ hint, center = false }: { hint?: string; center?: boolean }) {
   const { next } = usePresentation()
   return (
-    <div className={`mt-[clamp(30px,calc(var(--u)*3.4),56px)] flex flex-wrap items-center gap-6 ${center ? 'justify-center' : ''}`}>
+    <div className={`mt-[max(30px,calc(var(--u)*3.4))] flex flex-wrap items-center gap-6 ${center ? 'justify-center' : ''}`}>
       <button type="button" className="begin" onClick={next}>
         Begin
         <svg viewBox="0 0 22 12" fill="none" aria-hidden="true">

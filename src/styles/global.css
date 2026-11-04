@@ -90,15 +90,15 @@ body {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-  padding: 17px 30px;
+  gap: max(14px, 0.67em);
+  padding: max(17px, 0.81em) max(30px, 1.43em);
   border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
   border-radius: 999px;
   color: var(--color-accent);
-  font-size: clamp(14px, calc(var(--u) * 1.15), 21px);
+  font-size: max(14px, calc(var(--u) * 1.15)); /* no ceiling, like the hero it sits on */
   transition: background 260ms ease, border-color 260ms ease, transform 260ms cubic-bezier(.22, .61, .36, 1);
 }
-.begin svg { display: block; width: 22px; height: 12px; flex: none; }
+.begin svg { display: block; width: max(22px, 1.05em); height: auto; flex: none; }
 .begin:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); border-color: var(--color-accent); transform: translateX(4px); }
 @media (hover: none) { .begin-hint { display: none; } }
 
