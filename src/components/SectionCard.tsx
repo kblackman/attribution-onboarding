@@ -6,6 +6,10 @@ import { usePrefersReducedMotion } from '../engine/reducedMotion'
 import { SECTIONS, getSection, sectionNumber } from '../sections'
 import { RevealContext } from './Reveal'
 import { HorizonLine } from './HorizonLine'
+import { SunriseTitle } from './SunriseTitle'
+
+/** The sunrise sequence is the default; ?classic-sections in the URL shows the earlier one, to compare. */
+const CLASSIC = typeof location !== 'undefined' && new URLSearchParams(location.search).has('classic-sections')
 
 /**
  * Opens a section. Usage in src/beats/index.ts: `sectionCard('discovery')`.
@@ -19,12 +23,16 @@ export function sectionCard(id: string): Beat {
     title: `${number} ${s.label}`,
     variant: 'section',
     sectionId: id,
-    card: <SectionTitle number={number} label={s.label} tagline={s.tagline} index={SECTIONS.findIndex((x) => x.id === id)} />,
+    card: CLASSIC ? (
+      <SectionTitle number={number} label={s.label} tagline={s.tagline} index={SECTIONS.findIndex((x) => x.id === id)} />
+    ) : (
+      <SunriseTitle number={number} label={s.label} tagline={s.tagline} index={SECTIONS.findIndex((x) => x.id === id)} />
+    ),
   }
 }
 
 /*
-  A cinematic title sequence rather than a slide. From a dark, vignetted screen: a thin accent line draws
+  Classic version (shown with ?classic-sections). A cinematic title sequence rather than a slide. From a dark, vignetted screen: a thin accent line draws
   out from the center like a horizon, the label rises letter by letter from behind it (sharpening as it
   clears), a warm glow blooms behind the word, and a giant outlined numeral settles far in the background.
   The number, tagline, and chapter row land last. Plays once per visit; stepping back in shows it settled.

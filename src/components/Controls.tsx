@@ -26,7 +26,7 @@ const Arrow = ({ flip }: { flip?: boolean }) => (
   </svg>
 )
 
-/** Deck chrome: 1px progress line on top; on the bottom, the progress label (opens the section index) and Back / Next pills. */
+/** Deck chrome: progress bar on top; on the bottom, the progress label (opens the section index) and Back / Next pills. */
 const PauseIcon = () => (
   <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
     <rect x="2" y="1.5" width="2.6" height="9" rx="0.8" />
@@ -42,9 +42,10 @@ const PlayIcon = () => (
 export function Controls({ hidden = false, label, progress, canPrev, canNext, onPrev, onNext, menuOpen, onToggleMenu, countRef, nextRef, autoplay }: ControlsProps) {
   return (
     <>
-      <div className="fixed left-0 top-0 z-[60] h-px w-full bg-white/[0.08]" aria-hidden="true">
+      {/* progress: the decks' bar (amber gradient fill), 3px so it reads on large screens (Kyle, 2026-11-04) */}
+      <div className="fixed left-0 top-0 z-[60] h-[3px] w-full bg-white/[0.08]" aria-hidden="true">
         <div
-          className="h-full origin-left bg-accent transition-transform duration-[600ms] ease-[cubic-bezier(.16,.84,.34,1)] motion-reduce:transition-none"
+          className="h-full origin-left bg-[linear-gradient(90deg,color-mix(in_srgb,var(--color-accent)_30%,transparent),var(--color-accent))] transition-transform duration-[600ms] ease-[cubic-bezier(.16,.84,.34,1)] motion-reduce:transition-none"
           style={{ transform: `scaleX(${progress})` }}
         />
       </div>
