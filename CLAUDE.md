@@ -227,7 +227,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 
 ### Beat 1 copy (verbatim)
 - Title: Diagnosing the problem, not the symptom
-- Body: How a small observation made during customer calls turned into a platform-wide onboarding framework. (Kyle, 2026-11-04; "an small" corrected to "a small", period added to match the old line. Was: How a few offhand moments on customer calls led to an onboarding framework at Freshpaint.)
+- Body: How small observations made during customer calls turned into a platform-wide onboarding framework. (Kyle, 2026-11-04; period added to match the old line. Was: How a few offhand moments on customer calls led to an onboarding framework at Freshpaint.)
 - Skill tags: Root Cause Analysis, Codebase Investigation, Data-Informed Design, Rapid Prototyping, Cross-Functional Collaboration
 - Overlay: none
 - Treatment: centered hero like the case study page, at the larger `text-hero` size, "not the symptom" in accent (the case study's two-tone title), sub below, skill tags as centered outlined pills, then the Begin button. No logo, no instruction text. Reveal order: title, sub, tags, Begin.
