@@ -95,7 +95,7 @@ body {
   border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
   border-radius: 999px;
   color: var(--color-accent);
-  font-size: max(14px, calc(var(--u) * 1.15)); /* no ceiling, like the hero it sits on */
+  font-size: max(14px, calc(var(--u-hero) * 1.15)); /* the hero's cap, like the screen it sits on */
   transition: background 260ms ease, border-color 260ms ease, transform 260ms cubic-bezier(.22, .61, .36, 1);
 }
 .begin svg { display: block; width: max(22px, 1.05em); height: auto; flex: none; }

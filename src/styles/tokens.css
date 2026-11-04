@@ -128,8 +128,8 @@
   --text-label: clamp(11px, calc(var(--u) * 0.95), 18px);
   --text-label--line-height: 1.3;
   --text-label--letter-spacing: 0.18em;
-  /* no ceiling (Kyle, 2026-11-04): the hero keeps growing on very large monitors; --u already caps it by height */
-  --text-hero: max(38px, calc(var(--u) * 6.6));
+  /* capped by --u-hero, not the old 128px (Kyle, 2026-11-04) */
+  --text-hero: max(38px, calc(var(--u-hero) * 6.6));
   --text-hero--line-height: 1.0;
   --text-hero--letter-spacing: -0.035em;
   --text-spotlight: clamp(24px, calc(var(--u) * 3.6), 70px);
@@ -152,6 +152,12 @@
 :root {
   /* deck's viewport unit: scales with the smaller of width and height */
   --u: min(1vw, 1.78vh);
+  /*
+    The hero's own unit (Kyle, 2026-11-04): grows past the deck's 1920 ceilings but stops at HERO_CAP.
+    One knob for the whole title screen: raise or lower the px value to make it bigger or smaller on big monitors.
+    22px: title about 145px (was 128 before, 169 uncapped at 2560 x 1440).
+  */
+  --u-hero: min(var(--u), 22px);
   /* deck motion */
   --ease-deck: cubic-bezier(.16, .84, .34, 1);
   --gutter: clamp(16px, 4vw, 56px);

@@ -29,7 +29,7 @@ export function HeroBackdrop({ placeholderLabel, children }: HeroBackdropProps) 
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div
-          className="w-[min(max(1180px,calc(var(--u)*61.5)),86vw)] flex-none max-[720px]:w-[160vw]"
+          className="w-[min(max(1180px,calc(var(--u-hero)*61.5)),86vw)] flex-none max-[720px]:w-[160vw]"
           initial={{ opacity: 0, y: reduce ? 0 : 60 }}
           animate={{ opacity: BACKDROP.opacity, y: 0 }}
           transition={reduce ? { duration: 0.6, delay: BACKDROP.enterDelay } : { duration: BACKDROP.enterDuration, delay: BACKDROP.enterDelay, ease: EASE_DECK }}
