@@ -2,6 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
+import { SELF_SERVE } from '../engine/edition'
+import { useAutoplay } from '../engine/autoplay'
 import { PlaceholderBadge } from '../components/Placeholder'
 import { ASSETS, EVENT_NAME, EVENT_SELECTOR, FONTS, FlowScreen, asset, type FlowUI } from './onboarding-screens'
 
@@ -17,6 +19,7 @@ import { ASSETS, EVENT_NAME, EVENT_SELECTOR, FONTS, FlowScreen, asset, type Flow
 */
 export const TIMING = {
   autoAdvance: false, // Kyle presents this one himself: each step waits for an arrow press (2026-10-25). true to move on by itself
+  // the portfolio edition always auto-advances (readers are on their own); Pause / P is their override
   hold: 1.8, // after a step's script ends, before auto-advancing
   move: 0.65, // cursor travel
   type: 0.055, // per character
@@ -148,6 +151,7 @@ function preload() {
 
 export function OnboardingWalkthrough({ active, startFinished, reducedMotion: reduced, sub, requestNext }: VisualProps) {
   useEffect(preload, [])
+  const autoplay = useAutoplay() && (SELF_SERVE || TIMING.autoAdvance)
   const step = Math.min(sub, WALK_STEPS - 1)
   const script = SCRIPTS[step]
   // Did we reach this step going forward? Decided once per step change, as derived state (a ref read on every
@@ -173,11 +177,11 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
 
   // auto-advance, forward only, and never past the last step (the next press leaves the beat)
   useEffect(() => {
-    if (!TIMING.autoAdvance || !active || startFinished || sub >= WALK_STEPS - 1) return
+    if (!autoplay || !active || startFinished || sub >= WALK_STEPS - 1) return
     const end = script.frames[script.frames.length - 1].at
     const t = window.setTimeout(() => requestNext(sub), ((reduced ? 0 : end) + TIMING.hold + (reduced ? 0.8 : 0)) * 1000)
     return () => window.clearTimeout(t)
-  }, [active, startFinished, sub, script, reduced, requestNext])
+  }, [autoplay, active, startFinished, sub, script, reduced, requestNext])
 
   const frames = script.frames.slice(0, played)
   const ui = apply(BASES[step], frames)

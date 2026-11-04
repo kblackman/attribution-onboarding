@@ -78,7 +78,15 @@ When a full-screen visual isn't warranted, a card can carry a lightweight in-car
 - Progress label, in the decks' format: `01 · 2/3` (section number, position among that section's beats, section card excluded), `01 · Discovery` on a section card, `Prologue · 1/2` before the first section.
 - Section cards are added as each section is built. Current plan: Prologue (Title, The problem), 01 Discovery, 02 Diagnosis, 03 Approach, 04 Solution, 05 Impact.
 
-## Performance
+## Editions
+Two pages from one codebase (one set of beats, so copy and visual changes reach both). The edition comes from `<meta name="edition" content="portfolio">` (`src/engine/edition.ts`, `SELF_SERVE`).
+- Presentation (`index.html`): Kyle's live version. He drives it; the 04 Solution walkthrough waits for arrow keys; T toggles present mode.
+- Portfolio (`portfolio.html`): the self-serve version linked from Kyle's portfolio, for readers without him. Differences, all gated on `SELF_SERVE`:
+  - First-run coach (`KeyCoach`), ported from the Tiled return deck: a light popover above Next with the keycap diagram, 1.5s after the reader lands on the first step past the hero. Got it, Escape, or moving on closes it; "Don't show again" lasts the browser session. Touch screens get swipe wording and no keycaps.
+  - Every multi-step visual autoplays (setup flow walkthrough included); `src/engine/autoplay.ts` holds the state. Override: a Pause / Play pill beside Back (P toggles it); stepping Back pauses; Next jumps ahead and play carries on. Each beat starts playing again. On phones the pill floats as a circle just above Next, since the bar has no room for a fourth control. The ride-along's "a manual step stops it" rule applies only to the presentation edition.
+  - No present mode (T does nothing, `?present` and the stored setting are ignored).
+- Live at https://kblackman.github.io/attribution-onboarding/portfolio.html once pushed.
+
 The piece is card and animation heavy, so it must not accumulate DOM or running animations as the reader progresses.
 - Only beats within one beat of the current beat are mounted (`WINDOW` in `src/App.tsx`). Everything else is unmounted.
 - A visual's content mounts only when its step is current or adjacent, so video and heavy visuals load just in time and unload after.
@@ -113,6 +121,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - Deploy: GitHub Pages via `.github/workflows/deploy.yml` (every push to `main` redeploys). Vite `base: './'` so any repo path works. Repo: https://github.com/kblackman/attribution-onboarding (public, created 2026-10-27 at Kyle's request). Live at https://kblackman.github.io/attribution-onboarding/. Push only when Kyle says to.
 
 ## Decisions
+- 2026-11-04: Portfolio edition (`portfolio.html`), per Kyle: a self-serve version for his portfolio, with the presentation version kept for live talks. Same beats; the edition flag adds the Tiled deck's first-run coach, autoplay with Pause / Play override on every walkthrough, and drops present mode. Coach wording is adapted from the deck ("case study" for "slides") and awaits Kyle's OK; the touch wording is new.
 - 2026-10-23: Deploy to GitHub Pages (Kyle's call over Vercel), matching his decks.
 - 2026-10-23: Vite + React + Motion instead of the decks' build.py + vanilla JS. Deck CSS values and card transforms are ported exactly.
 - 2026-10-23: Card exit = the deck's recede transform plus a fade to 0, so the full-screen visual owns the screen. Card followed directly by another card keeps the deck behavior (stays dimmed behind). The deck's brightness filter is dropped to keep motion to transform, opacity, and blur.

@@ -11,6 +11,9 @@ import { DUR } from './engine/motion'
 import { usePrefersReducedMotion } from './engine/reducedMotion'
 import { PresentationContext } from './engine/presentation'
 import { togglePresentMode } from './engine/presentMode'
+import { SELF_SERVE } from './engine/edition'
+import { setAutoplay, useAutoplay } from './engine/autoplay'
+import { KeyCoach, coachSuppressed } from './components/KeyCoach'
 
 /*
   Performance: only beats within WINDOW of the current beat are mounted at all. A beat further back
@@ -30,6 +33,40 @@ export function App() {
   const [revealed, setRevealed] = useState<Set<number>>(() => new Set([0]))
   const [menuOpen, setMenuOpen] = useState(false)
   const countRef = useRef<HTMLButtonElement>(null)
+  const nextRef = useRef<HTMLButtonElement>(null)
+
+  // portfolio edition: autoplaying walkthroughs, with Pause / Play (and P) as the reader's override
+  const autoplay = useAutoplay()
+  const cbeat = beats[step.beat]
+  const visualSteps = cbeat.visual?.steps ?? 1
+  const canAutoplay = SELF_SERVE && step.kind === 'visual' && visualSteps > 1 && step.sub < visualSteps - 1
+  // every beat starts playing; stepping Back pauses (the reader wants to look again)
+  useEffect(() => setAutoplay(true), [step.beat])
+  const prevStep = useCallback(() => {
+    if (SELF_SERVE) setAutoplay(false)
+    engine.prev()
+  }, [engine])
+  const toggleAutoplay = useCallback(() => setAutoplay(!autoplay), [autoplay])
+
+  // portfolio edition: first-run coach above Next, once the reader has left the hero
+  const [coachOn, setCoachOn] = useState(false)
+  const coachDone = useRef(!SELF_SERVE || coachSuppressed())
+  useEffect(() => {
+    if (coachDone.current) return
+    if (index === 1) {
+      const t = window.setTimeout(() => setCoachOn(true), reduced ? 300 : 1500)
+      return () => window.clearTimeout(t)
+    }
+    if (coachOn) {
+      coachDone.current = true
+      setCoachOn(false)
+    }
+  }, [index, reduced, coachOn])
+  const dismissCoach = useCallback(() => {
+    coachDone.current = true
+    setCoachOn(false)
+    rootRef.current?.focus({ preventScroll: true })
+  }, [])
 
   // section index: jump to a beat's first step; number keys open a section by its number
   const sectionCards = useMemo(() => places.map((p, b) => ({ p, b })).filter(({ p }) => p.isSectionCard), [places])
@@ -63,6 +100,16 @@ export function App() {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return
       const k = e.key
+      if (k === 'Escape' && coachOn) {
+        e.preventDefault()
+        dismissCoach()
+        return
+      }
+      if ((k === 'p' || k === 'P') && canAutoplay) {
+        e.preventDefault()
+        toggleAutoplay()
+        return
+      }
       if (k === 't' || k === 'T') {
         e.preventDefault()
         togglePresentMode()
@@ -93,13 +140,13 @@ export function App() {
       if (forward || back || k === 'Home' || k === 'End') {
         e.preventDefault()
         if (forward) engine.next()
-        else if (back) engine.prev()
+        else if (back) prevStep()
         else engine.go(k === 'Home' ? 0 : steps.length - 1)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [engine, steps.length, menuOpen, closeMenu, sectionCards, jumpToBeat])
+  }, [engine, prevStep, steps.length, menuOpen, closeMenu, sectionCards, jumpToBeat, coachOn, dismissCoach, canAutoplay, toggleAutoplay])
 
   // swipe: horizontal only, so a tall card can still scroll on a phone
   const touch = useRef<{ x: number; y: number } | null>(null)
@@ -112,7 +159,7 @@ export function App() {
     const dy = e.changedTouches[0].clientY - t.y
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
       if (dx < 0) engine.next()
-      else engine.prev()
+      else prevStep()
     }
   }
 
@@ -247,9 +294,12 @@ export function App() {
         progress={steps.length > 1 ? index / (steps.length - 1) : 1}
         canPrev={!engine.isFirst}
         canNext={!engine.isLast}
-        onPrev={engine.prev}
+        onPrev={prevStep}
         onNext={engine.next}
+        nextRef={nextRef}
+        autoplay={canAutoplay ? { playing: autoplay, onToggle: toggleAutoplay } : undefined}
       />
+      {SELF_SERVE && <KeyCoach shown={coachOn} anchorRef={nextRef} onDismiss={dismissCoach} />}
     </div>
   )
 }

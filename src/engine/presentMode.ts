@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import { SELF_SERVE } from './edition'
 
 /*
   Present mode: Kyle's live-talk switch. T toggles it (no visible control); ?present in the URL starts in it.
@@ -8,6 +9,7 @@ import { useSyncExternalStore } from 'react'
 const KEY = 'present-mode'
 
 function initial(): boolean {
+  if (SELF_SERVE) return false // the portfolio edition always shows the full copy
   if (typeof location !== 'undefined' && new URLSearchParams(location.search).has('present')) return true
   try {
     return localStorage.getItem(KEY) === '1'
@@ -20,6 +22,7 @@ let on = initial()
 const listeners = new Set<() => void>()
 
 export function togglePresentMode() {
+  if (SELF_SERVE) return
   on = !on
   try {
     localStorage.setItem(KEY, on ? '1' : '0')

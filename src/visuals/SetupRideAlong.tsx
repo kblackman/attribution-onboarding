@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
+import { SELF_SERVE } from '../engine/edition'
+import { useAutoplay } from '../engine/autoplay'
 import { PlaceholderBadge } from '../components/Placeholder'
 import { BOUNDS, EdgesView, Legend, NODES, NodeView, PATH, UNIT, firstStep, nodeById, nodeSize } from './setup-map'
 
@@ -11,6 +13,7 @@ import { BOUNDS, EdgesView, Legend, NODES, NodeView, PATH, UNIT, firstStep, node
   while going forward; after a step back it waits). Counters tick up in the corner. After the last step,
   one more press (or the auto-advance) zooms out to the whole map; the overlay then waits for a key press. The map lives in setup-map.tsx.
   Any step Kyle takes himself (arrow keys, Next, swipe) turns the auto-advance off until the visual is left, so he can take over.
+  The portfolio edition skips that rule: Next just jumps ahead and autoplay carries on; Pause, P, or Back stop it.
 */
 export const RIDE_STEPS = PATH.length + 1 // the 14 steps, then the zoom-out
 export const TIMING = {
@@ -23,6 +26,7 @@ export const TIMING = {
 const FRAME_H = 62.5 // the 16:10 frame is 100cqw by 62.5cqw
 
 export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, onComplete, sub, requestNext }: VisualProps) {
+  const autoplay = useAutoplay()
   const zoomed = sub >= PATH.length
   const at = Math.min(sub, PATH.length - 1)
   const prev = useRef(-1)
@@ -39,14 +43,14 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
 
   // auto-advance, forward only; on the zoomed-out map, hand over to the overlay once it settles
   useEffect(() => {
-    if (!active || startFinished || (manual.current && !zoomed)) return
+    if (!active || startFinished || (!zoomed && (!autoplay || (manual.current && !SELF_SERVE)))) return
     const t = window.setTimeout(() => {
       if (zoomed) return onComplete()
       autoTo.current = sub + 1
       requestNext(sub)
     }, (zoomed ? TIMING.zoomSettle : TIMING.auto) * 1000)
     return () => window.clearTimeout(t)
-  }, [active, startFinished, sub, zoomed, onComplete, requestNext])
+  }, [autoplay, active, startFinished, sub, zoomed, onComplete, requestNext])
 
   // counters: how many exits and empty states the path has passed so far
   const upTo = zoomed ? PATH.length - 1 : at

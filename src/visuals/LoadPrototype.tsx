@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useAutoplay } from '../engine/autoplay'
 import type { VisualProps } from '../engine/types'
 import { EASE_DECK } from '../engine/motion'
 import { PlaceholderBadge } from '../components/Placeholder'
@@ -42,12 +43,13 @@ const W = 1440
 const H = 900
 
 export function LoadPrototype({ active, startFinished, reducedMotion: reduced, sub, requestNext }: VisualProps) {
+  const autoplay = useAutoplay()
   // auto-advance forward only, and never past the last load
   useEffect(() => {
-    if (!active || startFinished || sub >= LOADS.length - 1) return
+    if (!autoplay || !active || startFinished || sub >= LOADS.length - 1) return
     const t = window.setTimeout(() => requestNext(sub), TIMING.auto * 1000)
     return () => window.clearTimeout(t)
-  }, [active, startFinished, sub, requestNext])
+  }, [autoplay, active, startFinished, sub, requestNext])
 
   const load = LOADS[Math.min(sub, LOADS.length - 1)]
   const events = EVENTS.slice(0, load.count)

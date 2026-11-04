@@ -14,6 +14,10 @@ interface ControlsProps {
   menuOpen: boolean
   onToggleMenu: () => void
   countRef: Ref<HTMLButtonElement>
+  /** The Next button, so the portfolio edition's first-run coach can point at it. */
+  nextRef?: Ref<HTMLButtonElement>
+  /** Portfolio edition: Pause / Play for an autoplaying walkthrough. Omitted when nothing is autoplaying. */
+  autoplay?: { playing: boolean; onToggle: () => void }
 }
 
 const Arrow = ({ flip }: { flip?: boolean }) => (
@@ -23,7 +27,19 @@ const Arrow = ({ flip }: { flip?: boolean }) => (
 )
 
 /** Deck chrome: 1px progress line on top; on the bottom, the progress label (opens the section index) and Back / Next pills. */
-export function Controls({ hidden = false, label, progress, canPrev, canNext, onPrev, onNext, menuOpen, onToggleMenu, countRef }: ControlsProps) {
+const PauseIcon = () => (
+  <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+    <rect x="2" y="1.5" width="2.6" height="9" rx="0.8" />
+    <rect x="7.4" y="1.5" width="2.6" height="9" rx="0.8" />
+  </svg>
+)
+const PlayIcon = () => (
+  <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+    <path d="M3 1.8v8.4a.6.6 0 0 0 .9.5l6.7-4.2a.6.6 0 0 0 0-1L3.9 1.3a.6.6 0 0 0-.9.5Z" />
+  </svg>
+)
+
+export function Controls({ hidden = false, label, progress, canPrev, canNext, onPrev, onNext, menuOpen, onToggleMenu, countRef, nextRef, autoplay }: ControlsProps) {
   return (
     <>
       <div className="fixed left-0 top-0 z-[60] h-px w-full bg-white/[0.08]" aria-hidden="true">
@@ -56,11 +72,23 @@ export function Controls({ hidden = false, label, progress, canPrev, canNext, on
           </svg>
         </button>
         <div className="flex items-center gap-2 sm:gap-3">
+          {autoplay && (
+            <button
+              type="button"
+              className="pill autoplay"
+              aria-label={autoplay.playing ? 'Pause the walkthrough (P)' : 'Play the walkthrough (P)'}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={autoplay.onToggle}
+            >
+              {autoplay.playing ? <PauseIcon /> : <PlayIcon />}
+              <span className="max-[720px]:sr-only">{autoplay.playing ? 'Pause' : 'Play'}</span>
+            </button>
+          )}
           <button type="button" className="pill secondary" aria-label="Previous step" aria-disabled={!canPrev} onClick={onPrev}>
             <Arrow flip />
             Back
           </button>
-          <button type="button" className="pill primary" aria-label="Next step" aria-disabled={!canNext} onClick={onNext}>
+          <button ref={nextRef} type="button" className="pill primary" aria-label="Next step" aria-disabled={!canNext} onClick={onNext}>
             Next
             <Arrow />
           </button>

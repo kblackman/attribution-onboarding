@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useAutoplay } from '../engine/autoplay'
 import type { VisualProps } from '../engine/types'
 import { TerminalThread, exchangeDuration, type TerminalExchange } from '../components/TerminalThread'
 
@@ -51,6 +52,7 @@ export const EXCHANGES: TerminalExchange[] = [
 ]
 
 export function CodeConversation({ active, startFinished, reducedMotion, sub, requestNext }: VisualProps) {
+  const autoplay = useAutoplay()
   const prev = useRef(-1)
   const forward = prev.current === sub - 1 && !startFinished
   // only count steps taken while this visual is on screen; before that, the first active step is an arrival
@@ -60,10 +62,10 @@ export function CodeConversation({ active, startFinished, reducedMotion, sub, re
 
   // auto-advance forward only, and never past the last exchange (the next press leaves the beat)
   useEffect(() => {
-    if (!active || startFinished || sub >= EXCHANGES.length - 1) return
+    if (!autoplay || !active || startFinished || sub >= EXCHANGES.length - 1) return
     const t = window.setTimeout(() => requestNext(sub), (exchangeDuration(EXCHANGES[sub]) + TIMING.readAfter) * 1000)
     return () => window.clearTimeout(t)
-  }, [active, startFinished, sub, requestNext])
+  }, [autoplay, active, startFinished, sub, requestNext])
 
   return (
     <div className="absolute inset-0 flex items-start justify-center px-[var(--gutter)] pb-[clamp(84px,13vh,140px)] pt-[clamp(48px,8vh,96px)]">
