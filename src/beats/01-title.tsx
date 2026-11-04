@@ -21,7 +21,7 @@ const beat: Beat = {
         <span className="block text-balance text-accent">not the symptom</span>
       </Reveal>
       <Reveal as="p" order={1} className="m-0 mt-[max(24px,calc(var(--u-hero)*3.2))] max-w-[44ch] text-[length:max(17px,calc(var(--u-hero)*1.6))] leading-[1.5] text-fg text-balance">
-        How a few offhand moments on customer calls led to an onboarding framework at Freshpaint.
+        How a small observation made during customer calls turned into a platform-wide onboarding framework.
       </Reveal>
       <Reveal order={2} className="mt-[max(24px,calc(var(--u-hero)*3))]">
         <TagRow
