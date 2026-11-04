@@ -39,7 +39,7 @@ const beat: Beat = {
   visual: {
     component: SessionGrid,
     description:
-      'Four video call tiles appear one at a time: Day 1, New feature. Day 1, Bug walkthrough. Day 2, Adoption check-in. Day 2, New feature. Each shows a customer sharing the same half-set-up Attribution dashboard, with spend and recommendation areas empty, and a hand-drawn circle marks the empty area as each tile lands. The last tile then zooms to fill the screen. Generic avatars, no names or data. Placeholder shapes stand in for the final visual.',
+      'Four video call tiles appear one at a time: Day 1, Customer 1. Day 1, Customer 2. Day 2, Customer 3. Day 2, Customer 4. Each shows a customer sharing the same half-set-up Attribution dashboard, with spend and recommendation areas empty, and a hand-drawn circle marks the empty area as each tile lands. The last tile then zooms to fill the screen. Generic avatars, no names or data. Placeholder shapes stand in for the final visual.',
   },
 }
 

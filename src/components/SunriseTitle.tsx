@@ -32,7 +32,7 @@ export const TIMING = {
   rimOff: 2.5, // the warm rim fades once the word is lit
   rimDur: 0.8,
   settle: 2.6, // horizon pulls back to its usual length
-  settleDur: 1.0,
+  settleDur: 1.5, // eased in and out, so the horizon visibly draws back rather than snapping
   tagline: 2.9,
   reducedFade: 0.5,
 }
@@ -67,11 +67,7 @@ export function SunriseTitle({ number, label, tagline }: Props) {
 
   const stage = (at: number, dur: number) =>
     !revealed ? { duration: 0 } : reduce ? { duration: TIMING.reducedFade } : { duration: dur, delay: t0 + at, ease: EASE_DECK }
-  // a two-part move (e.g. draw, then settle) as one keyframed transition
-  const span = (from: number, to: number) => to - from
-  const lineTotal = span(TIMING.line, TIMING.settle + TIMING.settleDur)
-  const lineTimes = [0, TIMING.lineDur / lineTotal, (TIMING.settle - TIMING.line) / lineTotal, 1]
-  const rimTotal = span(TIMING.word, TIMING.rimOff + TIMING.rimDur)
+  const rimTotal = TIMING.rimOff + TIMING.rimDur - TIMING.word
 
   return (
     <>
@@ -151,14 +147,20 @@ export function SunriseTitle({ number, label, tagline }: Props) {
 
         {/* the horizon: wide while the title rises, then back to its usual length; brightest in the middle */}
         <div className="relative h-[2px]" style={{ width: `${WIDE * 100}vw` }} aria-hidden="true">
+          {/* two nested layers, one per move: the outer draws the line out wide, the inner later draws it back */}
           <motion.div
             className="absolute inset-0 origin-center"
             initial={false}
-            animate={revealed ? { scaleX: reduce ? settle : [0, 1, 1, settle], opacity: 1 } : { scaleX: reduce ? settle : 0, opacity: 0 }}
-            transition={!revealed ? { duration: 0 } : reduce ? { duration: TIMING.reducedFade } : { duration: lineTotal, delay: t0 + TIMING.line, times: lineTimes, ease: EASE_DECK }}
+            animate={revealed ? { scaleX: 1, opacity: 1 } : { scaleX: reduce ? 1 : 0, opacity: 0 }}
+            transition={stage(TIMING.line, TIMING.lineDur)}
           >
-            {/* the line itself */}
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, transparent, var(--color-accent) 38%, var(--color-accent) 62%, transparent)' }} />
+            <motion.div
+              className="absolute inset-0 origin-center"
+              style={{ background: 'linear-gradient(90deg, transparent, var(--color-accent) 38%, var(--color-accent) 62%, transparent)' }}
+              initial={false}
+              animate={{ scaleX: revealed || reduce ? settle : 1 }}
+              transition={!revealed ? { duration: 0 } : reduce ? { duration: 0 } : { duration: TIMING.settleDur, delay: t0 + TIMING.settle, ease: 'easeInOut' }}
+            />
           </motion.div>
           {/* the light along the horizon: fixed at the settled length, so it doesn't squeeze brighter when the line pulls back */}
           <motion.div
