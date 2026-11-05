@@ -1,3 +1,5 @@
+import { navigateViaFramer } from '../engine/frameNav'
+
 /*
   Portfolio edition: the case study header from Kyle's Framer site, inside the deck (the deck fills the Framer
   page in an iframe, so Framer's own hide-on-scroll header can't work here). On the hero it matches the site's
@@ -23,7 +25,7 @@ const Arrow = () => (
 export function SiteHeader({ compact, hidden = false }: { compact: boolean; hidden?: boolean }) {
   return (
     <header className={`site-header${compact ? ' is-compact' : ''}${hidden ? ' is-hidden' : ''}`} inert={hidden}>
-      <a className="site-back" href={SITE.home} target="_top">
+      <a className="site-back" href={SITE.home} target="_top" onClick={navigateViaFramer}>
         <Arrow /> View All Work
       </a>
       <a className="site-logo" href={SITE.home} target="_top" aria-label="Kyle Blackman, home" tabIndex={compact ? -1 : undefined} aria-hidden={compact || undefined}>
