@@ -189,6 +189,8 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-11-04: "One problem, not six" trimmed, per Kyle: dropped the mid/low funnel parenthetical, the single low-funnel event line (the walkthrough's error shows it), and the design spec in the last paragraph (optional steps skippable with a way back, the waiting room), all shown later in the setup flow. Also dropped the "fix things on the fly" sentence (Kyle).
 - 2026-11-04: Section titles: the word no longer brightens with a flat crossfade (Kyle: "it's not like a light turning on, it's coming into existence and being lit"). It rises as a dark silhouette with a warm rim; then a soft-edged band of warm light creeps down it from the top edge while it's still rising (a mask driven by `--lit`, `TIMING.catch`/`catchDur`), then the warm cools to white (`white`/`whiteDur`) as the rim fades. Tagline moved to 3.4s to follow.
 - 2026-11-04: "One problem, not six" no longer wraps text around the Required / Optional card (Kyle): all three paragraphs sit in one column with the card beside them, centered (`is-side` on TextWithAside, wide screens only; phones still stack).
+- 2026-11-04: Portfolio edition: Play now resumes after stepping Back. Stepping back shows a step finished (`startFinished`), and every auto-advance skipped such steps, so Play flipped the button but nothing moved (Kyle). In the portfolio edition Back always pauses, so autoplay is only on there if the reader pressed Play; the walkthrough, terminal, prototype and ride-along now resume from that step after the hold. Presentation edition unchanged.
+- 2026-11-04: Beat 9 renamed "Digging into the code" (was "Checking before prototyping"), per Kyle. "If it couldn't move into the new flow, I'd have to design around it." is now its own bold amber line, like Beats 4 and 5, also as the last short line.
 
 ## Beats
 | # | Slug | Steps | Visual | Status |
@@ -296,9 +298,10 @@ One problem, not six (back to six per Kyle 2026-10-26: it answers the ride-along
 ### 03 Approach copy (verbatim)
 Section card: 03 Approach. Tagline: Scoping, reusing, and testing. (updated again 2026-10-25; phasing, "shipping in pieces", moved to 04 Solution)
 
-Checking before prototyping
+Digging into the code
 - Front-loading setup meant pulling every required step into one guided flow. Whether that was possible would decide how simple the flow could be, so I checked before prototyping anything. ("sketching" changed to "prototyping" by Kyle 2026-10-25: he mapped in FigJam, then went straight to a prototype in Claude Code)
-- The biggest question was Event Creation. Its drawer lived on the Events page. If it couldn't move into the new flow, I'd have to design around it.
+- The biggest question was Event Creation. Its drawer lived on the Events page.
+- (amber line, on its own) If it couldn't move into the new flow, I'd have to design around it.
 - Terminal (no caption; "Reconstructed from my session." removed 2026-11-04): prompts verbatim, responses condensed, as briefed (4 exchanges).
 
 What the code told me

@@ -176,11 +176,12 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
 
   // auto-advance, forward only, and never past the last step (the next press leaves the beat)
   useEffect(() => {
-    if (!autoplay || !active || startFinished || sub >= WALK_STEPS - 1) return
+    // stepping back shows a step finished; in the portfolio edition, Play resumes from there (Back pauses, so autoplay is only on here if the reader pressed Play)
+    if (!autoplay || !active || (startFinished && !SELF_SERVE) || sub >= WALK_STEPS - 1) return
     const end = script.frames[script.frames.length - 1].at
-    const t = window.setTimeout(() => requestNext(sub), ((reduced ? 0 : end) + TIMING.hold + (reduced ? 0.8 : 0)) * 1000)
+    const t = window.setTimeout(() => requestNext(sub), ((reduced || !play ? 0 : end) + TIMING.hold + (reduced ? 0.8 : 0)) * 1000)
     return () => window.clearTimeout(t)
-  }, [autoplay, active, startFinished, sub, script, reduced, requestNext])
+  }, [autoplay, active, startFinished, sub, script, reduced, play, requestNext])
 
   const frames = script.frames.slice(0, played)
   const ui = apply(BASES[step], frames)

@@ -4,23 +4,26 @@ import { CodeConversation, EXCHANGES } from '../visuals/CodeConversation'
 
 const beat: Beat = {
   slug: 'before-prototyping',
-  title: 'Checking before prototyping',
+  title: 'Digging into the code',
   variant: 'statement',
   card: (
     <Statement
       wide
-      headline="Checking before prototyping"
+      headline="Digging into the code"
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
         "Front-loading setup meant pulling every required step into one guided flow.",
         "The biggest question: could Event Creation's drawer move into it?",
+        <em className="font-semibold text-accent">If it couldn&rsquo;t move into the new flow, I&rsquo;d have to design around it.</em>,
       ]}
       body={
         <>
           <p>
             Front-loading setup meant pulling every required step into one guided flow. Whether that was possible would decide how simple the flow could be, so I checked before prototyping anything.
           </p>
-          <p>The biggest question was Event Creation. Its drawer lived on the Events page. If it couldn't move into the new flow, I'd have to design around it.</p>
+          <p>The biggest question was Event Creation. Its drawer lived on the Events page.</p>
+          {/* the stakes get their own line, this screen's one yellow line */}
+          <p className="mt-[0.3em] text-kicker font-semibold italic text-accent">If it couldn&rsquo;t move into the new flow, I&rsquo;d have to design around it.</p>
         </>
       }
     />

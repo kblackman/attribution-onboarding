@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useAutoplay } from '../engine/autoplay'
+import { SELF_SERVE } from '../engine/edition'
 import type { VisualProps } from '../engine/types'
 import { TerminalThread, exchangeDuration, type TerminalExchange } from '../components/TerminalThread'
 
@@ -62,8 +63,9 @@ export function CodeConversation({ active, startFinished, reducedMotion, sub, re
 
   // auto-advance forward only, and never past the last exchange (the next press leaves the beat)
   useEffect(() => {
-    if (!autoplay || !active || startFinished || sub >= EXCHANGES.length - 1) return
-    const t = window.setTimeout(() => requestNext(sub), (exchangeDuration(EXCHANGES[sub]) + TIMING.readAfter) * 1000)
+    // stepping back shows a step finished; in the portfolio edition, Play resumes from there (Back pauses, so autoplay is only on here if the reader pressed Play)
+    if (!autoplay || !active || (startFinished && !SELF_SERVE) || sub >= EXCHANGES.length - 1) return
+    const t = window.setTimeout(() => requestNext(sub), ((startFinished ? 0 : exchangeDuration(EXCHANGES[sub])) + TIMING.readAfter) * 1000)
     return () => window.clearTimeout(t)
   }, [autoplay, active, startFinished, sub, requestNext])
 

@@ -42,7 +42,8 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
 
   // auto-advance, forward only; on the zoomed-out map, hand over to the overlay once it settles
   useEffect(() => {
-    if (!active || startFinished || (!zoomed && (!autoplay || (manual.current && !SELF_SERVE)))) return
+    // stepping back shows a step finished; in the portfolio edition, Play resumes the path from there
+    if (!active || (startFinished && (zoomed || !SELF_SERVE)) || (!zoomed && (!autoplay || (manual.current && !SELF_SERVE)))) return
     const t = window.setTimeout(() => {
       if (zoomed) return onComplete()
       autoTo.current = sub + 1

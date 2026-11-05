@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useAutoplay } from '../engine/autoplay'
+import { SELF_SERVE } from '../engine/edition'
 import type { VisualProps } from '../engine/types'
 import { EASE_DECK } from '../engine/motion'
 import { TweaksPanel } from '../components/TweaksPanel'
@@ -45,7 +46,8 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
   const autoplay = useAutoplay()
   // auto-advance forward only, and never past the last load
   useEffect(() => {
-    if (!autoplay || !active || startFinished || sub >= LOADS.length - 1) return
+    // stepping back shows a step finished; in the portfolio edition, Play resumes from there (Back pauses, so autoplay is only on here if the reader pressed Play)
+    if (!autoplay || !active || (startFinished && !SELF_SERVE) || sub >= LOADS.length - 1) return
     const t = window.setTimeout(() => requestNext(sub), TIMING.auto * 1000)
     return () => window.clearTimeout(t)
   }, [autoplay, active, startFinished, sub, requestNext])
