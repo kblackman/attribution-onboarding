@@ -20,24 +20,29 @@ const BACKDROP = {
 interface HeroBackdropProps {
   /** Shown as a small badge while the imagery is a placeholder. Omit once it's real. */
   placeholderLabel?: string
+  /** Imagery taller than one screen (a stack behind it): the fade, and how far up to shift it so the front screen stays centered. */
+  fade?: string
+  shiftY?: string
   children: ReactNode
 }
 
-export function HeroBackdrop({ placeholderLabel, children }: HeroBackdropProps) {
+export function HeroBackdrop({ placeholderLabel, fade = BACKDROP.fade, shiftY = '0%', children }: HeroBackdropProps) {
   const reduce = usePrefersReducedMotion()
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
       <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-[min(calc(var(--u-hero)*82),104vw)] flex-none max-[720px]:w-[160vw]" style={{ transform: `translateY(${shiftY})` }}>
         <motion.div
-          className="w-[min(calc(var(--u-hero)*82),104vw)] flex-none max-[720px]:w-[160vw]"
+          className="w-full"
           initial={{ opacity: 0, y: reduce ? 0 : 60 }}
           animate={{ opacity: BACKDROP.opacity, y: 0 }}
           transition={reduce ? { duration: 0.6, delay: BACKDROP.enterDelay } : { duration: BACKDROP.enterDuration, delay: BACKDROP.enterDelay, ease: EASE_DECK }}
         >
-          <div style={{ transform: BACKDROP.tilt, transformOrigin: '50% 100%', maskImage: BACKDROP.fade, WebkitMaskImage: BACKDROP.fade }}>
+          <div style={{ transform: BACKDROP.tilt, transformOrigin: '50% 100%', maskImage: fade, WebkitMaskImage: fade }}>
             {children}
           </div>
         </motion.div>
+        </div>
       </div>
       {placeholderLabel && (
         <div className="absolute bottom-[clamp(16px,3vh,28px)] left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] text-left">
