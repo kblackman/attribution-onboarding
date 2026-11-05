@@ -223,19 +223,16 @@ body {
 @media (hover: none) { .secmenu .keys-hint { display: none; } }
 @media (max-width: 720px) { .secmenu { left: 16px; bottom: 74px; } }
 @media (prefers-reduced-motion: reduce) { .secmenu, .secmenu.show, .count svg { transition: none; } }
-/* variant: the artifact sits beside the second paragraph; the first and the rest run full width */
-.text-with-aside.is-mid { grid-template-areas: "lead lead" "main aside" "rest rest"; grid-template-rows: auto auto auto; align-items: center; }
+/* variant: a lead paragraph above the main one. All the text stays in one column with the artifact beside the
+   whole of it, centered; text never wraps above or below the artifact (Kyle, 2026-11-04: "it's ugly") */
+.text-with-aside.is-mid { grid-template-areas: "lead aside" "main aside" "rest aside"; grid-template-rows: auto auto auto; align-content: center; }
+.text-with-aside.is-mid > .twa-aside { align-self: center; }
 .twa-lead { grid-area: lead; }
 /* variant: a chat thread as the artifact, given the wider column */
 .text-with-aside.is-chat { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
 @media (max-width: 720px) { .text-with-aside.is-chat { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 720px) {
   .text-with-aside.is-mid { grid-template-areas: "lead" "main" "aside" "rest"; }
-}
-/* variant: all the text in one column, the artifact beside the whole of it (no text wrapping under or over it) */
-@media (min-width: 721px) {
-  .text-with-aside.is-mid.is-side { grid-template-areas: "lead aside" "main aside" "rest aside"; grid-template-rows: auto auto auto; align-content: center; }
-  .text-with-aside.is-side > .twa-aside { align-self: center; }
 }
 /* present mode (TextWithAside): every short point in the text column, the artifact beside them, top-aligned */
 @media (min-width: 721px) {
