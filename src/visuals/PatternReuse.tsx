@@ -32,8 +32,8 @@ const MARK_AT = SECOND_FILL + TIMING.mark
 const NOTE_AT = MARK_AT + TIMING.note
 export const TOTAL = NOTE_AT + TIMING.hold
 
-/** The handwritten note. Draft wording, awaiting Kyle's OK. */
-const NOTE = 'Same framework, only the name changes'
+/** The handwritten note (Kyle's wording, 2026-11-04). */
+const NOTE = 'The same framework, reusable across the platform'
 
 const W = 1640 // the stage: two 780px windows and a gap
 const H = 640
@@ -159,8 +159,8 @@ export function PatternReuse(props: VisualProps) {
 
           {/* the note: above the windows with an arrow to each circled name, or between them when stacked */}
           <motion.p
-            className="absolute m-0 whitespace-nowrap text-center font-[family-name:var(--font-hand)] text-[46px] font-bold leading-none text-annotation"
-            style={{ left: stageW / 2, top: stacked ? H + GAP_S / 2 : 34, x: '-50%', y: stacked ? '-50%' : 0, rotate: -3 }}
+            className="absolute m-0 whitespace-nowrap text-center font-[family-name:var(--font-hand)] font-bold leading-none text-annotation"
+            style={{ fontSize: stacked ? 34 : 46, left: stageW / 2, top: stacked ? H + GAP_S / 2 : 34, x: '-50%', y: stacked ? '-50%' : 0, rotate: -3 }}
             initial={false}
             animate={{ opacity: marked ? 1 : 0 }}
             transition={instant ? { duration: 0 } : { duration: reduced ? 0.3 : 0.45, delay: NOTE_AT }}

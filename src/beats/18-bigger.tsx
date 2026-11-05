@@ -31,7 +31,7 @@ const beat: Beat = {
   visual: {
     component: PatternReuse,
     description:
-      'A product window for Attribution shows the setup guide, its stepped progress indicator filling through four steps, and the waiting room card. It moves left as a second window for Web Analytics lands beside it with the same progress indicator and waiting room card, identical in style. Web Analytics wording is shown as placeholder bars. Then the feature name in each heading is circled in magenta, with a handwritten note above both windows: "Same framework, only the name changes", and an arrow to each circle.',
+      'A product window for Attribution shows the setup guide, its stepped progress indicator filling through four steps, and the waiting room card. It moves left as a second window for Web Analytics lands beside it with the same progress indicator and waiting room card, identical in style. Web Analytics wording is shown as placeholder bars. Then the feature name in each heading is circled in magenta, with a handwritten note above both windows: "The same framework, reusable across the platform", and an arrow to each circle.',
   },
   overlay: {
     trigger: 'auto',
