@@ -18,7 +18,7 @@ const beat: Beat = {
       tldr={[
         "Most customers defined only a handful of events. A simple list worked.",
         "Nearly a quarter had 10 or more, and one had 55. So the waiting room uses a grid that wraps after every four.",
-        "Then I put both to the test.",
+        <em className="font-semibold text-accent">Then I put both to the test.</em>,
       ]}
       body={
         <>
@@ -28,7 +28,8 @@ const beat: Beat = {
           <p>
             The long tail told a different story. Nearly a quarter of customers had 10 or more, and one had 55. The waiting room screen lists every defined event, so for those customers a list would get bulky. So I designed a grid that wraps to a new row after every four events.
           </p>
-          <p>Then I put both to the test.</p>
+          {/* the finisher gets its own line, this screen's one yellow line (Kyle, 2026-11-05) */}
+          <p className="mt-[0.3em] text-kicker font-semibold italic text-accent">Then I put both to the test.</p>
         </>
       }
     />
@@ -37,7 +38,7 @@ const beat: Beat = {
     component: LoadPrototype,
     steps: LOADS.length,
     description:
-      'The prototype with its tweaks panel, a small floating panel with a four-option toggle: Low, Median, High, Outlier. Low shows 1 event in the setup step\'s simple list; Median shows 4 events in the same list. High shows 12 events in the waiting room\'s grid, wrapping to a new row after every 4 events; Outlier shows 55 events in the same grid, and the page scrolls to show them all. Then the prototype dims, the tweaks panel is circled in pink, and a handwritten note reads: Swaps real customer data loads to stress-test the UI. Now part of our shared prototyping skill.',
+      'The prototype with its tweaks panel, a small floating panel with a four-option toggle: Low, Median, High, Outlier. Low shows 1 event in the setup step\'s simple list; Median shows 4 events in the same list. High shows 12 events in the waiting room\'s grid, wrapping to a new row after every 4 events; Outlier shows 55 events in the same grid, and the page scrolls to show them all. Then the prototype dims, the tweaks panel is circled in pink, and a handwritten note reads: Swaps real customer data loads to stress-test the UI.',
   },
 }
 

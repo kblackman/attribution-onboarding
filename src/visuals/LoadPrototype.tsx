@@ -25,7 +25,7 @@ export const TIMING = {
 }
 
 // the annotation note (Kyle, 2026-11-05; wording still being tuned)
-export const NOTE = ['Swaps real customer data loads to stress-test the UI.', 'Now part of our shared prototyping skill.'] as const
+export const NOTE = 'Swaps real customer data loads to stress-test the UI.'
 
 export const LOADS = [
   { id: 'low', label: 'Low', count: 1, view: 'list' as const }, // p10
@@ -142,8 +142,7 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
             animate={{ opacity: marked ? 1 : 0 }}
             transition={at(TIMING.note)}
           >
-            <p className="m-0 whitespace-nowrap text-[max(17px,2.5cqw)] max-[720px]:whitespace-normal">{NOTE[0]}</p>
-            <p className="m-0 mt-[0.3em] whitespace-nowrap text-[max(14px,1.9cqw)] max-[720px]:whitespace-normal">{NOTE[1]}</p>
+            <p className="m-0 whitespace-nowrap text-[max(17px,2.5cqw)] max-[720px]:whitespace-normal">{NOTE}</p>
             <svg className="absolute right-[calc(100%+0.8cqw)] top-[0.2em] h-[3cqw] w-[5.5cqw] overflow-visible max-[720px]:hidden" viewBox="0 0 110 60" fill="none" stroke="var(--color-annotation)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke">
               <path d="M104,18 Q60,4 10,40" />
               <path d="M24,42 L10,40 L14,27" />
