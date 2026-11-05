@@ -15,7 +15,7 @@ const beat: Beat = {
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
         "I brought the map to the team to fill the gaps.",
-        "Some empty states weren't a problem at all. Attribution was just waiting on data. But nothing explicitly told them that.",
+        "Some empty states weren't a problem at all. Attribution was just waiting on data. But the system never communicated that clearly.",
       ]}
       body={
         <>
@@ -23,7 +23,7 @@ const beat: Beat = {
             With the flow mapped as I understood it, I brought it to the team. I wanted to know two things: was I missing any steps, and what caused each empty state?
           </p>
           <p>
-            Their answers filled the gaps. The biggest surprise was that some empty states weren't a sign of a problem at all. A customer could set everything up correctly and still see one while Attribution waited on data ingestion. But nothing explicitly told them that.
+            Their answers filled the gaps. The biggest surprise was that some empty states weren't a sign of a problem at all. A customer could set everything up correctly and still see one while Attribution waited on data ingestion. But the system never communicated that clearly.
           </p>
           <p>With the flow confirmed, I could finally see the full path a customer had to take.</p>
         </>
