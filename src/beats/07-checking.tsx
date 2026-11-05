@@ -16,6 +16,7 @@ const beat: Beat = {
       tldr={[
         "I brought the map to the team to fill the gaps.",
         "Some empty states weren't a problem at all. Attribution was just waiting on data. But the system never communicated that clearly.",
+        <em className="font-semibold text-accent">With the flow confirmed, I could finally see the full path a customer had to take.</em>,
       ]}
       body={
         <>
@@ -25,7 +26,8 @@ const beat: Beat = {
           <p>
             Their answers filled the gaps. The biggest surprise was that some empty states weren't a sign of a problem at all. A customer could set everything up correctly and still see one while Attribution waited on data ingestion. But the system never communicated that clearly.
           </p>
-          <p>With the flow confirmed, I could finally see the full path a customer had to take.</p>
+          {/* the finisher gets its own line, this screen's one yellow line (Kyle, 2026-11-05) */}
+          <p className="mt-[0.3em] text-kicker font-semibold italic text-accent">With the flow confirmed, I could finally see the full path a customer had to take.</p>
         </>
       }
     />
