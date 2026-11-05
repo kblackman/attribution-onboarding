@@ -11,7 +11,6 @@ import beforePrototyping from './09-before-prototyping'
 import codeTold from './10-code-told'
 import realNumbers from './11-real-numbers'
 import twoMoments from './12-two-moments'
-import showingWork from './13-showing-work'
 import toTheTeam from './14-to-the-team'
 import setupFlow from './15-setup-flow'
 import threeGoals from './16-three-goals'
@@ -37,7 +36,6 @@ export const beats: Beat[] = [
   codeTold,
   realNumbers,
   twoMoments,
-  showingWork,
   toTheTeam,
   sectionCard('solution'),
   setupFlow,

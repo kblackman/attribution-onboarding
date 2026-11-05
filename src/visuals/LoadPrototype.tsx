@@ -5,10 +5,11 @@ import { SELF_SERVE } from '../engine/edition'
 import type { VisualProps } from '../engine/types'
 import { EASE_DECK } from '../engine/motion'
 import { TweaksPanel } from '../components/TweaksPanel'
+import { HandCircle } from '../components/HandCircle'
 import { EventList, Footer, ProductFrame, SetupCard, SetupHeading, WaitingRoom, type TrackedEvent } from './onboarding-screens'
 
 /*
-  "Showing my work" visual: the prototype with its tweaks panel. Each key press switches the data load
+  "Two moments, two patterns" visual (it was "Showing my work"): the prototype with its tweaks panel. Each key press switches the data load
   (Low, Median, High, Outlier: Kyle's Snowflake numbers for funnel events per customer, p10 1, median 4,
   p90 12, max 55) and the UI updates on the fly, in the product's real patterns (Kyle's Figma):
   Low and Median in the setup step's event list (Create an event, after the first event); High and Outlier
@@ -16,7 +17,15 @@ import { EventList, Footer, ProductFrame, SetupCard, SetupHeading, WaitingRoom, 
   walkthrough's own components (onboarding-screens.tsx), in its 1440 x 900 space, scaled to the frame.
   With no key press it moves on by itself, forward only. Mock event names. Tune the timing here (seconds).
 */
-export const TIMING = { auto: 2.2 }
+export const TIMING = {
+  auto: 2.2,
+  // on the last load (Outlier), once its grid has scrolled: the prototype dims, the panel is circled, the note lands
+  mark: 2.4,
+  note: 3.1,
+}
+
+// the annotation note (Kyle, 2026-11-05; wording still being tuned)
+export const NOTE = ['Swaps real customer data loads to stress-test the UI.', 'Now part of our shared prototyping skill.'] as const
 
 export const LOADS = [
   { id: 'low', label: 'Low', count: 1, view: 'list' as const }, // p10
@@ -53,6 +62,10 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
   }, [autoplay, active, startFinished, sub, requestNext])
 
   const load = LOADS[Math.min(sub, LOADS.length - 1)]
+  // point out the tweaks panel once every load has played; stepping back into it shows it already drawn
+  const marked = active && sub >= LOADS.length - 1
+  const instant = startFinished
+  const at = (t: number) => (instant ? { duration: 0 } : { duration: reduced ? 0.3 : 0.5, delay: reduced ? 0 : t })
   const events = EVENTS.slice(0, load.count)
 
   // scale the 1440 x 900 screen to the frame
@@ -104,16 +117,39 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
               </div>
             </ProductFrame>
           </div>
+          {/* dims the prototype so the annotation reads and the eye goes to the panel */}
+          <motion.div className="pointer-events-none absolute inset-0 bg-[rgb(10_11_16/0.78)]" initial={false} animate={{ opacity: marked ? 1 : 0 }} transition={at(TIMING.mark - 0.3)} />
         </div>
 
-        <TweaksPanel
-          className="absolute bottom-[2cqw] left-[2cqw] z-10 max-[720px]:static max-[720px]:mt-3 max-[720px]:self-end"
-          label="Data load"
-          options={LOADS.map(({ id, label }) => ({ id, label }))}
-          value={load.id}
-          readout={`${load.count} ${load.count === 1 ? 'event' : 'events'}`}
-          reducedMotion={reduced}
-        />
+        <div className="absolute bottom-[2cqw] left-[2cqw] z-10 max-[720px]:static max-[720px]:mt-3 max-[720px]:self-end">
+          <div className="relative">
+            <TweaksPanel
+              label="Data load"
+              options={LOADS.map(({ id, label }) => ({ id, label }))}
+              value={load.id}
+              readout={`${load.count} ${load.count === 1 ? 'event' : 'events'}`}
+              reducedMotion={reduced}
+            />
+            <span className="pointer-events-none absolute -inset-x-[16%] -inset-y-[34%]">
+              <HandCircle show={marked} instant={instant} reducedMotion={reduced} delay={TIMING.mark} duration={0.6} variant={1} className="inset-0 h-full w-full" />
+            </span>
+          </div>
+          {/* the note: right of the panel with an arrow back to it; under it on phones */}
+          <motion.div
+            className="absolute bottom-[50%] left-[calc(100%+7cqw)] translate-y-1/2 font-[family-name:var(--font-hand)] font-bold leading-[1.15] text-annotation max-[720px]:static max-[720px]:mt-4 max-[720px]:translate-y-0"
+            style={{ rotate: -2 }}
+            initial={false}
+            animate={{ opacity: marked ? 1 : 0 }}
+            transition={at(TIMING.note)}
+          >
+            <p className="m-0 whitespace-nowrap text-[max(17px,2.5cqw)] max-[720px]:whitespace-normal">{NOTE[0]}</p>
+            <p className="m-0 mt-[0.3em] whitespace-nowrap text-[max(14px,1.9cqw)] max-[720px]:whitespace-normal">{NOTE[1]}</p>
+            <svg className="absolute right-[calc(100%+0.8cqw)] top-[0.2em] h-[3cqw] w-[5.5cqw] overflow-visible max-[720px]:hidden" viewBox="0 0 110 60" fill="none" stroke="var(--color-annotation)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke">
+              <path d="M104,18 Q60,4 10,40" />
+              <path d="M24,42 L10,40 L14,27" />
+            </svg>
+          </motion.div>
+        </div>
       </div>
     </div>
   )
