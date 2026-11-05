@@ -15,7 +15,7 @@ const beat: Beat = {
       <Reveal as="h2" className="m-0 text-display font-extrabold">
         One problem, <span className="text-accent">not six</span>
       </Reveal>
-      <TextWithAside className="is-mid mt-[clamp(14px,calc(var(--u)*1.6),30px)] gap-y-[0.7em] text-lead text-fg-muted text-pretty">
+      <TextWithAside className="is-mid is-side mt-[clamp(14px,calc(var(--u)*1.6),30px)] gap-y-[0.7em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-lead">
           <Tldr short="The empty states were one problem: customers landed in Attribution before they could set it up.">
             <p className="m-0">

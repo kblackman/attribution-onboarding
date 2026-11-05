@@ -9,7 +9,7 @@ import { RevealContext } from './Reveal'
   amber in the middle, fading to the background at both ends). Everything above it is sky, clipped at the
   horizon, so things rise over it rather than fade in: first the giant outlined numeral (slowest, far
   behind), then an amber sun glow, then the word. The word comes up as a dark silhouette with a warm rim,
-  backlit by the sun, and brightens to white as it clears. Then the horizon pulls back to the motif's usual
+  backlit by the sun. Light catches it from the top edge down as it clears, warm at first, then cools to white. Then the horizon pulls back to the motif's usual
   length, and the tagline lands. The sun and the light along the line build from the first moment, so
   nothing new lights up at the end. Below the line the glow fades out softly instead of stopping at a hard edge.
   Plays once per visit; stepping back in shows it settled. Reduced motion: everything fades in together.
@@ -27,15 +27,20 @@ export const TIMING = {
   bloomDur: 1.2, // the light along the horizon, with the line
   word: 0.6, // the word rises over the horizon
   wordDur: 2.0,
-  light: 1.5, // the word brightens from silhouette to white
-  lightDur: 1.2,
-  rimOff: 2.5, // the warm rim fades once the word is lit
-  rimDur: 0.8,
+  catch: 1.0, // warm light starts catching the word at its top edge as it rises, and creeps down it
+  catchDur: 2.4,
+  white: 2.3, // the warm light cools to white once the word is fully lit
+  whiteDur: 1.8,
+  rimOff: 2.6, // the warm rim fades as the word cools to white
+  rimDur: 1.2,
   settle: 2.6, // horizon pulls back to its usual length
   settleDur: 1.5, // eased in and out, so the horizon visibly draws back rather than snapping
-  tagline: 2.9,
+  tagline: 3.4,
   reducedFade: 0.5,
 }
+
+// soft lit edge, 50% of the word's height, at --lit from the top (0% = unlit, 150% = fully lit)
+const LIT_MASK = 'linear-gradient(to bottom, #000 calc(var(--lit) - 50%), transparent var(--lit))'
 
 const WIDE = 0.9 // horizon width while the title rises, as a share of the screen width
 const settledWidth = (vw: number) => Math.min(vw * 0.56, 720) // the motif's usual length (HorizonLine on overlays)
@@ -133,11 +138,22 @@ export function SunriseTitle({ number, label, tagline }: Props) {
               >
                 {label}
               </motion.span>
+              {/* the light: a soft-edged band of warm light creeps down the word from its top edge (a mask driven
+                  by --lit), then the warm cools to white. No flat crossfade, so it never reads as a switch */}
+              <motion.span
+                className="absolute inset-0 block text-[color-mix(in_srgb,var(--color-accent)_38%,var(--color-fg))]"
+                style={{ maskImage: LIT_MASK, WebkitMaskImage: LIT_MASK }}
+                initial={false}
+                animate={{ '--lit': revealed || reduce ? '150%' : '0%', opacity: revealed ? 1 : 0 } as Record<string, string | number>}
+                transition={!revealed ? { duration: 0 } : reduce ? { duration: TIMING.reducedFade } : { duration: TIMING.catchDur, delay: t0 + TIMING.catch, ease: 'easeInOut' }}
+              >
+                {label}
+              </motion.span>
               <motion.span
                 className="absolute inset-0 block text-fg"
                 initial={false}
                 animate={{ opacity: revealed ? 1 : 0 }}
-                transition={stage(TIMING.light, TIMING.lightDur)}
+                transition={!revealed ? { duration: 0 } : reduce ? { duration: TIMING.reducedFade } : { duration: TIMING.whiteDur, delay: t0 + TIMING.white, ease: 'easeInOut' }}
               >
                 {label}
               </motion.span>

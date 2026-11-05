@@ -232,6 +232,11 @@ body {
 @media (max-width: 720px) {
   .text-with-aside.is-mid { grid-template-areas: "lead" "main" "aside" "rest"; }
 }
+/* variant: all the text in one column, the artifact beside the whole of it (no text wrapping under or over it) */
+@media (min-width: 721px) {
+  .text-with-aside.is-mid.is-side { grid-template-areas: "lead aside" "main aside" "rest aside"; grid-template-rows: auto auto auto; align-content: center; }
+  .text-with-aside.is-side > .twa-aside { align-self: center; }
+}
 /* present mode (TextWithAside): every short point in the text column, the artifact beside them, top-aligned */
 @media (min-width: 721px) {
   .text-with-aside.is-mid.is-present { grid-template-areas: "lead aside" "main aside" "rest aside"; grid-template-rows: auto auto 1fr; align-items: start; }
