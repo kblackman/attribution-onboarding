@@ -273,23 +273,33 @@ function Edge({ edge, shown, drawNow, reducedMotion }: { edge: MapEdge; shown: b
   const h2 = `${e.x - head * Math.cos(ang + 0.5)},${e.y - head * Math.sin(ang + 0.5)}`
   const stroke = edge.kind === 'exit' ? 'var(--color-fg)' : edge.kind === 'back' ? 'var(--color-fg-muted)' : 'var(--color-fg-soft)'
   const width = edge.kind === 'exit' ? 3 : 2.2
+  /* Performance (Kyle, 2026-11-05): SVG masks are redrawn on the CPU every frame the map moves, so the mask is
+     only on the edge drawing itself on this step, and sized to that edge rather than the whole map. Drawn edges
+     show plainly; edges not reached yet are hidden. With a mask on every edge, the ride-along fell to ~30fps on
+     large screens. */
+  const xs = [s.x, c1.x, c2.x, e.x]
+  const ys = [s.y, c1.y, c2.y, e.y]
+  const PAD = 40
+  const box = { x: Math.min(...xs) - PAD, y: Math.min(...ys) - PAD, w: Math.max(...xs) - Math.min(...xs) + PAD * 2, h: Math.max(...ys) - Math.min(...ys) + PAD * 2 }
+  const masked = drawNow && shown
   return (
-    <g>
-      <defs>
-        <mask id={`${id}-m`} maskUnits="userSpaceOnUse" x={BOUNDS.minX - 200} y={BOUNDS.minY - 200} width={BOUNDS.w + 400} height={BOUNDS.h + 400}>
+    <g visibility={shown ? 'visible' : 'hidden'}>
+      {masked && <defs>
+        <mask id={`${id}-m`} maskUnits="userSpaceOnUse" x={box.x} y={box.y} width={box.w} height={box.h}>
           <motion.circle
             cx={s.x}
             cy={s.y}
             r={len * 1.15}
             fill="#fff"
             style={{ originX: 0.5, originY: 0.5 }}
-            initial={false}
-            animate={{ scale: shown ? 1 : reducedMotion ? 1 : 0, opacity: shown ? 1 : 0 }}
-            transition={!drawNow ? { duration: 0 } : reducedMotion ? { duration: 0.3 } : { duration: 0.7, delay: 0.1, ease: EASE_DECK }}
+            // mounts only when this edge starts drawing, so it starts empty
+            initial={{ scale: reducedMotion ? 1 : 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={reducedMotion ? { duration: 0.3 } : { duration: 0.7, delay: 0.1, ease: EASE_DECK }}
           />
         </mask>
-      </defs>
-      <g mask={`url(#${id}-m)`} fill="none" stroke={stroke} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round">
+      </defs>}
+      <g mask={masked ? `url(#${id}-m)` : undefined} fill="none" stroke={stroke} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round">
         <path d={`M${s.x},${s.y} C${c1.x},${c1.y} ${c2.x},${c2.y} ${e.x},${e.y}`} strokeDasharray={edge.kind === 'back' ? '10 10' : undefined} vectorEffect="non-scaling-stroke" />
         <path d={`M${h1} L${e.x},${e.y} L${h2}`} vectorEffect="non-scaling-stroke" />
       </g>
