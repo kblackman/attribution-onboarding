@@ -186,7 +186,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-10-23: Hero gets a pushed-back visual like Kyle's case study heroes, supporting weight rather than the subject. Placeholder imagery is the populated Attribution page (`AttributionPage`, static), labeled as a placeholder.
 - 2026-10-23: Hero centered and enlarged after the case study hero; no instruction text. Problem kicker restyled as a centered italic spotlight (research: editorial pull statements set in a true italic between hairline rules; Figtree has a true italic, so the one typeface rule holds).
 - 2026-11-04: No mention of simulation, recreation, or mock data anywhere a reader sees it, per Kyle ("that's implied"). Removed the corner badges ("Recreated screens, mock data", "Rebuilt from the Figma designs, mock data / mock event names", and PatternReuse's "Web Analytics content is placeholder"), the terminal's "Reconstructed from my session." caption, and the same phrases from the screen-reader descriptions in Beats 6, 9, 13, 15 and 17. The data itself is still mock and still contains no customer data. Only SetupPaths keeps its badge ("Placeholder shapes, final illustration to come"), since that is a real to-do, not a disclaimer.
-- 2026-11-04: "One problem, not six" trimmed, per Kyle: dropped the mid/low funnel parenthetical, the single low-funnel event line (the walkthrough's error shows it), and the design spec in the last paragraph (optional steps skippable with a way back, the waiting room), all shown later in the setup flow. Kept the "fix things on the fly" sentence.
+- 2026-11-04: "One problem, not six" trimmed, per Kyle: dropped the mid/low funnel parenthetical, the single low-funnel event line (the walkthrough's error shows it), and the design spec in the last paragraph (optional steps skippable with a way back, the waiting room), all shown later in the setup flow. Also dropped the "fix things on the fly" sentence (Kyle).
 
 ## Beats
 | # | Slug | Steps | Visual | Status |
@@ -286,7 +286,7 @@ Checking my work
 - Overlay (on a key press after the zoom-out, per Kyle): To set up Attribution properly, a new customer had to leave it three times, find their way back on their own, and push through six empty states. (Option C, chosen by Kyle 2026-10-25: the goal is a fully set-up Attribution, not the first recommendation.)
 
 One problem, not six (back to six per Kyle 2026-10-26: it answers the ride-along's six; the montage's extra screens are variants of the same empty states)
-- The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.
+- The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up.
 - It also showed that only two steps were required to see anything: Event Creation and Event Definition. Connecting ad sources and enabling AI added value, but they were optional.
 - That pointed to the fix: front-load setup before users ever see the dashboard. Required steps first, optional ones last. (updated by Kyle 2026-10-25)
 - Split: Required (Event Creation, Event Definition). Optional (Connect ad sources, Enable AI).

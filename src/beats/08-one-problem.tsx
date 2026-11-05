@@ -19,7 +19,7 @@ const beat: Beat = {
         <Reveal order={1} className="twa-lead">
           <Tldr short="The empty states were one problem: customers landed in Attribution before they could set it up.">
             <p className="m-0">
-              The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up. As soon as someone created an event, they saw an empty dashboard and were left to fix things on the fly.
+              The map answered the question. The empty states weren't six problems. They were one: customers landed in Attribution before they'd had a chance to set it up.
             </p>
           </Tldr>
         </Reveal>
