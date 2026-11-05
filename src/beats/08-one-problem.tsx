@@ -26,7 +26,7 @@ const beat: Beat = {
         <Reveal order={2} className="twa-main">
           <Tldr short="Only two steps were required: Event Creation and Event Definition.">
             <p className="m-0">
-              The map also showed what was required and what wasn't. Event Creation and Event Definition (marking events as mid or low funnel) were the only steps needed to see anything, and Attribution only needed a single low-funnel event to work. Connecting ad sources and enabling AI added value, but they were optional.
+              It also showed that only two steps were required to see anything: Event Creation and Event Definition. Connecting ad sources and enabling AI added value, but they were optional.
             </p>
           </Tldr>
         </Reveal>
@@ -38,7 +38,7 @@ const beat: Beat = {
         <Reveal order={3} className="twa-rest">
           <Tldr short="The fix: front-load setup before users ever see the dashboard.">
             <p className="m-0">
-              That pointed to the fix: front-load setup before users ever see the dashboard. Required steps first, explained clearly. Optional steps last, with the choice to skip them and an easy way back later. And once setup was done, tell users their data was on its way instead of showing them an empty page.
+              That pointed to the fix: front-load setup before users ever see the dashboard. Required steps first, optional ones last.
             </p>
           </Tldr>
         </Reveal>
