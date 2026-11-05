@@ -186,7 +186,7 @@ function PageNode({ node, on, reducedMotion }: { node: MapNode; on: boolean; red
         {node.detail && <div className="mt-[2%] text-[6.4cqw] leading-[1.25] text-ink-2">{node.detail}</div>}
         <div className="mt-[6%] flex items-center gap-[4%]">
           {node.feature === 'toggle' && <Toggle on={on} reducedMotion={reducedMotion} />}
-          {node.feature === 'save' && <span className="rounded-full bg-product px-[6%] py-[2%] text-[6cqw] font-semibold text-surface">Save</span>}
+          {node.feature === 'save' && <span className="rounded-full bg-[color-mix(in_srgb,var(--color-product)_75%,var(--color-product-ink))] px-[6%] py-[2%] text-[6cqw] font-semibold text-surface">Save</span>}
           {node.feature === 'oauth' && <span className="rounded-full border border-line-strong px-[6%] py-[2%] text-[6cqw] font-semibold text-ink-2">Authorize</span>}
           {node.feature === 'funnel' && (
             <>

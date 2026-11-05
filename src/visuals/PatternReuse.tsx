@@ -229,7 +229,7 @@ function Window({
     <div data-win className="overflow-hidden rounded-[16px] bg-fp-bg font-fp text-fp-ink shadow-[0_24px_60px_rgba(0,0,0,0.45)]" style={{ fontSize: 14, height: H }}>
       <TopBar crumb={crumb} />
       <div className="mx-auto w-[700px] pt-[36px]">
-        <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo-soft">SETUP GUIDE</p>
+        <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo">SETUP GUIDE</p>
         <h3 className="m-0 mt-[4px] text-[28px] font-semibold leading-normal tracking-[-0.56px]">
           Getting started with{' '}
           <span ref={nameRef} className="relative inline-block">

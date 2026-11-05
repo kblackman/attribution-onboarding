@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { cardVariants, cardVariantsReduced, heroVariants, sectionVariants, statementVariants } from '../engine/motion'
 import { RevealContext } from './Reveal'
@@ -32,6 +32,19 @@ export function Card({ status, variant = 'card', align = 'left', dense = false, 
   useEffect(() => {
     if (active && ref.current) ref.current.scrollTop = 0
   }, [active])
+  // a card taller than the screen scrolls inside itself; it then takes keyboard focus so it can be scrolled
+  // with the arrow keys too (WCAG 2.1.1). Only while it actually overflows, so it adds no tab stop otherwise.
+  const [scrolls, setScrolls] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !active) return
+    const check = () => setScrolls(el.scrollHeight > el.clientHeight + 1 && getComputedStyle(el).overflowY !== 'visible')
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    if (el.firstElementChild) ro.observe(el.firstElementChild)
+    return () => ro.disconnect()
+  }, [active])
   // pushed: still the current step, sitting back behind a card overlay
   const statement = variant === 'statement'
   const className = variant === 'section' ? 'deck-section' : variant === 'hero' ? `deck-hero${align === 'center' ? ' is-centered' : ''}` : statement ? `deck-statement${dense ? ' is-dense' : ''}` : `deck-card${glow ? ' has-glow' : ''}${dense ? ' is-dense' : ''}`
@@ -42,6 +55,7 @@ export function Card({ status, variant = 'card', align = 'left', dense = false, 
       aria-label={label}
       aria-hidden={!active}
       inert={!active}
+      tabIndex={active && scrolls ? 0 : undefined}
       className={className}
       // the hero recedes in z, so it carries the decks' 1400px perspective
       style={{ zIndex, pointerEvents: active ? 'auto' : 'none', transformPerspective: variant === 'hero' ? 1400 : undefined }}

@@ -64,8 +64,10 @@ export function App() {
   }, [index, reduced, coachOn])
   const dismissCoach = useCallback(() => {
     coachDone.current = true
+    // keyboard focus inside the coach goes to Next (the coach turns inert, which would drop it); otherwise the root
+    if (document.activeElement?.closest('.coach')) nextRef.current?.focus({ preventScroll: true })
+    else rootRef.current?.focus({ preventScroll: true })
     setCoachOn(false)
-    rootRef.current?.focus({ preventScroll: true })
   }, [])
 
   // section index: jump to a beat's first step; number keys open a section by its number
@@ -135,6 +137,13 @@ export function App() {
         return
       }
       if (menuOpen) return // the index handles its own keys
+      // a focused card that scrolls inside itself (phones) scrolls with ↑ ↓ Space PageUp PageDown until it hits an end
+      const box = e.target instanceof HTMLElement && e.target.matches('.deck-card, .deck-statement, .deck-hero') ? e.target : null
+      if (box && box.scrollHeight > box.clientHeight + 1) {
+        const down = k === 'ArrowDown' || k === 'PageDown' || k === ' '
+        const up = k === 'ArrowUp' || k === 'PageUp'
+        if ((down && box.scrollTop + box.clientHeight < box.scrollHeight - 1) || (up && box.scrollTop > 0)) return
+      }
       const forward = k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !(e.target instanceof HTMLButtonElement))
       const back = k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp'
       if (forward || back || k === 'Home' || k === 'End') {

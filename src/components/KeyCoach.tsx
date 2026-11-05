@@ -112,7 +112,11 @@ export function KeyCoach({ shown, anchorRef, onDismiss }: KeyCoachProps) {
         <label>
           <input type="checkbox" checked={never} onChange={(e) => setNever(e.target.checked)} /> Don&rsquo;t show again
         </label>
-        <button type="button" className="coach-ok" onClick={onDismiss}>
+        <button
+          type="button"
+          className="coach-ok"
+          onClick={onDismiss}
+        >
           Got it
         </button>
       </div>

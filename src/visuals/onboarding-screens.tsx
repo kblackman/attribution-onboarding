@@ -89,7 +89,7 @@ export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string |
             {ui.screen === 'setup' && (
               <motion.div key="setup" className={`${STACK} relative bg-fp-bg`} {...cross(reduced)}>
                 <div className="mx-auto w-[700px] pt-[65px]">
-                  <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo-soft">SETUP GUIDE</p>
+                  <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo">SETUP GUIDE</p>
                   <h3 className="m-0 mt-[4px] text-[32px] font-semibold leading-normal tracking-[-0.64px]">Getting started with Attribution</h3>
                   <Progress phase={ui.phase} reduced={reduced} />
                   <div className="grid">
@@ -138,7 +138,7 @@ export function ProductFrame({ children }: { children: ReactNode }) {
 export function SetupHeading({ phase, reduced }: { phase: 1 | 2 | 3 | 4; reduced: boolean }) {
   return (
     <>
-      <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo-soft">SETUP GUIDE</p>
+      <p className="m-0 text-[12px] font-bold tracking-[0.6px] text-fp-indigo">SETUP GUIDE</p>
       <h3 className="m-0 mt-[4px] text-[32px] font-semibold leading-normal tracking-[-0.64px]">Getting started with Attribution</h3>
       <Progress phase={phase} reduced={reduced} />
     </>
@@ -269,7 +269,7 @@ export function TopBar({ crumb = 'Attribution' }: { crumb?: string }) {
           <Img name="help" size={24} />
         </span>
         <span className="grid h-[48px] w-[48px] place-items-center">
-          <span className="grid h-[36px] w-[36px] place-items-center rounded-full border border-white bg-fp-indigo-soft text-[14px] leading-[20px] text-white">AN</span>
+          <span className="grid h-[36px] w-[36px] place-items-center rounded-full border border-white bg-fp-indigo text-[14px] leading-[20px] text-white">AN</span>
         </span>
       </span>
     </div>
@@ -322,7 +322,7 @@ export function Progress({ phase, reduced, labels = STEPS, className = 'mt-[40px
           const done = n < phase
           const now = n === phase
           return (
-            <span key={i} className={`flex w-[175px] items-center justify-center gap-[8px] text-[12px] font-semibold ${done || now ? 'text-fp-ink' : 'text-fp-faint'}`}>
+            <span key={i} className={`flex w-[175px] items-center justify-center gap-[8px] text-[12px] font-semibold ${done || now ? 'text-fp-ink' : 'text-fp-muted'}`}>
               {done && <Img name="step-done" size={18} />}
               {now && <span className="grid h-[18px] w-[18px] place-items-center rounded-full bg-fp-indigo-soft text-[10px] font-bold text-white">{n}</span>}
               {label}
@@ -628,7 +628,7 @@ function Drawer({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; redu
             </div>
           </Field>
           <Field label="Description">
-            <div className="h-[80px] rounded-[8px] border border-fp-input p-[12px] text-[12px] text-fp-faint">e.g. “Fires when a user completes the appointment confirmation step”</div>
+            <div className="h-[80px] rounded-[8px] border border-fp-input p-[12px] text-[12px] text-fp-muted">e.g. “Fires when a user completes the appointment confirmation step”</div>
           </Field>
           <div className="flex flex-col gap-[6px] text-[12px] font-semibold text-black">
             <span className="h-[39px] rounded-[8px] border border-fp-input p-[12px]">+ Add filter</span>
@@ -691,7 +691,7 @@ function Input({ t, value, focus, placeholder, grow = false }: { t: string; valu
       data-t={t}
       className={`flex h-[40px] ${grow ? 'min-w-0 flex-1' : 'w-full flex-none'} items-center rounded-[8px] border px-[12px] text-[12px] transition-[border-color,box-shadow] duration-200 ${focus ? 'border-fp-indigo shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-fp-indigo)_15%,transparent)]' : 'border-fp-input'}`}
     >
-      <span className={`truncate ${value ? 'text-fp-ink' : 'text-fp-faint'}`}>{value || (focus ? '' : placeholder)}</span>
+      <span className={`truncate ${value ? 'text-fp-ink' : 'text-fp-muted'}`}>{value || (focus ? '' : placeholder)}</span>
       {focus && <span className="ml-[1px] block h-[15px] w-[1.5px] animate-pulse bg-fp-ink" />}
     </div>
   )
@@ -1102,7 +1102,7 @@ export function Dashboard({
       <Resolve order={5} className="mt-[10px]">
       <div className="rounded-[10px] border border-fp-line bg-white">
         <div className="flex items-center justify-between px-[16px] py-[14px]">
-          <span className="flex h-[32px] w-[220px] items-center rounded-[6px] border border-fp-line px-[10px] text-[11.5px] text-fp-faint">Search sources or campaigns</span>
+          <span className="flex h-[32px] w-[220px] items-center rounded-[6px] border border-fp-line px-[10px] text-[11.5px] text-fp-muted">Search sources or campaigns</span>
           <span className="flex h-[32px] items-center rounded-[6px] border border-fp-line-strong px-[12px] font-fp-ui text-[11.5px] font-medium">Export CSV</span>
         </div>
         <TableRow head cells={['Source', ...COLS]} />
