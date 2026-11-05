@@ -3,7 +3,6 @@ import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { useVisualPlayback } from '../engine/useVisualPlayback'
-import { PlaceholderBadge } from '../components/Placeholder'
 import { ShotView, shotByLabel } from './EmptyStateMontage'
 
 /*
@@ -78,9 +77,6 @@ export function MappingBoard(props: VisualProps) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
-      <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Recreated screens, mock data</PlaceholderBadge>
-      </div>
       <div
         className="relative overflow-hidden rounded-[1.2cqw] bg-surface-2 shadow-[0_24px_60px_rgba(0,0,0,0.45)]"
         style={{

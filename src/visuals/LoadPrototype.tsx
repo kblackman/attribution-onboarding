@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useAutoplay } from '../engine/autoplay'
 import type { VisualProps } from '../engine/types'
 import { EASE_DECK } from '../engine/motion'
-import { PlaceholderBadge } from '../components/Placeholder'
 import { TweaksPanel } from '../components/TweaksPanel'
 import { EventList, Footer, ProductFrame, SetupCard, SetupHeading, WaitingRoom, type TrackedEvent } from './onboarding-screens'
 
@@ -69,9 +68,6 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
-      <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Rebuilt from the Figma designs, mock event names</PlaceholderBadge>
-      </div>
       {/* wrapper: the product window, plus the tweaks panel (bottom-left, over the lower sidebar, on wide screens; below it on phones) */}
       <div
         className="relative flex flex-col"

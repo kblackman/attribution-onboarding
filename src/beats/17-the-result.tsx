@@ -34,7 +34,7 @@ const beat: Beat = {
   visual: {
     component: AttributionResolve,
     description:
-      'The new Attribution dashboard, as the setup flow leaves it, starts with every section loading. One by one they resolve: the setup progress banner, the AI recommendations bar, the filters, then the Source performance chart with its bars growing. The page scrolls down as the banner to connect ad sources and the source table resolve, until the whole dashboard is working. Rebuilt from the Figma designs, mock data.',
+      'The new Attribution dashboard, as the setup flow leaves it, starts with every section loading. One by one they resolve: the setup progress banner, the AI recommendations bar, the filters, then the Source performance chart with its bars growing. The page scrolls down as the banner to connect ad sources and the source table resolve, until the whole dashboard is working.',
   },
 }
 

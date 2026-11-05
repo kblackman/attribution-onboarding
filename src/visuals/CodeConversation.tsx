@@ -76,7 +76,6 @@ export function CodeConversation({ active, startFinished, reducedMotion, sub, re
         shownCount={active || sub > 0 ? sub + 1 : 0}
         animateCurrent={forward}
         reducedMotion={reducedMotion}
-        caption="Reconstructed from my session."
       />
     </div>
   )

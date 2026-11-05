@@ -29,7 +29,7 @@ const beat: Beat = {
     component: CodeConversation,
     steps: EXCHANGES.length,
     description:
-      'A terminal-style conversation with Claude Code, reconstructed from the session. Kyle: Can you dig into Events and locate the Create Events Drawer? Response: Found it. The drawer lives inside the Events section. Kyle: What fields are required in order to create an event? Response: Only two: Event name and CSS selector. Kyle: Are there any dependencies for this drawer on the Events page? Response: No. The drawer is self-contained, and everything it needs lives inside it. Kyle: How feasible would it be to surface this drawer in Attribution? Would it break anything in the Events page? Response: Very feasible. A few lines would let you surface it anywhere, and the original location in Events stays intact.',
+      'A terminal-style conversation with Claude Code. Kyle: Can you dig into Events and locate the Create Events Drawer? Response: Found it. The drawer lives inside the Events section. Kyle: What fields are required in order to create an event? Response: Only two: Event name and CSS selector. Kyle: Are there any dependencies for this drawer on the Events page? Response: No. The drawer is self-contained, and everything it needs lives inside it. Kyle: How feasible would it be to surface this drawer in Attribution? Would it break anything in the Events page? Response: Very feasible. A few lines would let you surface it anywhere, and the original location in Events stays intact.',
   },
 }
 

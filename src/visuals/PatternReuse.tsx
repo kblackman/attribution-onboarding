@@ -3,7 +3,6 @@ import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { useVisualPlayback } from '../engine/useVisualPlayback'
-import { PlaceholderBadge } from '../components/Placeholder'
 import { ProcessingCard, Progress, TopBar } from './onboarding-screens'
 
 /*
@@ -80,9 +79,6 @@ export function PatternReuse(props: VisualProps) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
-      <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Rebuilt from the Figma designs, Web Analytics content is placeholder</PlaceholderBadge>
-      </div>
       <div
         ref={frameRef}
         className="relative w-full max-w-[1500px]"

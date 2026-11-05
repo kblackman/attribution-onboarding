@@ -4,7 +4,6 @@ import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { SELF_SERVE } from '../engine/edition'
 import { useAutoplay } from '../engine/autoplay'
-import { PlaceholderBadge } from '../components/Placeholder'
 import { ASSETS, EVENT_NAME, EVENT_SELECTOR, FONTS, FlowScreen, asset, type FlowUI } from './onboarding-screens'
 
 /*
@@ -240,9 +239,6 @@ export function OnboardingWalkthrough({ active, startFinished, reducedMotion: re
 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
-      <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Rebuilt from the Figma designs, mock data</PlaceholderBadge>
-      </div>
       <div
         className="relative flex flex-col"
         style={{ width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))', containerType: 'inline-size' }}

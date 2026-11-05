@@ -1,7 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { VisualProps } from '../engine/types'
 import { useVisualPlayback } from '../engine/useVisualPlayback'
-import { PlaceholderBadge } from '../components/Placeholder'
 import { Dashboard, DashboardResolveContext, ProductFrame, type DashboardResolve } from './onboarding-screens'
 
 /*
@@ -46,9 +45,6 @@ export function AttributionResolve(props: VisualProps) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
-      <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Rebuilt from the Figma designs, mock data</PlaceholderBadge>
-      </div>
       <div
         ref={frameRef}
         className="relative overflow-hidden rounded-[12px] shadow-[0_24px_60px_rgba(0,0,0,0.45)]"

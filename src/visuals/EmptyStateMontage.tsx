@@ -3,7 +3,6 @@ import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { useVisualPlayback } from '../engine/useVisualPlayback'
 import { Annotation, type Zone } from '../components/Annotation'
-import { PlaceholderBadge } from '../components/Placeholder'
 
 /*
   Beat 4 visual: the empty-state montage, as a stack of screenshots on a table. One large screenshot falls
@@ -124,9 +123,6 @@ export function EmptyStateMontage(props: VisualProps) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center px-[var(--gutter)] pb-[clamp(72px,11vh,120px)] pt-[clamp(56px,8vh,96px)]">
-      <div className="absolute left-[calc(var(--gutter)+4px)] right-[calc(var(--gutter)+4px)] top-[clamp(16px,3vh,28px)]">
-        <PlaceholderBadge>Recreated screens, mock data</PlaceholderBadge>
-      </div>
       <div
         className="relative"
         style={{ aspectRatio: '16 / 10', width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))', containerType: 'size' }}
