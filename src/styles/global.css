@@ -305,8 +305,9 @@ body {
    Full on the hero, matching kyleblackman.com's case study header; compact pill once the story starts. */
 .site-header {
   position: fixed; inset: 0 0 auto 0; z-index: 75;
-  height: clamp(72px, 8.3vw, 166px);
-  padding: 0 clamp(20px, 3.7vw, 74px);
+  /* measured on kyleblackman.com case studies (2026-11-05): 32px from the sides, every item centered 40px from the top */
+  height: 80px;
+  padding: 0 32px;
   display: flex; align-items: center; justify-content: space-between;
   pointer-events: none;
   font-family: Figtree, sans-serif;
@@ -314,21 +315,21 @@ body {
 }
 .site-header a { pointer-events: auto; color: var(--color-fg); text-decoration: none; }
 .site-back {
-  display: inline-flex; align-items: center; gap: 0.45em;
-  font-size: 16px; font-weight: 700; letter-spacing: 0.01em;
-  height: 52px; padding: 0; border: 1px solid transparent; border-radius: 999px;
+  display: inline-flex; align-items: center; white-space: pre;
+  font-size: 15px; font-weight: 700; letter-spacing: 0.6px; line-height: 18px;
+  height: 50px; padding: 0; border: 0 solid transparent; border-radius: 999px;
   transition: font-size 520ms cubic-bezier(.16, .84, .34, 1), padding 520ms cubic-bezier(.16, .84, .34, 1), background 300ms ease, border-color 300ms ease, color 200ms ease, opacity 300ms ease;
 }
-.site-arrow { width: 0.85em; height: 0.85em; flex: none; transition: transform 200ms ease; }
+.site-arrow { display: inline-block; transition: transform 200ms ease; }
 .site-back:hover .site-arrow { transform: translateX(-3px); }
 /* hover turns amber (Kyle, 2026-11-05) */
 .site-header .site-back:hover { color: var(--color-accent); }
 .site-logo { position: absolute; left: 50%; transform: translateX(-50%); display: block; width: 110px; height: 32px; transition: opacity 300ms ease, transform 520ms cubic-bezier(.16, .84, .34, 1); }
 .site-logo img { display: block; width: 100%; height: 100%; }
 .site-contact {
-  font-size: 16px; font-weight: 700;
-  width: 124px; height: 52px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
-  border: 2px solid var(--color-fg); border-radius: 999px;
+  font-size: 16px; font-weight: 700; line-height: 19.2px;
+  width: 125px; height: 50px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--color-fg); border-radius: 50px;
   transition: opacity 300ms ease, transform 520ms cubic-bezier(.16, .84, .34, 1), background 200ms ease, color 200ms ease;
 }
 .site-header .site-contact:hover { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-card-to); }
@@ -341,14 +342,14 @@ body {
   background: rgb(0 0 0 / 0.32); border-color: rgb(255 255 255 / 0.16);
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
 }
-.site-header.is-compact .site-back { height: auto; }
+.site-header.is-compact .site-back { height: auto; border-width: 1px; }
 .site-header.is-compact .site-back:hover { color: var(--color-accent); border-color: var(--color-accent); }
 .site-header.is-compact .site-logo, .site-header.is-compact .site-contact { opacity: 0; pointer-events: none; }
 .site-header.is-hidden .site-back { opacity: 0; pointer-events: none; }
 .site-header.is-compact .site-logo { transform: translate(-50%, -12px); }
 .site-header.is-compact .site-contact { transform: translateY(-12px); }
 @media (max-width: 720px) {
-  .site-header { padding: 0 16px; height: 64px; }
+  .site-header { padding: 0 16px; height: 80px; }
   .site-header.is-compact { height: 60px; padding: 12px 16px 0; }
   .site-logo { left: auto; right: 16px; transform: none; }
   .site-header.is-compact .site-logo { transform: translateY(-12px); }

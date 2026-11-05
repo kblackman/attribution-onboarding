@@ -12,10 +12,11 @@ export const SITE = {
   contact: 'https://www.linkedin.com/in/kyleblackman/',
 }
 
+// the site uses a plain arrow character, not an icon; matched so the link measures the same
 const Arrow = () => (
-  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="site-arrow">
-    <path d="M13 8H3M3 8L7.5 3.5M3 8L7.5 12.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
+  <span aria-hidden="true" className="site-arrow">
+    &larr;
+  </span>
 )
 
 /** hidden: the last screen, where the end-of-story actions carry the way back instead. */
@@ -23,8 +24,7 @@ export function SiteHeader({ compact, hidden = false }: { compact: boolean; hidd
   return (
     <header className={`site-header${compact ? ' is-compact' : ''}${hidden ? ' is-hidden' : ''}`} inert={hidden}>
       <a className="site-back" href={SITE.home} target="_top">
-        <Arrow />
-        View All Work
+        <Arrow /> View All Work
       </a>
       <a className="site-logo" href={SITE.home} target="_top" aria-label="Kyle Blackman, home" tabIndex={compact ? -1 : undefined} aria-hidden={compact || undefined}>
         <img src={`${import.meta.env.BASE_URL}assets/bkmn-logo.svg`} alt="" width={110} height={32} />
