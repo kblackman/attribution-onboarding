@@ -300,3 +300,61 @@ body {
 
 /* a card that scrolls inside itself (phones) can take keyboard focus; show it */
 .deck-card:focus-visible, .deck-statement:focus-visible, .deck-hero:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -4px; }
+
+/* ---- portfolio edition: the site's case study header (SiteHeader.tsx) ----
+   Full on the hero, matching kyleblackman.com's case study header; compact pill once the story starts. */
+.site-header {
+  position: fixed; inset: 0 0 auto 0; z-index: 75;
+  height: clamp(72px, 8.3vw, 166px);
+  padding: 0 clamp(20px, 3.7vw, 74px);
+  display: flex; align-items: center; justify-content: space-between;
+  pointer-events: none;
+  font-family: Figtree, sans-serif;
+  transition: height 520ms cubic-bezier(.16, .84, .34, 1), padding 520ms cubic-bezier(.16, .84, .34, 1);
+}
+.site-header a { pointer-events: auto; color: var(--color-fg); text-decoration: none; }
+.site-back {
+  display: inline-flex; align-items: center; gap: 0.45em;
+  font-size: clamp(15px, 0.9vw, 18px); font-weight: 600; letter-spacing: 0.01em;
+  padding: 0.5em 0; border: 1px solid transparent; border-radius: 999px;
+  transition: font-size 520ms cubic-bezier(.16, .84, .34, 1), padding 520ms cubic-bezier(.16, .84, .34, 1), background 300ms ease, border-color 300ms ease, color 200ms ease, opacity 300ms ease;
+}
+.site-arrow { width: 0.85em; height: 0.85em; flex: none; transition: transform 200ms ease; }
+.site-back:hover .site-arrow { transform: translateX(-3px); }
+.site-logo { position: absolute; left: 50%; transform: translateX(-50%); display: block; width: clamp(88px, 7.7vw, 156px); transition: opacity 300ms ease, transform 520ms cubic-bezier(.16, .84, .34, 1); }
+.site-logo img { display: block; width: 100%; height: auto; }
+.site-contact {
+  font-size: clamp(15px, 0.9vw, 18px); font-weight: 600;
+  padding: 0 clamp(18px, 1.1vw, 24px); height: clamp(42px, 3.45vw, 70px); display: inline-flex; align-items: center;
+  border: 2px solid var(--color-fg); border-radius: 999px;
+  transition: opacity 300ms ease, transform 520ms cubic-bezier(.16, .84, .34, 1), background 200ms ease, color 200ms ease;
+}
+.site-contact:hover { background: var(--color-fg); color: var(--color-card-to); }
+/* compact: only the way back stays, as a small pill in the corner */
+.site-header.is-compact { height: calc(max(14px, calc(6.5vh - 30px)) + 48px); padding: max(14px, calc(6.5vh - 30px)) calc(var(--gutter) + 4px) 0; align-items: flex-start; }
+.site-header.is-compact .site-back {
+  /* sized and placed like the section pill in the bottom-left corner, so the two corners match */
+  font-size: var(--text-ui); font-weight: 500; letter-spacing: 0.06em;
+  padding: clamp(8px, calc(var(--u) * 0.7), 11px) clamp(14px, calc(var(--u) * 1.3), 20px); color: var(--color-fg-muted);
+  background: rgb(0 0 0 / 0.32); border-color: rgb(255 255 255 / 0.16);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.site-header.is-compact .site-back:hover { color: var(--color-fg); border-color: rgb(255 255 255 / 0.4); }
+.site-header.is-compact .site-logo, .site-header.is-compact .site-contact { opacity: 0; pointer-events: none; }
+.site-header.is-hidden .site-back { opacity: 0; pointer-events: none; }
+.site-header.is-compact .site-logo { transform: translate(-50%, -12px); }
+.site-header.is-compact .site-contact { transform: translateY(-12px); }
+@media (max-width: 720px) {
+  .site-header { padding: 0 16px; height: 64px; }
+  .site-header.is-compact { height: 60px; padding: 12px 16px 0; }
+  .site-logo { width: 76px; left: auto; right: 16px; transform: none; }
+  .site-header.is-compact .site-logo { transform: translateY(-12px); }
+  .site-contact { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header, .site-back, .site-logo, .site-contact, .site-arrow { transition: opacity 200ms ease; }
+}
+
+/* portfolio edition: end-of-story actions under the closing line */
+.end-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: clamp(28px, calc(var(--u) * 3.2), 56px); }
+.end-actions .pill { text-decoration: none; font-size: max(15px, calc(var(--u) * 1.15)); padding: 0.8em 1.5em; }

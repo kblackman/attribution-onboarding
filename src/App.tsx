@@ -14,6 +14,8 @@ import { togglePresentMode } from './engine/presentMode'
 import { SELF_SERVE } from './engine/edition'
 import { setAutoplay, useAutoplay } from './engine/autoplay'
 import { KeyCoach, coachSuppressed } from './components/KeyCoach'
+import { SiteHeader } from './components/SiteHeader'
+import { EndActions } from './components/EndActions'
 
 /*
   Performance: only beats within WINDOW of the current beat are mounted at all. A beat further back
@@ -210,6 +212,8 @@ export function App() {
       onTouchEnd={onTouchEnd}
     >
       <PresentationContext.Provider value={presentation}>
+      {/* portfolio edition: the site's case study header, first in tab order */}
+      {SELF_SERVE && <SiteHeader compact={index > 0} hidden={index === steps.length - 1} />}
       <main className="fixed inset-0 overflow-hidden">
         {beats.map((beat, b) => {
           if (Math.abs(b - cb) > WINDOW) return null
@@ -274,7 +278,12 @@ export function App() {
                 />
               )}
               {beat.visual && beat.overlay && (near(oi) || visualNear) && (
-                <Overlay shown={b === cb && step.kind === 'overlay'} reducedMotion={reduced} zIndex={b * 10 + 3}>
+                <Overlay
+                  shown={b === cb && step.kind === 'overlay'}
+                  reducedMotion={reduced}
+                  zIndex={b * 10 + 3}
+                  actions={SELF_SERVE && b === beats.length - 1 ? <EndActions /> : undefined}
+                >
                   {beat.overlay.content}
                 </Overlay>
               )}

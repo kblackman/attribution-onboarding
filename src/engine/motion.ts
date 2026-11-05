@@ -117,6 +117,11 @@ export const overlayTextVariants: Variants = {
   hidden: { opacity: 0, y: 18, transition: deck(DUR.overlay), ...HIDE },
   shown: { opacity: 1, y: 0, transition: deck(DUR.reveal, 0.2), ...SHOW },
 }
+/** End-of-story actions under an overlay's text: land after the line has settled. */
+export const overlayActionVariants: Variants = {
+  hidden: { opacity: 0, y: 12, transition: deck(DUR.overlay), ...HIDE },
+  shown: { opacity: 1, y: 0, transition: deck(DUR.reveal, 1.1), ...SHOW },
+}
 export const overlayTextVariantsReduced: Variants = {
   hidden: { opacity: 0, y: 0, transition: fade, ...HIDE },
   shown: { opacity: 1, y: 0, transition: fade, ...SHOW },
