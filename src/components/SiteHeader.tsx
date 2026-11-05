@@ -27,7 +27,7 @@ export function SiteHeader({ compact, hidden = false }: { compact: boolean; hidd
         View All Work
       </a>
       <a className="site-logo" href={SITE.home} target="_top" aria-label="Kyle Blackman, home" tabIndex={compact ? -1 : undefined} aria-hidden={compact || undefined}>
-        <img src={`${import.meta.env.BASE_URL}assets/bkmn-logo.svg`} alt="" width={105} height={32} />
+        <img src={`${import.meta.env.BASE_URL}assets/bkmn-logo.svg`} alt="" width={110} height={32} />
       </a>
       <a className="site-contact" href={SITE.contact} target="_top" tabIndex={compact ? -1 : undefined} aria-hidden={compact || undefined}>
         Get In Touch
