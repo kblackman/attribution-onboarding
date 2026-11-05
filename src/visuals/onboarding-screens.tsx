@@ -80,7 +80,7 @@ export const FONTS = ['400 14px Inter', '500 14px Inter', '600 14px Inter', '700
 
 export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; reduced: boolean }) {
   return (
-    <div className="relative flex h-[900px] w-[1440px] overflow-hidden bg-fp-bg font-fp text-fp-ink" style={{ fontSize: 14 }}>
+    <div className="relative flex h-[900px] w-[1440px] overflow-hidden bg-fp-bg text-left font-fp text-fp-ink" style={{ fontSize: 14 }}>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
@@ -124,7 +124,7 @@ export function FlowScreen({ ui, hover, reduced }: { ui: FlowUI; hover: string |
 /** The product's frame (sidebar, top bar) around any content, in the same 1440 x 900 space. */
 export function ProductFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="relative flex h-[900px] w-[1440px] overflow-hidden bg-fp-bg font-fp text-fp-ink" style={{ fontSize: 14 }}>
+    <div className="relative flex h-[900px] w-[1440px] overflow-hidden bg-fp-bg text-left font-fp text-fp-ink" style={{ fontSize: 14 }}>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
