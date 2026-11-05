@@ -8,7 +8,7 @@
 */
 export const SITE = {
   home: 'https://www.kyleblackman.com/',
-  // TODO(Kyle): where Get In Touch goes on the Framer site. LinkedIn until confirmed.
+  // Get In Touch goes to LinkedIn (Kyle, 2026-11-04)
   contact: 'https://www.linkedin.com/in/kyleblackman/',
 }
 
