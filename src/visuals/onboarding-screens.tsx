@@ -1,4 +1,4 @@
-import { createContext, useContext, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import { HandCircle } from '../components/HandCircle'
@@ -603,7 +603,7 @@ function Drawer({ ui, hover, reduced }: { ui: FlowUI; hover: string | null; redu
   const tr = { duration: reduced ? 0 : 0.45, ease: EASE_DECK }
   return (
     <>
-      <motion.div className="absolute inset-0 z-20 bg-black/50" initial={false} animate={{ opacity: ui.drawer ? 1 : 0 }} transition={tr} />
+      <motion.div className={`absolute inset-0 z-20 bg-black/50 ${ui.drawer ? '' : 'pointer-events-none'}`} initial={false} animate={{ opacity: ui.drawer ? 1 : 0 }} transition={tr} />
       <motion.div className="absolute inset-y-0 right-0 z-20 flex w-[420px] flex-col gap-[10px] bg-white" initial={false} animate={{ x: ui.drawer ? 0 : 440 }} transition={tr}>
         <div className="flex items-center gap-[10px] p-[24px]">
           <p className="m-0 flex-1 text-[18px] font-bold tracking-[-0.27px] text-black">Create Event</p>
@@ -937,19 +937,40 @@ export function Dashboard({
   scrollDelay?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
+  const pane = useRef<HTMLDivElement>(null)
   const [travel, setTravel] = useState(0)
   // measured when the scroll starts, after the AI card has collapsed
   useLayoutEffect(() => {
     if (ref.current) setTravel(Math.max(0, ref.current.offsetHeight - PAGE_H))
   }, [scroll])
+  // once the scripted scroll has finished, the reader can scroll the page themselves (Kyle, 2026-11-04): the
+  // transform hands over to a real scroll position at the same spot, so nothing jumps
+  const [free, setFree] = useState(false)
+  useEffect(() => {
+    if (!scroll) setFree(false)
+    else if (reduced) setFree(true)
+  }, [scroll, reduced])
+  useLayoutEffect(() => {
+    if (free && pane.current && !reduced) pane.current.scrollTop = travel
+  }, [free, travel, reduced])
   return (
+    <div
+      ref={pane}
+      className={`dash-pane overflow-x-hidden ${free ? 'overflow-y-auto overscroll-contain' : 'overflow-y-hidden'}`}
+      style={{ height: PAGE_H }}
+      onWheel={free ? (e) => e.stopPropagation() : undefined}
+    >
     <motion.div
       ref={ref}
       className="px-[30px] pb-[40px] pt-[24px]"
       initial={false}
       // reduced motion: no scroll (a jump would skip the top of the page); it stays on the header and chart
-      animate={{ y: scroll && !reduced ? -travel : 0 }}
-      transition={{ duration: scrollSeconds, delay: scrollDelay, ease: [0.45, 0, 0.35, 1] }}
+      animate={{ y: scroll && !reduced && !free ? -travel : 0 }}
+      transition={free ? { duration: 0 } : { duration: scrollSeconds, delay: scrollDelay, ease: [0.45, 0, 0.35, 1] }}
+      onAnimationComplete={(def) => {
+        // only the finished scroll down hands over, not a settle at the top
+        if (scroll && !reduced && travel > 0 && (def as { y?: number }).y === -travel) setFree(true)
+      }}
     >
       <div className="flex items-center justify-between">
         <span className="text-[30px] font-semibold tracking-[-0.6px]">Attribution</span>
@@ -1109,6 +1130,7 @@ export function Dashboard({
       </div>
       </Resolve>
     </motion.div>
+    </div>
   )
 }
 

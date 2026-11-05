@@ -1,10 +1,10 @@
 import type { Beat } from '../engine/types'
 import { Reveal } from '../components/Reveal'
-import { AttributionResolve } from '../visuals/AttributionResolve'
 
 /*
   05 Impact, "The result": a frameless statement (Kyle's brief) split into Before and After, the After column
-  in accent as the screen's one yellow moment. Then 04 Solution's Attribution dashboard resolves section by section.
+  in accent as the screen's one yellow moment. The dashboard that used to follow
+  was dropped (Kyle, 2026-11-04: redundant after the walkthrough ends on it); AttributionResolve stays in visuals/.
 */
 const beat: Beat = {
   slug: 'the-result',
@@ -31,11 +31,6 @@ const beat: Beat = {
       </div>
     </div>
   ),
-  visual: {
-    component: AttributionResolve,
-    description:
-      'The new Attribution dashboard, as the setup flow leaves it, starts with every section loading. One by one they resolve: the setup progress banner, the AI recommendations bar, the filters, then the Source performance chart with its bars growing. The page scrolls down as the banner to connect ad sources and the source table resolve, until the whole dashboard is working.',
-  },
 }
 
 export default beat

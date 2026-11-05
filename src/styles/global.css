@@ -294,3 +294,6 @@ body {
   .coach, .coach.show { transition: none; }
   .coach-key.hot { animation: none; }
 }
+
+/* the final dashboard, once it can be scrolled by hand: a slim scrollbar so it reads as a page */
+.dash-pane { scrollbar-width: thin; scrollbar-color: rgb(0 0 0 / 0.25) transparent; }
