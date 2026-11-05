@@ -96,7 +96,12 @@ body {
   border-radius: 999px;
   color: var(--color-accent);
   font-size: max(14px, calc(var(--u-hero) * 1.15)); /* the hero's cap, like the screen it sits on */
-  transition: background 260ms ease, border-color 260ms ease, transform 260ms cubic-bezier(.22, .61, .36, 1);
+  /* explicit starting values, and the button kept on its own layer, so the first hover eases like every
+     later one instead of jumping while the browser sets the layer up (Kyle, 2026-11-05) */
+  background-color: transparent;
+  transform: translateX(0);
+  will-change: transform;
+  transition: background-color 260ms ease, border-color 260ms ease, transform 260ms cubic-bezier(.22, .61, .36, 1);
 }
 .begin svg { display: block; width: max(22px, 1.05em); height: auto; flex: none; }
 .begin:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); border-color: var(--color-accent); transform: translateX(4px); }
