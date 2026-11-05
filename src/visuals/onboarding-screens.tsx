@@ -779,7 +779,6 @@ export function WaitingRoom({ reduced, events = [{ name: EVENT_NAME, funnel: 'lo
     <div className="mx-auto w-[700px] pt-[32px]">
       <div className="flex items-center gap-[18px]">
         <span className="text-[32px] font-semibold tracking-[-0.64px]">Attribution</span>
-        <span className="rounded-full bg-fp-line px-[9px] py-[4px] text-[11px] font-semibold tracking-[0.02em]">PROCESSING</span>
       </div>
       <ProcessingCard reduced={reduced} className={compact ? 'mt-[24px] py-[24px]' : 'mt-[40px] py-[40px]'} />
       <div className={`flex items-center justify-between ${compact ? 'mt-[24px]' : 'mt-[40px]'}`}>

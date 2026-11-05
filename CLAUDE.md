@@ -191,6 +191,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-11-04: "One problem, not six" no longer wraps text around the Required / Optional card (Kyle): all three paragraphs sit in one column with the card beside them, centered (phones still stack). Later the same day this became the rule for every card with a graphic beside text (`is-mid` now always keeps the text in one column; Beat 11 too).
 - 2026-11-04: Portfolio edition: Play now resumes after stepping Back. Stepping back shows a step finished (`startFinished`), and every auto-advance skipped such steps, so Play flipped the button but nothing moved (Kyle). In the portfolio edition Back always pauses, so autoplay is only on there if the reader pressed Play; the walkthrough, terminal, prototype and ride-along now resume from that step after the hold. Presentation edition unchanged.
 - 2026-11-04: Beat 9 renamed "Digging into the code" (was "Checking before prototyping"), per Kyle. "If it couldn't move into the new flow, I'd have to design around it." is now its own bold amber line, like Beats 4 and 5, also as the last short line.
+- 2026-11-04: The waiting room no longer has the PROCESSING pill beside the feature name (Kyle). Removed in the walkthrough, the data-load prototype, and the Attribution / Web Analytics reuse visual, which all share that header.
 
 ## Beats
 | # | Slug | Steps | Visual | Status |

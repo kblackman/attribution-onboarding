@@ -10,7 +10,7 @@ import { ProcessingCard, Progress, TopBar } from './onboarding-screens'
   then the same pieces in Web Analytics beside it. Both windows use the walkthrough's own components
   (TopBar, Progress, ProcessingCard from onboarding-screens.tsx), so they're identical by construction.
   Web Analytics' own wording is placeholder bars: Kyle doesn't have those screens. Each window shows the waiting
-  room's header (feature name, PROCESSING) and card under the setup guide's progress, so both pieces sit in one view.
+  room's header (feature name) and card under the setup guide's progress, so both pieces sit in one view.
   Tune the timing here (seconds).
 */
 export const TIMING = {
@@ -136,7 +136,6 @@ function Window({ crumb, title, phase, reduced, labels, cardTitle, cardBody }: {
         <Progress phase={phase} reduced={reduced} labels={labels} className="mt-[28px]" />
         <div className="mt-[36px] flex items-center gap-[14px]">
           <span className="text-[16px] font-semibold">{crumb}</span>
-          <span className="rounded-full bg-fp-line px-[9px] py-[4px] text-[11px] font-semibold tracking-[0.02em]">PROCESSING</span>
         </div>
         <ProcessingCard reduced={reduced} className="mt-[14px] py-[28px]" title={cardTitle} body={cardBody} />
       </div>
