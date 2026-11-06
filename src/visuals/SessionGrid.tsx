@@ -4,6 +4,7 @@ import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { useVisualPlayback } from '../engine/useVisualPlayback'
 import { HandCircle } from '../components/HandCircle'
+import { Annotation, type Zone } from '../components/Annotation'
 import { SHOTS, type Shot } from './EmptyStateMontage'
 
 /*
@@ -13,6 +14,8 @@ import { SHOTS, type Shot } from './EmptyStateMontage'
   Generic avatars, no names or data. Each tile can show one of the montage's recreated screenshots (shot), fitted
   into the shared screen at its own proportions, circled on its empty area; tiles without one still draw the
   placeholder. Per Kyle's copy the sessions showed No ad sources and AI off.
+  Each circle is labeled "Empty state" with an arrow (Kyle, 2026-11-06), so it's clear why they're circled. The type
+  of empty state isn't named here; the montage in the next section does that.
   Tune the timing here (seconds).
 */
 export const TIMING = {
@@ -36,6 +39,8 @@ const SESSIONS: { day: string; purpose: string; shot?: Shot }[] = [
   { day: 'Day 2', purpose: 'Customer 3', shot: shot('AI on, no events') },
   { day: 'Day 2', purpose: 'Customer 4', shot: shot('No ad sources') },
 ]
+// the note on every circle (Kyle, 2026-11-06)
+export const NOTE = 'Empty state'
 const tileAt = (i: number) => TIMING.start + i * TIMING.tileStagger
 const ZOOM_AT = tileAt(SESSIONS.length - 1) + TIMING.circleDelay + TIMING.circleDraw + TIMING.zoomAfter
 const TOTAL = ZOOM_AT + TIMING.zoom
@@ -97,6 +102,19 @@ export function SessionGrid(props: VisualProps) {
               >
                 <Tile
                   {...s}
+                  annotate={(zone, aspect) => (
+                    <Annotation
+                      zone={zone}
+                      aspect={aspect}
+                      label={NOTE}
+                      show={on}
+                      instant={instant}
+                      reducedMotion={reduced}
+                      delay={reduced ? TIMING.reducedHold : tileAt(i) + TIMING.circleDelay}
+                      circleDuration={TIMING.circleDraw}
+                      variant={i}
+                    />
+                  )}
                   circle={(className, style) => (
                     <HandCircle
                       show={on}
@@ -120,9 +138,7 @@ export function SessionGrid(props: VisualProps) {
 }
 
 /** One call tile: session stamp, the shared screen, and two generic participant thumbnails. */
-const PAD = 3 // the circle sits this far (percent of the screenshot) outside its empty area
-
-function Tile({ day, purpose, shot, circle }: { day: string; purpose: string; shot?: Shot; circle: (className: string, style?: CSSProperties) => ReactNode }) {
+function Tile({ day, purpose, shot, annotate, circle }: { day: string; purpose: string; shot?: Shot; annotate: (zone: Zone, aspect: number) => ReactNode; circle: (className: string, style?: CSSProperties) => ReactNode }) {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[12px] border border-hairline bg-card-to" style={{ containerType: 'size' }}>
       {/* in flow, so on small tiles the labels push the screen down instead of covering it */}
@@ -136,14 +152,10 @@ function Tile({ day, purpose, shot, circle }: { day: string; purpose: string; sh
       {shot?.src ? (
         <div className="absolute bottom-[3cqw] left-[3cqw] right-[22cqw] top-0 grid place-items-center" style={{ containerType: 'size' }}>
           {/* the screenshot at its own proportions, as large as the screen area allows */}
-          <div className="relative" style={{ width: `min(100cqw, ${100 * (shot.aspect ?? 1.6)}cqh)`, aspectRatio: String(shot.aspect ?? 1.6) }}>
+          <div className="relative" style={{ width: `min(100cqw, ${100 * (shot.aspect ?? 1.6)}cqh)`, aspectRatio: String(shot.aspect ?? 1.6), containerType: 'inline-size' }}>
             <img src={`${import.meta.env.BASE_URL}assets/hunch/${shot.src}`} alt="" draggable={false} className="block h-full w-full rounded-[1.2cqw] object-cover" />
-            {circle('', {
-              left: `${shot.empty.x - PAD}%`,
-              top: `${shot.empty.y - PAD}%`,
-              width: `${shot.empty.w + PAD * 2}%`,
-              height: `${shot.empty.h + PAD * 2}%`,
-            })}
+            {/* the circle, the "Empty state" note and its arrow */}
+            {annotate(shot.empty, shot.aspect ?? 1.6)}
           </div>
         </div>
       ) : (
