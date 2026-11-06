@@ -7,7 +7,7 @@ import { DataTable } from '../components/DataTable'
 import { Caption } from '../components/Caption'
 import { HandCircle } from '../components/HandCircle'
 import { usePrefersReducedMotion } from '../engine/reducedMotion'
-import { LOADS, LoadPrototype } from '../visuals/LoadPrototype'
+import { STEPS, LoadPrototype } from '../visuals/LoadPrototype'
 
 /*
   Evidence tier: a card, because it holds an artifact (the event-count ranges).
@@ -130,9 +130,9 @@ const beat: Beat = {
   ),
   visual: {
     component: LoadPrototype,
-    steps: LOADS.length,
+    steps: STEPS,
     description:
-      'The prototype with its tweaks panel, a small floating panel with a four-option toggle: Low, Median, High, Outlier. First the prototype dims, the tweaks panel is circled in pink, and a handwritten note reads: Swaps real customer data loads to stress-test the UI. Then the note clears and the loads play. Low shows 1 event in the setup step\'s simple list; Median shows 4 events in the same list. High shows 12 events in the waiting room\'s grid, wrapping to a new row after every 4 events; Outlier shows 55 events in the same grid, and the page scrolls to show them all.',
+      'The prototype with its tweaks panel, a small floating panel with a four-option toggle: Low, Median, High, Outlier. It opens on Low, with 1 event in the setup step\'s list. Then the prototype dims, the tweaks panel is circled in pink, and a handwritten note reads: Swaps real customer data loads to stress-test the UI. Then the note clears, Low holds on its own, and the loads play. Median shows 4 events in the same list. High shows 12 events in the waiting room\'s grid, wrapping to a new row after every 4 events; Outlier shows 55 events in the same grid, and the page scrolls to show them all.',
   },
 }
 

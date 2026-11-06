@@ -18,15 +18,21 @@ import { EventList, Footer, ProductFrame, SetupCard, SetupHeading, WaitingRoom, 
   With no key press it moves on by itself, forward only. Mock event names. Tune the timing here (seconds).
 */
 export const TIMING = {
-  auto: 2.2,
-  // opens on the tweaks panel (Kyle, 2026-11-05): the prototype dims, the panel is circled, the note lands, then it all clears
-  mark: 0.8,
-  note: 1.4,
-  clear: 4.8, // seconds after arriving; the loads start playing after this
+  auto: 2.6, // each load holds this long before the next (was 2.2; Kyle, 2026-11-06: make each load clear)
+  // opens on the tweaks panel (Kyle, 2026-11-05), as its own step (Kyle, 2026-11-06): Low shows on its own first,
+  // then the prototype dims, the panel is circled and the note lands. The next press (or autoplay) clears it and
+  // Low holds by itself before Median, so the first load is never skipped.
+  settle: 1.2, // Low on its own before the annotation starts
+  mark: 2.0, // circle starts drawing (the dim starts just before)
+  note: 2.6,
+  read: 6.6, // seconds after arriving before autoplay clears the annotation
 }
 
 // the annotation note (Kyle, 2026-11-05)
 export const NOTE = 'Swaps real customer data loads to stress-test the UI.'
+
+/** The annotation, then one step per load. */
+export const STEPS = 5
 
 export const LOADS = [
   { id: 'low', label: 'Low', count: 1, view: 'list' as const }, // p10
@@ -54,28 +60,22 @@ const H = 900
 
 export function LoadPrototype({ active, startFinished, reducedMotion: reduced, sub, requestNext }: VisualProps) {
   const autoplay = useAutoplay()
-  // the opening annotation: shown on arrival at the first load, cleared after TIMING.clear; skipped when stepping back in
-  const [intro, setIntro] = useState(true)
-  useEffect(() => {
-    if (!active) return setIntro(true)
-    if (startFinished || sub > 0) return setIntro(false)
-    const t = window.setTimeout(() => setIntro(false), TIMING.clear * 1000)
-    return () => window.clearTimeout(t)
-  }, [active, startFinished, sub])
+  // step 0: Low with the annotation; steps 1 to 4: the loads, Low again first (annotation cleared)
+  const last = STEPS - 1
   // auto-advance forward only, and never past the last load
   useEffect(() => {
     // stepping back shows a step finished; in the portfolio edition, Play resumes from there (Back pauses, so autoplay is only on here if the reader pressed Play)
-    if (!autoplay || !active || (startFinished && !SELF_SERVE) || sub >= LOADS.length - 1 || intro) return
-    const t = window.setTimeout(() => requestNext(sub), TIMING.auto * 1000)
+    if (!autoplay || !active || (startFinished && !SELF_SERVE) || sub >= last) return
+    const t = window.setTimeout(() => requestNext(sub), (sub === 0 ? TIMING.read : TIMING.auto) * 1000)
     return () => window.clearTimeout(t)
-  }, [autoplay, active, startFinished, sub, requestNext, intro])
+  }, [autoplay, active, startFinished, sub, requestNext, last])
 
-  const load = LOADS[Math.min(sub, LOADS.length - 1)]
+  const load = LOADS[Math.min(Math.max(sub - 1, 0), LOADS.length - 1)]
   // point out the tweaks panel first, before the loads play
-  const marked = active && sub === 0 && intro
+  const marked = active && sub === 0
   const instant = false
-  // delays apply on the way in; clearing is immediate
-  const at = (t: number) => ({ duration: reduced ? 0.3 : 0.5, delay: reduced || !marked ? 0 : t })
+  // delays apply on the way in (not when stepping back in); clearing is immediate
+  const at = (t: number) => ({ duration: reduced ? 0.3 : 0.5, delay: reduced || !marked || startFinished ? 0 : t })
   const events = EVENTS.slice(0, load.count)
 
   // scale the 1440 x 900 screen to the frame
@@ -128,7 +128,7 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
             </ProductFrame>
           </div>
           {/* dims the prototype so the annotation reads and the eye goes to the panel */}
-          <motion.div className="pointer-events-none absolute inset-0 bg-[rgb(10_11_16/0.78)]" initial={false} animate={{ opacity: marked ? 1 : 0 }} transition={at(TIMING.mark - 0.3)} />
+          <motion.div className="pointer-events-none absolute inset-0 bg-[rgb(10_11_16/0.78)]" initial={false} animate={{ opacity: marked ? 1 : 0 }} transition={at(TIMING.settle)} />
         </div>
 
         <div className="absolute bottom-[2cqw] left-[2cqw] z-10 max-[720px]:static max-[720px]:mt-3 max-[720px]:self-end">
@@ -141,7 +141,7 @@ export function LoadPrototype({ active, startFinished, reducedMotion: reduced, s
               reducedMotion={reduced}
             />
             <span className="pointer-events-none absolute -inset-x-[16%] -inset-y-[34%]">
-              <HandCircle show={marked} instant={instant} reducedMotion={reduced} delay={TIMING.mark} duration={0.6} variant={1} className="inset-0 h-full w-full" />
+              <HandCircle show={marked} instant={instant} reducedMotion={reduced} delay={startFinished ? 0 : TIMING.mark} duration={0.6} variant={1} className="inset-0 h-full w-full" />
             </span>
           </div>
           {/* the note: right of the panel with an arrow back to it; under it on phones */}
