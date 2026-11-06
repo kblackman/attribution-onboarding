@@ -8,7 +8,7 @@ const beat: Beat = {
   variant: 'statement',
   card: (
     <Statement
-      headline="The problem"
+      headline={<>The <span className="text-accent">problem</span></>}
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
         "Freshpaint's platform was powerful, but customers had no self-serve way to get set up.",

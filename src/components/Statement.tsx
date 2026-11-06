@@ -7,10 +7,11 @@ import { EASE_DECK } from '../engine/motion'
 import { usePresentMode } from '../engine/presentMode'
 
 interface StatementProps {
-  headline: string
+  /** Pass a fragment with the key word(s) in <span className="text-accent"> for the two-tone headline (Kyle, 2026-11-06). */
+  headline: ReactNode
   /** One paragraph as a string, or several <p> elements. */
   body: ReactNode
-  /** Text-heavy beats: a wider measure (64ch instead of 46ch). Pair with the beat's cardDense. */
+  /** Text-heavy beats: a wider measure (the full 54ch column instead of 46ch). Pair with the beat's cardDense. */
   wide?: boolean
   /** Center the headline and body (default left, the Story tier). */
   align?: 'left' | 'center'
@@ -33,7 +34,9 @@ export function Statement({ headline, body, wide = false, align = 'left', tldr, 
   const short = usePresentMode() && tldr
   return (
     <LayoutGroup>
-    <div className={`flex flex-col ${center ? 'items-center text-center' : ''}`}>
+    {/* one column, centered on the screen, text still left-aligned (Kyle, 2026-11-06, after his old case study).
+        Sized in body ch (text-statement here) so every story beat shares the same left edge. 54ch (was a 64ch body) leaves room either side. */}
+    <div className={`mx-auto flex w-full max-w-[54ch] flex-col text-statement ${center ? 'items-center text-center' : ''}`}>
       {/* when present mode swaps the copy, the block re-centers; the headline glides to its new spot */}
       <motion.div layout="position" transition={{ duration: PRESENT_SWAP.in, ease: EASE_DECK }}>
         <Reveal as="h2" className="m-0 text-story font-extrabold">
@@ -47,7 +50,7 @@ export function Statement({ headline, body, wide = false, align = 'left', tldr, 
           className={
             short
               ? 'flex max-w-[34ch] flex-col gap-[0.6em] text-kicker text-fg text-pretty [&_p]:m-0'
-              : `flex flex-col gap-[0.65em] text-statement text-fg-muted text-pretty sm:gap-[0.8em] [&_p]:m-0 ${wide ? 'max-w-[64ch]' : 'max-w-[46ch]'}`
+              : `flex flex-col gap-[0.65em] text-statement text-fg-muted text-pretty sm:gap-[0.8em] [&_p]:m-0 ${wide ? '' : 'max-w-[46ch]'}`
           }
         >
           {short ? (

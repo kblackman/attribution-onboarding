@@ -38,7 +38,7 @@ const beat: Beat = {
   card: (
     <div>
       <Reveal as="h2" className="m-0 text-story font-extrabold">
-        Bringing it to the team
+        Bringing it <span className="text-accent">to the team</span>
       </Reveal>
       {/* the thread gets the wider column here, so its messages wrap less */}
       <div className="text-with-aside is-chat mt-[clamp(14px,calc(var(--u)*1.6),30px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">

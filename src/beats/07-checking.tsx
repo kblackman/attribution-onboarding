@@ -11,7 +11,7 @@ const beat: Beat = {
   card: (
     <Statement
       wide
-      headline="Checking my work"
+      headline={<>Checking <span className="text-accent">my work</span></>}
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
         "I brought the map to the team to fill the gaps.",

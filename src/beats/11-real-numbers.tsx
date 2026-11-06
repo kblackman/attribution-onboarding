@@ -99,7 +99,7 @@ const beat: Beat = {
   card: (
     <div>
       <Reveal as="h2" className="m-0 text-story font-extrabold">
-        Designing for real numbers
+        Designing for <span className="text-accent">real numbers</span>
       </Reveal>
       <TextWithAside className="is-mid mt-[clamp(16px,calc(var(--u)*2.2),40px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-lead">

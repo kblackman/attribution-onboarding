@@ -44,7 +44,7 @@ const beat: Beat = {
   card: (
     <Statement
       wide
-      headline="Three goals, one solution"
+      headline={<>Three goals, <span className="text-accent">one solution</span></>}
       // present mode (T): draft, awaiting Kyle's approval
       tldrBullets={false}
       tldr={GOALS.map((g, i) => (

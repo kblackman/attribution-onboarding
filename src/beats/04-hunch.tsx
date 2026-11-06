@@ -8,7 +8,7 @@ const beat: Beat = {
   variant: 'statement',
   card: (
     <Statement
-      headline="Checking the hunch"
+      headline={<>Checking the <span className="text-accent">hunch</span></>}
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
         "I asked the team if they'd noticed. They had.",

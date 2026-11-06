@@ -15,7 +15,7 @@ const beat: Beat = {
   card: (
     <Statement
       wide
-      headline="Bigger than Attribution"
+      headline={<><span className="text-accent">Bigger</span> than Attribution</>}
       body={
         <>
           <p>

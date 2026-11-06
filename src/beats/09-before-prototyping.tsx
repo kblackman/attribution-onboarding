@@ -9,7 +9,7 @@ const beat: Beat = {
   card: (
     <Statement
       wide
-      headline="Digging into the code"
+      headline={<>Digging into <span className="text-accent">the code</span></>}
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
         "Front-loading setup meant pulling every required step into one guided flow.",

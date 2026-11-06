@@ -12,11 +12,11 @@ const beat: Beat = {
   variant: 'statement',
   cardDense: true,
   card: (
-    <div className="flex flex-col">
+    <div className="mx-auto flex w-full max-w-[54ch] flex-col text-statement">
       <Reveal as="h2" className="m-0 text-story font-extrabold">
-        The result
+        The <span className="text-accent">result</span>
       </Reveal>
-      <div className="mt-[clamp(20px,calc(var(--u)*3),52px)] grid max-w-[1400px] grid-cols-1 gap-[clamp(24px,calc(var(--u)*3.4),64px)] text-statement text-pretty md:grid-cols-2">
+      <div className="mt-[clamp(20px,calc(var(--u)*3),52px)] grid grid-cols-1 gap-[clamp(24px,calc(var(--u)*3.4),64px)] text-statement text-pretty md:grid-cols-2">
         <Reveal order={1} className="flex flex-col gap-[0.6em]">
           <h3 className="m-0 text-label font-normal uppercase tracking-[0.12em] text-fg-soft">Before the redesign</h3>
           <p className="m-0 text-fg-muted">Users ran into six empty states while getting set up, and none of them guided them toward the next step.</p>

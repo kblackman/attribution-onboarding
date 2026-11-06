@@ -113,7 +113,7 @@
   --text-display: clamp(32px, calc(var(--u) * 5.4), 100px);
   --text-display--line-height: 1.06;
   --text-display--letter-spacing: -0.03em;
-  --text-story: clamp(28px, calc(var(--u) * 4.4), 84px); /* every story beat's headline */
+  --text-story: clamp(32px, calc(var(--u) * 5.2), 100px); /* every story beat's headline (was 4.4u, max 84; raised 2026-11-06, Kyle) */
   --text-story--line-height: 1.06;
   --text-story--letter-spacing: -0.03em;
   --text-headline: clamp(24px, calc(var(--u) * 3.4), 68px);

@@ -20,7 +20,7 @@ const beat: Beat = {
   card: (
     <div>
       <Reveal as="h2" className="m-0 text-story font-extrabold">
-        What the code told me
+        What the code <span className="text-accent">told me</span>
       </Reveal>
       <div className="text-with-aside mt-[clamp(18px,calc(var(--u)*2.6),46px)] gap-y-[0.8em] text-lead text-fg-muted text-pretty">
         <Reveal order={1} className="twa-main">

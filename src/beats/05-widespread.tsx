@@ -10,7 +10,7 @@ const beat: Beat = {
   card: (
     <Statement
       wide
-      headline="How widespread was it?"
+      headline={<>How <span className="text-accent">widespread</span> was it?</>}
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
         "I looked inside roughly 20 of our 200+ customer accounts.",

@@ -10,7 +10,7 @@ const beat: Beat = {
   card: (
     <Statement
       wide
-      headline="Connecting the dots"
+      headline={<>Connecting the <span className="text-accent">dots</span></>}
       // present mode (T): draft, awaiting Kyle's approval
       tldr={[
         "I screenshotted every empty state I found.",
