@@ -9,7 +9,7 @@ import { HandCircle } from '../components/HandCircle'
 import { EventList, Footer, ProductFrame, SetupCard, SetupHeading, WaitingRoom, type TrackedEvent } from './onboarding-screens'
 
 /*
-  "Two moments, two patterns" visual (it was "Showing my work"): the prototype with its tweaks panel. Each key press switches the data load
+  "Designing for real numbers" visual (it was "Showing my work", then "Two moments"): the prototype with its tweaks panel. Each key press switches the data load
   (Low, Median, High, Outlier: Kyle's Snowflake numbers for funnel events per customer, p10 1, median 4,
   p90 12, max 55) and the UI updates on the fly, in the product's real patterns (Kyle's Figma):
   Low and Median in the setup step's event list (Create an event, after the first event); High and Outlier
@@ -19,12 +19,13 @@ import { EventList, Footer, ProductFrame, SetupCard, SetupHeading, WaitingRoom, 
 */
 export const TIMING = {
   auto: 2.2,
-  // on the last load (Outlier), once its grid has scrolled: the prototype dims, the panel is circled, the note lands
-  mark: 2.4,
-  note: 3.1,
+  // opens on the tweaks panel (Kyle, 2026-11-05): the prototype dims, the panel is circled, the note lands, then it all clears
+  mark: 0.8,
+  note: 1.4,
+  clear: 4.8, // seconds after arriving; the loads start playing after this
 }
 
-// the annotation note (Kyle, 2026-11-05; wording still being tuned)
+// the annotation note (Kyle, 2026-11-05)
 export const NOTE = 'Swaps real customer data loads to stress-test the UI.'
 
 export const LOADS = [
@@ -53,19 +54,28 @@ const H = 900
 
 export function LoadPrototype({ active, startFinished, reducedMotion: reduced, sub, requestNext }: VisualProps) {
   const autoplay = useAutoplay()
+  // the opening annotation: shown on arrival at the first load, cleared after TIMING.clear; skipped when stepping back in
+  const [intro, setIntro] = useState(true)
+  useEffect(() => {
+    if (!active) return setIntro(true)
+    if (startFinished || sub > 0) return setIntro(false)
+    const t = window.setTimeout(() => setIntro(false), TIMING.clear * 1000)
+    return () => window.clearTimeout(t)
+  }, [active, startFinished, sub])
   // auto-advance forward only, and never past the last load
   useEffect(() => {
     // stepping back shows a step finished; in the portfolio edition, Play resumes from there (Back pauses, so autoplay is only on here if the reader pressed Play)
-    if (!autoplay || !active || (startFinished && !SELF_SERVE) || sub >= LOADS.length - 1) return
+    if (!autoplay || !active || (startFinished && !SELF_SERVE) || sub >= LOADS.length - 1 || intro) return
     const t = window.setTimeout(() => requestNext(sub), TIMING.auto * 1000)
     return () => window.clearTimeout(t)
-  }, [autoplay, active, startFinished, sub, requestNext])
+  }, [autoplay, active, startFinished, sub, requestNext, intro])
 
   const load = LOADS[Math.min(sub, LOADS.length - 1)]
-  // point out the tweaks panel once every load has played; stepping back into it shows it already drawn
-  const marked = active && sub >= LOADS.length - 1
-  const instant = startFinished
-  const at = (t: number) => (instant ? { duration: 0 } : { duration: reduced ? 0.3 : 0.5, delay: reduced ? 0 : t })
+  // point out the tweaks panel first, before the loads play
+  const marked = active && sub === 0 && intro
+  const instant = false
+  // delays apply on the way in; clearing is immediate
+  const at = (t: number) => ({ duration: reduced ? 0.3 : 0.5, delay: reduced || !marked ? 0 : t })
   const events = EVENTS.slice(0, load.count)
 
   // scale the 1440 x 900 screen to the frame
