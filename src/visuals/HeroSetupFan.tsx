@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'motion/react'
-import { EASE_DECK } from '../engine/motion'
 import { usePrefersReducedMotion } from '../engine/reducedMotion'
 import { FlowScreen, type FlowUI } from './onboarding-screens'
 
@@ -9,11 +8,17 @@ import { FlowScreen, type FlowUI } from './onboarding-screens'
   the screens fan off into the distance to the left. The whole row is turned on its vertical axis, left side away,
   so each screen further left sits further away; each is also darker, so the row falls into the dark.
   The front screen (step 2, event marked low funnel) stays centered behind the hero text. The rest of the setup
-  flow, in order, runs off to its left and fades in one after another once the front screen has settled.
+  flow, in order, runs off to its left.
+  Intro (Kyle, 2026-11-06): the screens start tucked behind the front one and slide out to their places together,
+  slow and smooth, settling with a long ease-out; the furthest travels furthest, so it arrives last. They darken
+  as they go.
   Tune here: turn is the row's angle, step is how far left each screen sits (share of a screen's width),
-  depth pushes each one back a little more, dark is per screen.
+  depth pushes each one back a little more, dark is per screen. enter is when the slide starts (after the front
+  screen has mostly arrived), duration how long it takes, stagger the small offset between screens.
 */
-export const FAN = { turn: -38, lift: 4, step: 0.6, depth: 120, dark: 0.22, enter: 1.3, stagger: 0.28, duration: 1.2 }
+export const FAN = { turn: -38, lift: 4, step: 0.6, depth: 120, dark: 0.22, enter: 1.5, stagger: 0.15, duration: 3.2 }
+// eases in gently, then a long, soft glide into place (no snap off the line)
+const EASE_GLIDE = [0.5, 0, 0.1, 1] as const
 
 const UI: FlowUI = {
   screen: 'setup', phase: 2, drawer: false, name: '', selector: '', focus: null, events: 1, funnel: 'low', error: false,
@@ -62,14 +67,20 @@ export function HeroSetupFan() {
               <motion.div
                 key={i}
                 className={card}
-                style={{ transform: `translateX(${-n * FAN.step * 100}%) translateZ(${-n * FAN.depth}px)`, maskImage: FADE, WebkitMaskImage: FADE }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={reduce ? { duration: 0.6 } : { duration: FAN.duration, delay: FAN.enter + i * FAN.stagger, ease: EASE_DECK }}
+                style={{ maskImage: FADE, WebkitMaskImage: FADE }}
+                // tucked just behind the front screen, then out to its place
+                initial={reduce ? { x: `${-n * FAN.step * 100}%`, z: -n * FAN.depth, opacity: 0 } : { x: '0%', z: -n * 6, opacity: 1 }}
+                animate={{ x: `${-n * FAN.step * 100}%`, z: -n * FAN.depth, opacity: 1 }}
+                transition={reduce ? { duration: 0.6, delay: FAN.enter } : { duration: FAN.duration, delay: FAN.enter + i * FAN.stagger, ease: EASE_GLIDE }}
               >
                 {screen(ui)}
-                {/* falls away into the dark */}
-                <div className="absolute inset-0 bg-black" style={{ opacity: Math.min(0.9, n * FAN.dark) }} />
+                {/* falls away into the dark as it slides out */}
+                <motion.div
+                  className="absolute inset-0 bg-black"
+                  initial={{ opacity: reduce ? Math.min(0.9, n * FAN.dark) : 0 }}
+                  animate={{ opacity: Math.min(0.9, n * FAN.dark) }}
+                  transition={reduce ? { duration: 0 } : { duration: FAN.duration, delay: FAN.enter + i * FAN.stagger, ease: 'easeInOut' }}
+                />
               </motion.div>
             )
           })}
