@@ -23,10 +23,12 @@ interface HeroBackdropProps {
   /** Imagery taller than one screen (a stack behind it): the fade, and how far up to shift it so the front screen stays centered. */
   fade?: string
   shiftY?: string
+  /** Imagery that does its own 3D (the fanned row): 'none' turns off the tilt. */
+  tilt?: string
   children: ReactNode
 }
 
-export function HeroBackdrop({ placeholderLabel, fade = BACKDROP.fade, shiftY = '0%', children }: HeroBackdropProps) {
+export function HeroBackdrop({ placeholderLabel, fade = BACKDROP.fade, shiftY = '0%', tilt = BACKDROP.tilt, children }: HeroBackdropProps) {
   const reduce = usePrefersReducedMotion()
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -38,7 +40,7 @@ export function HeroBackdrop({ placeholderLabel, fade = BACKDROP.fade, shiftY = 
           animate={{ opacity: BACKDROP.opacity, y: 0 }}
           transition={reduce ? { duration: 0.6, delay: BACKDROP.enterDelay } : { duration: BACKDROP.enterDuration, delay: BACKDROP.enterDelay, ease: EASE_DECK }}
         >
-          <div style={{ transform: BACKDROP.tilt, transformOrigin: '50% 100%', maskImage: fade, WebkitMaskImage: fade }}>
+          <div style={{ transform: tilt, transformOrigin: '50% 100%', maskImage: fade, WebkitMaskImage: fade }}>
             {children}
           </div>
         </motion.div>

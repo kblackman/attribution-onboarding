@@ -3,7 +3,7 @@ import { Reveal } from '../components/Reveal'
 import { TagRow } from '../components/TagRow'
 import { BeginRow } from '../components/BeginRow'
 import { HeroBackdrop } from '../components/HeroBackdrop'
-import { HeroSetupFlow, STACK_FADE, STACK_SHIFT } from '../visuals/HeroSetupFlow'
+import { HeroSetupFan } from '../visuals/HeroSetupFan'
 
 const beat: Beat = {
   slug: 'title',
@@ -12,8 +12,8 @@ const beat: Beat = {
   align: 'center',
   card: (
     <>
-    <HeroBackdrop fade={STACK_FADE} shiftY={STACK_SHIFT}>
-      <HeroSetupFlow />
+    <HeroBackdrop fade="none" tilt="none">
+      <HeroSetupFan />
     </HeroBackdrop>
     <div className="relative flex max-w-[max(1280px,calc(var(--u-hero)*74))] flex-col items-center">
       <Reveal as="h1" className="m-0 text-hero font-extrabold">
