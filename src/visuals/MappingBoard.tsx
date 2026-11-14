@@ -24,21 +24,22 @@ export const TIMING = {
   settle: 0.8,
 }
 
-// layout in percent of the board (x of width, y of height); a two-row snake, left to right then back
+// layout in percent of the board (x of width, y of height); a two-row snake, left to right then back.
+// Centered: the row spans 6% to 94% (it ran 3% to 91%, left heavy; Kyle, 2026-11-14).
 const SHOT_W = 14 // cqw
 const STEP_W = 11 // cqw
 type Item = { kind: 'shot'; shot: string; x: number; y: number } | { kind: 'step'; label: string; x: number; y: number }
 const FLOW: Item[] = [
-  { kind: 'shot', shot: 'No events', x: 10, y: 28 }, // No events
-  { kind: 'step', label: 'Event Creation', x: 28, y: 28 },
-  { kind: 'shot', shot: 'Events not defined', x: 46, y: 28 }, // Events not defined
-  { kind: 'step', label: 'Event Definition', x: 64, y: 28 },
-  { kind: 'shot', shot: 'Waiting on data', x: 84, y: 28 }, // Waiting on data
-  { kind: 'shot', shot: 'No ad sources', x: 84, y: 74 }, // No ad sources
-  { kind: 'step', label: 'Sources', x: 64, y: 74 },
-  { kind: 'shot', shot: 'AI off', x: 46, y: 74 }, // AI off
-  { kind: 'step', label: 'AI settings', x: 28, y: 74 },
-  { kind: 'shot', shot: 'AI on, no events', x: 10, y: 74 }, // AI on, no events
+  { kind: 'shot', shot: 'No events', x: 13, y: 28 }, // No events
+  { kind: 'step', label: 'Event Creation', x: 31, y: 28 },
+  { kind: 'shot', shot: 'Events not defined', x: 49, y: 28 }, // Events not defined
+  { kind: 'step', label: 'Event Definition', x: 67, y: 28 },
+  { kind: 'shot', shot: 'Waiting on data', x: 87, y: 28 }, // Waiting on data
+  { kind: 'shot', shot: 'No ad sources', x: 87, y: 74 }, // No ad sources
+  { kind: 'step', label: 'Sources', x: 67, y: 74 },
+  { kind: 'shot', shot: 'AI off', x: 49, y: 74 }, // AI off
+  { kind: 'step', label: 'AI settings', x: 31, y: 74 },
+  { kind: 'shot', shot: 'AI on, no events', x: 13, y: 74 }, // AI on, no events
 ]
 // friction points: a handwritten note above or below a step (index into FLOW), with an arrow to it.
 // Kyle's wording (2026-10-25), each under a "UX Gap:" label.
