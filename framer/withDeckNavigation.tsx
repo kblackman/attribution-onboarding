@@ -29,16 +29,21 @@ function findContact(wrapper: HTMLElement | null): HTMLElement | null {
     return (label?.closest("a, button") as HTMLElement | null) ?? label ?? (wrapper.firstElementChild as HTMLElement | null)
 }
 
+// An invisible layer must never catch the mouse, or it blocks the deck underneath (a hidden header over the top
+// of the page swallowed every click and hover there). A stylesheet rule, not an inline style, so Framer can't reset
+// it, and it covers Framer's positioning box around the layer too (the element that holds this wrapper).
+// The deck's presses are sent from code, so they still arrive.
+const PASS_THROUGH = `*:has(> [data-deck-layer]), [data-deck-layer] * { pointer-events: none !important; }`
+
 /** Wraps a hidden layer; when the deck sends `to`, answers it and presses that layer. */
 function deckTarget(to: "home" | "contact", Component): ComponentType {
     return (props) => {
         const ref = useRef<HTMLDivElement>(null)
 
         useEffect(() => {
-            // the layer is only for the deck to trigger: keep it and anything inside it out of the tab order,
-            // and let the mouse pass through it, so an invisible layer never blocks the deck underneath
+            // the layer is only for the deck to trigger: keep it and anything inside it out of the tab order
+            // (the mouse passes through it: see PASS_THROUGH below)
             ref.current?.querySelectorAll("a, button, [tabindex]").forEach((el) => el.setAttribute("tabindex", "-1"))
-            Array.from(ref.current?.children ?? []).forEach((el) => ((el as HTMLElement).style.pointerEvents = "none"))
 
             const onMessage = (event: MessageEvent) => {
                 if (event.origin !== DECK_ORIGIN) return
@@ -58,7 +63,8 @@ function deckTarget(to: "home" | "contact", Component): ComponentType {
         }, [])
 
         return (
-            <div ref={ref} aria-hidden="true" style={{ display: "contents" }}>
+            <div ref={ref} aria-hidden="true" data-deck-layer="" style={{ display: "contents" }}>
+                <style>{PASS_THROUGH}</style>
                 <Component {...props} />
             </div>
         )
