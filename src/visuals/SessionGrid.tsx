@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
@@ -11,7 +11,9 @@ import { SHOTS, type Shot } from './EmptyStateMontage'
   Beat 3 visual: a 2x2 video-call grid that builds one tile at a time. Each tile is a research session
   with a customer sharing the same half-set-up Attribution dashboard; a hand-drawn circle marks its
   empty area as the tile lands. After the fourth, that tile zooms to fill the frame and holds.
-  Generic avatars, no names or data. Each tile can show one of the montage's recreated screenshots (shot), fitted
+  Participants are generated webcam stills (no real people), pixelated so they read as real faces kept private
+  (Kyle, 2026-11-14; they were vector avatars). Each tile's first thumbnail is that session's customer, the second
+  the same stand-in for Kyle in all four. No names or data. Each tile can show one of the montage's recreated screenshots (shot), fitted
   into the shared screen at its own proportions, circled on its empty area; tiles without one still draw the
   placeholder. Per Kyle's copy the sessions showed No ad sources and AI off.
   Each circle is labeled "Empty state" with an arrow (Kyle, 2026-11-06), so it's clear why they're circled. The type
@@ -33,11 +35,11 @@ const shot = (label: string) => SHOTS.find((s) => s.label === label && s.src)
 // four different half-set-up dashboards (Kyle: vary them): two missing ad sources, two without Recommendation Cards.
 // Waiting states (processing, not enough data) stay out: a later beat reveals those weren't setup problems.
 // The last tile zooms to fill the frame.
-const SESSIONS: { day: string; purpose: string; shot?: Shot }[] = [
-  { day: 'Day 1', purpose: 'Customer 1', shot: shot('Requires API connection') },
-  { day: 'Day 1', purpose: 'Customer 2', shot: shot('AI off') },
-  { day: 'Day 2', purpose: 'Customer 3', shot: shot('AI on, no events') },
-  { day: 'Day 2', purpose: 'Customer 4', shot: shot('No ad sources') },
+const SESSIONS: { day: string; purpose: string; shot?: Shot; face: string }[] = [
+  { day: 'Day 1', purpose: 'Customer 1', shot: shot('Requires API connection'), face: 'customer-1.jpg' },
+  { day: 'Day 1', purpose: 'Customer 2', shot: shot('AI off'), face: 'customer-2.jpg' },
+  { day: 'Day 2', purpose: 'Customer 3', shot: shot('AI on, no events'), face: 'customer-3.jpg' },
+  { day: 'Day 2', purpose: 'Customer 4', shot: shot('No ad sources'), face: 'customer-4.jpg' },
 ]
 // the note on every circle (Kyle, 2026-11-06)
 export const NOTE = 'Empty state'
@@ -138,7 +140,7 @@ export function SessionGrid(props: VisualProps) {
 }
 
 /** One call tile: session stamp, the shared screen, and two generic participant thumbnails. */
-function Tile({ day, purpose, shot, annotate, circle }: { day: string; purpose: string; shot?: Shot; annotate: (zone: Zone, aspect: number) => ReactNode; circle: (className: string, style?: CSSProperties) => ReactNode }) {
+function Tile({ day, purpose, shot, face, annotate, circle }: { day: string; purpose: string; shot?: Shot; face: string; annotate: (zone: Zone, aspect: number) => ReactNode; circle: (className: string, style?: CSSProperties) => ReactNode }) {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[12px] border border-hairline bg-card-to" style={{ containerType: 'size' }}>
       {/* in flow, so on small tiles the labels push the screen down instead of covering it */}
@@ -165,20 +167,35 @@ function Tile({ day, purpose, shot, annotate, circle }: { day: string; purpose: 
         </div>
       )}
 
-      {/* participants: generic avatars only */}
+      {/* participants: the customer, then Kyle's stand-in, pixelated */}
       <div className="absolute right-[3cqw] top-0 flex w-[16cqw] flex-col gap-[2cqw]">
-        {[0, 1].map((p) => (
-          <div key={p} className="grid aspect-[4/3] place-items-center rounded-[1cqw] bg-white/[0.06]">
-            <span className="relative block h-[6cqw] w-[6cqw] overflow-hidden rounded-full bg-white/[0.14]">
-              <span className="absolute left-1/2 top-[22%] block h-[34%] w-[34%] -translate-x-1/2 rounded-full bg-white/25" />
-              <span className="absolute left-1/2 top-[64%] block h-[60%] w-[70%] -translate-x-1/2 rounded-full bg-white/25" />
-            </span>
-          </div>
+        {[face, 'designer.jpg'].map((src) => (
+          <Pixelated key={src} src={`${import.meta.env.BASE_URL}assets/pattern/${src}`} className="aspect-[4/3] w-full overflow-hidden rounded-[1cqw] bg-white/[0.06]" />
         ))}
       </div>
       </div>
     </div>
   )
+}
+
+// how coarse the mosaic is: blocks across a thumbnail (fewer hides more; more reads more like video)
+const PIXEL_CELLS = 10
+
+/** A photo drawn as a coarse mosaic: shrunk onto a tiny canvas (averaging each block), then scaled up without smoothing. */
+function Pixelated({ src, className }: { src: string; className?: string }) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    const img = new Image()
+    img.onload = () => {
+      const c = ref.current
+      if (!c) return
+      c.width = PIXEL_CELLS
+      c.height = Math.round((PIXEL_CELLS * img.naturalHeight) / img.naturalWidth)
+      c.getContext('2d')?.drawImage(img, 0, 0, c.width, c.height)
+    }
+    img.src = src
+  }, [src])
+  return <canvas ref={ref} className={`block ${className ?? ''}`} style={{ imageRendering: 'pixelated' }} aria-hidden="true" />
 }
 
 /** The same half-set-up page in every session: some data in, spend and recommendations empty. */
