@@ -151,7 +151,7 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
             animate={{ x: `${marker.x * UNIT}cqw`, y: `${marker.y * UNIT}cqw`, opacity: zoomed ? 0 : 1 }}
             transition={camTr}
           >
-            <div className="flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-[0.5cqw]">
+            <div className="flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-[1.2cqw]">
               <span className="whitespace-nowrap rounded-full bg-accent px-[0.9cqw] py-[0.25cqw] text-[1.35cqw] font-bold text-card-to">New customer</span>
               <span className="relative block h-[1.6cqw] w-[1.6cqw] rounded-full bg-accent shadow-[0_0_0_0.6cqw_color-mix(in_srgb,var(--color-accent)_28%,transparent)]">
                 {/* the ping: one ring pulsing out from the marker */}
@@ -171,7 +171,7 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
               {ping && (
                 <motion.span
                   key={`chip${ping.step}`}
-                  className="absolute right-[calc(100%+6.2cqw)] top-[-2.2cqw] flex items-center gap-[0.5cqw] whitespace-nowrap rounded-full bg-fg px-[0.9cqw] py-[0.3cqw] text-[1.2cqw] font-bold text-card-to shadow-[0_10px_24px_rgba(0,0,0,0.35)]"
+                  className="absolute right-[calc(100%+6.2cqw)] top-[-2.55cqw] flex items-center gap-[0.5cqw] whitespace-nowrap rounded-full bg-fg px-[0.9cqw] py-[0.3cqw] text-[1.2cqw] font-bold text-card-to shadow-[0_10px_24px_rgba(0,0,0,0.35)]"
                   style={{ originX: 1 }}
                   initial={reduced ? { opacity: 0 } : { opacity: 0, x: '0.8cqw', scale: 0.85 }}
                   animate={{ opacity: 1, x: '0cqw', scale: 1 }}
