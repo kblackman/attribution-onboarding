@@ -1,4 +1,4 @@
-import { navigateViaFramer } from '../engine/frameNav'
+import { contactViaFramer, navigateViaFramer } from '../engine/frameNav'
 
 /*
   Portfolio edition: the case study header from Kyle's Framer site, inside the deck (the deck fills the Framer
@@ -10,7 +10,7 @@ import { navigateViaFramer } from '../engine/frameNav'
 */
 export const SITE = {
   home: 'https://www.kyleblackman.com/',
-  // Get In Touch goes to LinkedIn (Kyle, 2026-11-04)
+  // Get In Touch opens the Framer contact modal when embedded; LinkedIn is the fallback (Kyle, 2026-11-04 / 2026-11-14)
   contact: 'https://www.linkedin.com/in/kyleblackman/',
 }
 
@@ -28,10 +28,10 @@ export function SiteHeader({ compact, hidden = false }: { compact: boolean; hidd
       <a className="site-back" href={SITE.home} target="_top" onClick={navigateViaFramer}>
         <Arrow /> View All Work
       </a>
-      <a className="site-logo" href={SITE.home} target="_top" aria-label="Kyle Blackman, home" tabIndex={compact ? -1 : undefined} aria-hidden={compact || undefined}>
+      <a className="site-logo" href={SITE.home} target="_top" onClick={navigateViaFramer} aria-label="Kyle Blackman, home" tabIndex={compact ? -1 : undefined} aria-hidden={compact || undefined}>
         <img src={`${import.meta.env.BASE_URL}assets/bkmn-logo.svg`} alt="" width={110} height={32} />
       </a>
-      <a className="site-contact" href={SITE.contact} target="_top" tabIndex={compact ? -1 : undefined} aria-hidden={compact || undefined}>
+      <a className="site-contact" href={SITE.contact} target="_top" onClick={contactViaFramer} tabIndex={compact ? -1 : undefined} aria-hidden={compact || undefined}>
         Get In Touch
       </a>
     </header>

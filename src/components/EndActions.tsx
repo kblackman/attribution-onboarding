@@ -1,5 +1,5 @@
 import { SITE } from './SiteHeader'
-import { navigateViaFramer } from '../engine/frameNav'
+import { contactViaFramer, navigateViaFramer } from '../engine/frameNav'
 
 /*
   Portfolio edition: what to do once the story ends, under the closing line (Kyle, 2026-11-04). The way back
@@ -14,7 +14,7 @@ export function EndActions() {
         </svg>
         View All Work
       </a>
-      <a className="pill primary" href={SITE.contact} target="_top">
+      <a className="pill primary" href={SITE.contact} target="_top" onClick={contactViaFramer}>
         Get In Touch
       </a>
     </div>
