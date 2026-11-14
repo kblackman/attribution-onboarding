@@ -29,11 +29,12 @@ const FRAME_H = 62.5 // the 16:10 frame is 100cqw by 62.5cqw
   every page outside Attribution already sits on the row above (y -330), so a soft band shades everything above
   LANE_Y, with a dashed edge. Each time the marker climbs into it, "Times you left Attribution" ticks up.
   Manage conversions (below the row) is a drawer on the Attribution page, so it stays unshaded.
-  The labels hold to the frame's left edge and ride up and down with the camera, so they stay in view as it pans.
+  One quiet label, "Outside Attribution", appears only on the zoomed-out map (the pinned pills read as noisy, Kyle).
 */
 const LANE_Y = -168 // map units: between the outside pages (bottom edge -255) and the Attribution row (top edge -81)
 // small dark pills, so they stay readable when a node passes under them
-const LANE_LABEL = 'absolute left-[1.6cqw] whitespace-nowrap rounded-full bg-card-to/90 px-[0.9cqw] py-[0.35cqw] text-[clamp(9px,1.05cqw,15px)] font-bold uppercase tracking-[0.14em] text-fg-soft'
+// quiet on purpose (Kyle, 2026-11-14: the pills were noisy): plain small caps, no pill, one label only
+const LANE_LABEL = 'absolute left-[2cqw] whitespace-nowrap text-[clamp(9px,0.95cqw,14px)] font-semibold uppercase tracking-[0.16em] text-fg-soft'
 
 export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, onComplete, sub, requestNext }: VisualProps) {
   const autoplay = useAutoplay()
@@ -70,7 +71,7 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
 
   // camera: follow the marker, or fit the whole map
   const focus = nodeById(PATH[at].focus)
-  // zoomed out, the map leaves room on the left for the lane labels (ZOOM_LEFT cqw)
+  // zoomed out, the map leaves room on the left for the lane label (ZOOM_LEFT cqw)
   const ZOOM_LEFT = 12
   const fit = Math.min((96 - ZOOM_LEFT) / (BOUNDS.w * UNIT), (FRAME_H - 14) / (BOUNDS.h * UNIT))
   const scale = zoomed ? fit : TIMING.follow
@@ -130,15 +131,15 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
         </motion.div>
 
 
-        {/* lane labels, either side of the dashed edge: held at the frame's left, following the camera vertically */}
+        {/* the lane's one label, only on the zoomed-out map (fading in with the legend): during the ride the band and
+            the counter say it; "In Attribution" is the default, so it goes unlabeled */}
         <motion.div
           className="pointer-events-none absolute left-0 right-0 top-0 z-[5] h-0"
           initial={false}
-          animate={{ y: `${FRAME_H / 2 + (LANE_Y - cy) * UNIT * scale}cqw` }}
-          transition={camTr}
+          animate={{ y: `${FRAME_H / 2 + (LANE_Y - cy) * UNIT * scale}cqw`, opacity: zoomed ? 1 : 0 }}
+          transition={reduced ? { duration: 0.3 } : { duration: 0.6, delay: zoomed ? 0.6 : 0 }}
         >
-          <span className={`${LANE_LABEL} bottom-[0.8cqw]`}>Outside Attribution</span>
-          <span className={`${LANE_LABEL} top-[0.8cqw]`}>In Attribution</span>
+          <span className={`${LANE_LABEL} bottom-[0.9cqw]`}>Outside Attribution</span>
         </motion.div>
 
         <motion.div
