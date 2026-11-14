@@ -24,6 +24,17 @@ export const TIMING = {
 
 const FRAME_H = 62.5 // the 16:10 frame is 100cqw by 62.5cqw
 
+/*
+  Outside Attribution lane (Kyle, 2026-11-14, borrowed from the two-lane board that was tried and dropped):
+  every page outside Attribution already sits on the row above (y -330), so a soft band shades everything above
+  LANE_Y, with a dashed edge. Each time the marker climbs into it, "Times you left Attribution" ticks up.
+  Manage conversions (below the row) is a drawer on the Attribution page, so it stays unshaded.
+  The labels hold to the frame's left edge and ride up and down with the camera, so they stay in view as it pans.
+*/
+const LANE_Y = -168 // map units: between the outside pages (bottom edge -255) and the Attribution row (top edge -81)
+// small dark pills, so they stay readable when a node passes under them
+const LANE_LABEL = 'absolute left-[1.6cqw] whitespace-nowrap rounded-full bg-card-to/90 px-[0.9cqw] py-[0.35cqw] text-[clamp(9px,1.05cqw,15px)] font-bold uppercase tracking-[0.14em] text-fg-soft'
+
 export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, onComplete, sub, requestNext }: VisualProps) {
   const autoplay = useAutoplay()
   const zoomed = sub >= PATH.length
@@ -59,9 +70,11 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
 
   // camera: follow the marker, or fit the whole map
   const focus = nodeById(PATH[at].focus)
-  const fit = Math.min(94 / (BOUNDS.w * UNIT), (FRAME_H - 14) / (BOUNDS.h * UNIT))
+  // zoomed out, the map leaves room on the left for the lane labels (ZOOM_LEFT cqw)
+  const ZOOM_LEFT = 12
+  const fit = Math.min((96 - ZOOM_LEFT) / (BOUNDS.w * UNIT), (FRAME_H - 14) / (BOUNDS.h * UNIT))
   const scale = zoomed ? fit : TIMING.follow
-  const cx = zoomed ? BOUNDS.cx : focus.x
+  const cx = zoomed ? BOUNDS.cx - ZOOM_LEFT / 2 / (UNIT * fit) : focus.x
   const cy = zoomed ? BOUNDS.cy + 40 : focus.y
   const cam = { x: `${-cx * UNIT * scale}cqw`, y: `${-cy * UNIT * scale}cqw`, scale }
   const camTr = reduced ? { duration: 0 } : { duration: TIMING.camera, ease: EASE_DECK }
@@ -80,6 +93,9 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16 / 10', containerType: 'size' }}>
         {/* the map, moved by the camera; origin at the frame's center */}
         <motion.div className="absolute left-1/2 top-1/2 h-0 w-0" style={{ originX: 0, originY: 0 }} initial={false} animate={cam} transition={camTr}>
+          {/* the Outside Attribution lane: shaded above the dashed edge, far wider and taller than the map, so the frame clips it */}
+          <div className="absolute bg-white/[0.035]" style={{ left: '-1000cqw', width: '2000cqw', top: `${(LANE_Y - 3000) * UNIT}cqw`, height: `${3000 * UNIT}cqw` }} />
+          <div className="absolute border-t border-dashed border-hairline-strong" style={{ left: '-1000cqw', width: '2000cqw', top: `${LANE_Y * UNIT}cqw` }} />
           <EdgesView
             visible={(id) => zoomed || firstStep('edges', id) <= at}
             drawNow={(id) => drawNow(firstStep('edges', id))}
@@ -113,6 +129,17 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
           </motion.div>
         </motion.div>
 
+
+        {/* lane labels, either side of the dashed edge: held at the frame's left, following the camera vertically */}
+        <motion.div
+          className="pointer-events-none absolute left-0 right-0 top-0 z-[5] h-0"
+          initial={false}
+          animate={{ y: `${FRAME_H / 2 + (LANE_Y - cy) * UNIT * scale}cqw` }}
+          transition={camTr}
+        >
+          <span className={`${LANE_LABEL} bottom-[0.8cqw]`}>Outside Attribution</span>
+          <span className={`${LANE_LABEL} top-[0.8cqw]`}>In Attribution</span>
+        </motion.div>
 
         <motion.div
           className="absolute bottom-[1.6cqw] left-1/2 z-10 -translate-x-1/2"

@@ -24,41 +24,28 @@ export const TIMING = {
   settle: 0.8,
 }
 
-/*
-  Two lanes (Kyle, 2026-11-08: make it clear you leave Attribution in the in-between steps): the top lane is
-  inside Attribution (every screenshot, plus Event Definition, a drawer on the page, dipping just below the row
-  without crossing the line), the bottom lane is outside
-  it (Event Creation on the Events page, Sources, AI settings). The flow runs left to right and dips into the
-  bottom lane each time the customer leaves, so the three exits show without reading a note.
-  Layout in percent of the board (x of width, y of height).
-*/
-const SHOT_W = 11.4 // cqw
-const STEP_W = 9 // cqw
-const LANE_SPLIT = 50 // the divider, percent of board height
-const TOP_Y = 23
-const DRAWER_Y = 40 // Event Definition: a drawer on the Attribution page, so a shallow dip that stays in the top lane
-const BOTTOM_Y = 72
-type Item = ({ kind: 'shot'; shot: string } | { kind: 'step'; label: string }) & { x: number; y: number }
-const top = (x: number) => ({ x, y: TOP_Y })
-const bottom = (x: number) => ({ x, y: BOTTOM_Y })
+// layout in percent of the board (x of width, y of height); a two-row snake, left to right then back
+const SHOT_W = 14 // cqw
+const STEP_W = 11 // cqw
+type Item = { kind: 'shot'; shot: string; x: number; y: number } | { kind: 'step'; label: string; x: number; y: number }
 const FLOW: Item[] = [
-  { kind: 'shot', shot: 'No events', ...top(8.3) },
-  { kind: 'step', label: 'Event Creation', ...bottom(16.3) },
-  { kind: 'shot', shot: 'Events not defined', ...top(24.3) },
-  { kind: 'step', label: 'Event Definition', x: 34, y: DRAWER_Y },
-  { kind: 'shot', shot: 'Waiting on data', ...top(43.7) },
-  { kind: 'shot', shot: 'No ad sources', ...top(59.7) },
-  { kind: 'step', label: 'Sources', ...bottom(67.7) },
-  { kind: 'shot', shot: 'AI off', ...top(75.7) },
-  { kind: 'step', label: 'AI settings', ...bottom(83.7) },
-  { kind: 'shot', shot: 'AI on, no events', ...top(91.7) },
+  { kind: 'shot', shot: 'No events', x: 10, y: 28 }, // No events
+  { kind: 'step', label: 'Event Creation', x: 28, y: 28 },
+  { kind: 'shot', shot: 'Events not defined', x: 46, y: 28 }, // Events not defined
+  { kind: 'step', label: 'Event Definition', x: 64, y: 28 },
+  { kind: 'shot', shot: 'Waiting on data', x: 84, y: 28 }, // Waiting on data
+  { kind: 'shot', shot: 'No ad sources', x: 84, y: 74 }, // No ad sources
+  { kind: 'step', label: 'Sources', x: 64, y: 74 },
+  { kind: 'shot', shot: 'AI off', x: 46, y: 74 }, // AI off
+  { kind: 'step', label: 'AI settings', x: 28, y: 74 },
+  { kind: 'shot', shot: 'AI on, no events', x: 10, y: 74 }, // AI on, no events
 ]
-// friction points: a handwritten note beside a step (index into FLOW), with an arrow to it.
-// Kyle's wording (2026-10-25), each under a "UX Gap:" label. side: where the note sits relative to its step.
+// friction points: a handwritten note above or below a step (index into FLOW), with an arrow to it.
+// Kyle's wording (2026-10-25), each under a "UX Gap:" label.
 const NOTE_LABEL = 'UX Gap:'
-const NOTES: { at: number; text: string; side: 'below' | 'left' | 'right'; r: number }[] = [
-  { at: 1, text: 'Leaving Attribution to create events', side: 'right', r: -3 },
-  { at: 6, text: 'No way back after connecting', side: 'left', r: 3 },
+const NOTES: { at: number; text: string; side: 'above' | 'below'; r: number }[] = [
+  { at: 1, text: 'Leaving Attribution to create events', side: 'above', r: -4 },
+  { at: 6, text: 'No way back after connecting', side: 'below', r: 3 },
   { at: 8, text: 'Leaving Attribution to turn on AI', side: 'below', r: -3 },
 ]
 
@@ -69,27 +56,8 @@ const ARROWS_AT = STEPS_AT + stepsOnly.length * TIMING.stepGap + TIMING.arrowsAf
 const NOTES_AT = ARROWS_AT + (FLOW.length - 1) * TIMING.arrowGap + TIMING.arrowDraw + TIMING.notesAfter
 const TOTAL = NOTES_AT + NOTES.length * TIMING.noteGap + TIMING.settle
 
-const LANE = 'absolute left-[2cqw] text-[clamp(9px,1.15cqw,17px)] font-bold uppercase tracking-[0.12em] text-ink-2'
 const halfW = (f: Item) => (f.kind === 'shot' ? SHOT_W : STEP_W) / 2
-// wider than the old 16:10, so the lanes use the screen's width and the screenshots stay readable
-const ASPECT = 1.9
-const halfH = (f: Item) => ((f.kind === 'shot' ? (SHOT_W * 10) / 16 : 5) / 2 / (100 / ASPECT)) * 100 // percent of board height
-// the board is 100cqw wide
-const BOARD_H = 100 / ASPECT
-/** An arrow from item a's edge to item b's edge, at any angle (lane changes run on the diagonal). */
-function arrowBetween(a: Item, b: Item) {
-  const ax = a.x, ay = (a.y / 100) * BOARD_H, bx = b.x, by = (b.y / 100) * BOARD_H
-  const dx = bx - ax, dy = by - ay
-  const dist = Math.hypot(dx, dy)
-  const edge = (f: Item) => {
-    const hw = halfW(f), hh = (halfH(f) / 100) * BOARD_H
-    return Math.min(dx ? hw / Math.abs(dx) : Infinity, dy ? hh / Math.abs(dy) : Infinity) * dist
-  }
-  const pad = 1
-  const from = edge(a) + pad
-  const len = dist - from - edge(b) - pad
-  return { x: ax + (dx / dist) * from, y: ((ay + (dy / dist) * from) / BOARD_H) * 100, len, deg: (Math.atan2(dy, dx) * 180) / Math.PI }
-}
+const halfH = (f: Item) => (f.kind === 'shot' ? (SHOT_W * 10) / 16 : 5) / 2 / 0.625 // percent of board height
 
 export function MappingBoard(props: VisualProps) {
   const { reducedMotion: reduced } = props
@@ -112,27 +80,27 @@ export function MappingBoard(props: VisualProps) {
       <div
         className="relative overflow-hidden rounded-[1.2cqw] bg-surface-2 shadow-[0_24px_60px_rgba(0,0,0,0.45)]"
         style={{
-          aspectRatio: `${ASPECT}`,
-          width: `min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * ${ASPECT}))`,
+          aspectRatio: '16 / 10',
+          width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))',
           containerType: 'size',
           backgroundImage: 'radial-gradient(var(--color-caption) 1.4px, transparent 1.4px)', // whiteboard dots, visible but quiet
           backgroundSize: '2.2cqw 2.2cqw',
         }}
         aria-hidden="true"
       >
-        {/* the two lanes: inside Attribution on top, outside it below (tinted), with their labels */}
-        <div className="absolute inset-x-0 bottom-0 bg-line/70" style={{ top: `${LANE_SPLIT}%` }} />
-        <div className="absolute inset-x-0 border-t-2 border-dashed border-line-strong" style={{ top: `${LANE_SPLIT}%` }} />
-        <motion.div className="contents" {...pop(TIMING.start * 0.5, 1)}>
-          <span className={LANE} style={{ top: '3.2%' }}>In Attribution</span>
-          <span className={LANE} style={{ top: `${LANE_SPLIT + 3.2}%` }}>Outside Attribution</span>
-        </motion.div>
-
         {/* arrows between consecutive items */}
         {FLOW.slice(0, -1).map((a, i) => {
-          const { x, y, len, deg } = arrowBetween(a, FLOW[i + 1])
+          const b = FLOW[i + 1]
+          const vertical = a.x === b.x
+          const dir = vertical ? 90 : b.x > a.x ? 0 : 180
+          const start = vertical
+            ? { x: a.x, y: a.y + halfH(a) + 1.5 }
+            : { x: a.x + (b.x > a.x ? halfW(a) + 1 : -halfW(a) - 1), y: a.y }
+          const len = vertical
+            ? (b.y - halfH(b) - 1.5 - start.y) * 0.625 // board height is 62.5cqw
+            : Math.abs(b.x - a.x) - halfW(a) - halfW(b) - 2
           return (
-            <Arrow key={i} x={x} y={y} len={len} deg={deg}>
+            <Arrow key={i} x={start.x} y={start.y} len={len} deg={dir}>
               <motion.span
                 className="absolute inset-0 origin-left"
                 initial={false}
@@ -178,18 +146,14 @@ export function MappingBoard(props: VisualProps) {
         {/* friction points: Kyle's handwritten notes, each with an arrow to its step */}
         {NOTES.map((n, i) => {
           const f = FLOW[n.at]
-          // anchored at the step's edge on the note's side; the arrow points back at the step
-          const pos =
-            n.side === 'below'
-              ? { left: `${f.x}%`, top: `${f.y + halfH(f) + 1}%`, transform: 'translate(-50%, 0)' }
-              : n.side === 'left'
-                ? { left: `${f.x - halfW(f) - 0.6}%`, top: `${f.y}%`, transform: 'translate(-100%, -50%)' }
-                : { left: `${f.x + halfW(f) + 0.6}%`, top: `${f.y}%`, transform: 'translate(0, -50%)' }
-          const flow = n.side === 'below' ? 'flex-col-reverse' : n.side === 'left' ? 'flex-row' : 'flex-row-reverse'
-          const turn = n.side === 'below' ? 'rotate-180' : n.side === 'left' ? '-rotate-90' : 'rotate-90'
+          const edge = f.y + (n.side === 'above' ? -halfH(f) - 1 : halfH(f) + 1) // percent of board height
           return (
-            <div key={`n${i}`} className="absolute z-30 flex w-[15cqw] justify-center" style={pos}>
-              <motion.div className={`flex items-center ${flow}`} {...pop(NOTES_AT + i * TIMING.noteGap, 0.9)}>
+            <div
+              key={`n${i}`}
+              className="absolute z-30 flex w-[17cqw] flex-col items-center"
+              style={{ left: `${f.x}%`, top: `${edge}%`, transform: `translate(-50%, ${n.side === 'above' ? '-100%' : '0'})` }}
+            >
+              <motion.div className={`flex items-center ${n.side === 'below' ? 'flex-col-reverse' : 'flex-col'}`} {...pop(NOTES_AT + i * TIMING.noteGap, 0.9)}>
                 <span
                   className="block text-center font-[family-name:var(--font-hand)] text-[clamp(11px,1.75cqw,30px)] font-bold leading-[1.05] text-annotation"
                   style={{ transform: `rotate(${n.r}deg)` }}
@@ -197,7 +161,7 @@ export function MappingBoard(props: VisualProps) {
                   <span className="block">{NOTE_LABEL}</span>
                   {n.text}
                 </span>
-                <svg viewBox="0 0 30 34" className={`h-[3.2cqw] w-[2.8cqw] flex-none overflow-visible ${turn}`} aria-hidden="true">
+                <svg viewBox="0 0 30 34" className={`h-[3.2cqw] w-[2.8cqw] overflow-visible ${n.side === 'below' ? 'mb-[0.3cqw] rotate-180' : 'mt-[0.3cqw]'}`} aria-hidden="true">
                   <g fill="none" stroke="var(--color-annotation)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14 2 C9 12 9 22 15 31" vectorEffect="non-scaling-stroke" />
                     <path d="M9 25 L15 31 L20 24" vectorEffect="non-scaling-stroke" />
