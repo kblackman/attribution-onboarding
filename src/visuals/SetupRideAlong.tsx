@@ -29,7 +29,7 @@ export const TIMING = {
   way back, the marker pings (a ring pulses out from it) and a small chip pops out beside it, holds, then fades.
   Nothing stays on the map. Wording is Claude's draft, awaiting Kyle.
 */
-export const PINGS = { leave: 'Leaving Attribution', back: 'Back to Attribution, by hand' }
+export const PINGS = { leave: 'Leaving Attribution', back: 'Navigating back manually' } // "back" was "Back to Attribution, by hand"; Kyle: everything is by hand, it's manual navigation
 type PingKind = keyof typeof PINGS
 const pingAt = (step: number): PingKind | null =>
   PATH[step]?.left ? 'leave' : PATH[step]?.edges?.some((id) => EDGES.find((e) => e.id === id)?.kind === 'back') ? 'back' : null
@@ -117,7 +117,9 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
         style={{ width: 'min(100%, calc((100dvh - clamp(56px,8vh,96px) - clamp(72px,11vh,120px)) * 1.6))', containerType: 'inline-size' }}
         aria-hidden="true"
       >
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16 / 10', containerType: 'size' }}>
+      {/* clipped at the top and bottom only: the map, and the Outside Attribution band, run the full width of the
+          screen instead of stopping at the frame's sides (Kyle, 2026-11-14: the band's hard side edges) */}
+      <div className="relative w-full" style={{ aspectRatio: '16 / 10', containerType: 'size', clipPath: 'inset(0 -100vw)' }}>
         {/* the map, moved by the camera; origin at the frame's center */}
         <motion.div className="absolute left-1/2 top-1/2 h-0 w-0" style={{ originX: 0, originY: 0 }} initial={false} animate={cam} transition={camTr}>
           {/* the Outside Attribution lane: shaded above the dashed edge, far wider and taller than the map, so the frame clips it */}
@@ -164,14 +166,14 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
                 )}
               </span>
             </div>
-            {/* the callout chip, beside the New customer tag */}
+            {/* the callout chip, left of the New customer tag (the counter panel sits top-right and covered it on smaller screens) */}
             <AnimatePresence>
               {ping && (
                 <motion.span
                   key={`chip${ping.step}`}
-                  className="absolute left-[5.8cqw] top-[-2.2cqw] flex items-center gap-[0.5cqw] whitespace-nowrap rounded-full bg-fg px-[0.9cqw] py-[0.3cqw] text-[1.2cqw] font-bold text-card-to shadow-[0_10px_24px_rgba(0,0,0,0.35)]"
-                  style={{ originX: 0 }}
-                  initial={reduced ? { opacity: 0 } : { opacity: 0, x: '-0.8cqw', scale: 0.85 }}
+                  className="absolute right-[calc(100%+6.2cqw)] top-[-2.2cqw] flex items-center gap-[0.5cqw] whitespace-nowrap rounded-full bg-fg px-[0.9cqw] py-[0.3cqw] text-[1.2cqw] font-bold text-card-to shadow-[0_10px_24px_rgba(0,0,0,0.35)]"
+                  style={{ originX: 1 }}
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, x: '0.8cqw', scale: 0.85 }}
                   animate={{ opacity: 1, x: '0cqw', scale: 1 }}
                   exit={{ opacity: 0, transition: { duration: 0.35 } }}
                   transition={reduced ? { duration: 0.2 } : { duration: 0.4, ease: EASE_DECK }}

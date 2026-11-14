@@ -320,7 +320,7 @@ export function Legend({ className = '' }: { className?: string }) {
       <Row label="Left Attribution">
         <span className="block h-[3px] w-[2.2em] rounded-full bg-fg" />
       </Row>
-      <Row label="Back by hand">
+      <Row label="Manual navigation">
         <span className="block w-[2.2em] border-t-2 border-dashed border-fg-muted" />
       </Row>
       <Row label="Empty state">
