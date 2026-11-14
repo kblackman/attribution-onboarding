@@ -1,10 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { EASE_DECK } from '../engine/motion'
 import type { VisualProps } from '../engine/types'
 import { SELF_SERVE } from '../engine/edition'
 import { useAutoplay } from '../engine/autoplay'
-import { BOUNDS, EdgesView, Legend, NODES, NodeView, PATH, UNIT, firstStep, nodeById, nodeSize } from './setup-map'
+import { BOUNDS, EDGES, EdgesView, Legend, NODES, NodeView, PATH, UNIT, firstStep, nodeById, nodeSize } from './setup-map'
 
 /*
   Beat 7 visual: the setup ride-along. A marker starts on Attribution and travels the setup path one step
@@ -20,7 +20,19 @@ export const TIMING = {
   camera: 1.1,
   zoomSettle: 1.4, // after the zoom-out, before the overlay
   follow: 1.35, // camera zoom while following the marker
+  ping: 0.9, // after a step starts (camera moving, arrow drawing), its callout pings in
+  pingHold: 1.5, // then holds this long and fades, before the next step
 }
+
+/*
+  Callouts (Kyle, 2026-11-14): each time the customer leaves Attribution, and each time they have to find their own
+  way back, the marker pings (a ring pulses out from it) and a small chip pops out beside it, holds, then fades.
+  Nothing stays on the map. Wording is Claude's draft, awaiting Kyle.
+*/
+export const PINGS = { leave: 'Leaving Attribution', back: 'Back to Attribution, by hand' }
+type PingKind = keyof typeof PINGS
+const pingAt = (step: number): PingKind | null =>
+  PATH[step]?.left ? 'leave' : PATH[step]?.edges?.some((id) => EDGES.find((e) => e.id === id)?.kind === 'back') ? 'back' : null
 
 const FRAME_H = 62.5 // the 16:10 frame is 100cqw by 62.5cqw
 
@@ -81,6 +93,20 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
   const camTr = reduced ? { duration: 0 } : { duration: TIMING.camera, ease: EASE_DECK }
 
   const marker = { x: focus.x, y: focus.y - nodeSize(focus).h / 2 - 46 }
+
+  // the step's callout, if it has one: pings in once the camera has nearly arrived, then clears
+  const [ping, setPing] = useState<{ step: number; kind: PingKind } | null>(null)
+  useEffect(() => {
+    setPing(null)
+    const kind = active && !zoomed ? pingAt(sub) : null
+    if (!kind) return
+    const t1 = window.setTimeout(() => setPing({ step: sub, kind }), (reduced ? 0.3 : TIMING.ping) * 1000)
+    const t2 = window.setTimeout(() => setPing(null), ((reduced ? 0.3 : TIMING.ping) + TIMING.pingHold) * 1000)
+    return () => {
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+    }
+  }, [sub, active, zoomed, reduced])
   const drawNow = (step: number) => forward && step === sub
 
   return (
@@ -125,8 +151,36 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
           >
             <div className="flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-[0.5cqw]">
               <span className="whitespace-nowrap rounded-full bg-accent px-[0.9cqw] py-[0.25cqw] text-[1.35cqw] font-bold text-card-to">New customer</span>
-              <span className="block h-[1.6cqw] w-[1.6cqw] rounded-full bg-accent shadow-[0_0_0_0.6cqw_color-mix(in_srgb,var(--color-accent)_28%,transparent)]" />
+              <span className="relative block h-[1.6cqw] w-[1.6cqw] rounded-full bg-accent shadow-[0_0_0_0.6cqw_color-mix(in_srgb,var(--color-accent)_28%,transparent)]">
+                {/* the ping: one ring pulsing out from the marker */}
+                {ping && !reduced && (
+                  <motion.span
+                    key={`ring${ping.step}`}
+                    className="absolute inset-0 rounded-full border-[0.25cqw] border-fg"
+                    initial={{ scale: 1, opacity: 0.9 }}
+                    animate={{ scale: 3.4, opacity: 0 }}
+                    transition={{ duration: 0.9, ease: 'easeOut' }}
+                  />
+                )}
+              </span>
             </div>
+            {/* the callout chip, beside the New customer tag */}
+            <AnimatePresence>
+              {ping && (
+                <motion.span
+                  key={`chip${ping.step}`}
+                  className="absolute left-[5.8cqw] top-[-2.2cqw] flex items-center gap-[0.5cqw] whitespace-nowrap rounded-full bg-fg px-[0.9cqw] py-[0.3cqw] text-[1.2cqw] font-bold text-card-to shadow-[0_10px_24px_rgba(0,0,0,0.35)]"
+                  style={{ originX: 0 }}
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, x: '-0.8cqw', scale: 0.85 }}
+                  animate={{ opacity: 1, x: '0cqw', scale: 1 }}
+                  exit={{ opacity: 0, transition: { duration: 0.35 } }}
+                  transition={reduced ? { duration: 0.2 } : { duration: 0.4, ease: EASE_DECK }}
+                >
+                  <span aria-hidden="true">{ping.kind === 'leave' ? '↗' : '↩'}</span>
+                  {PINGS[ping.kind]}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </motion.div>
         </motion.div>
 
