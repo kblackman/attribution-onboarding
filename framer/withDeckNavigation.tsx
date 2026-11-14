@@ -31,9 +31,10 @@ function findContact(wrapper: HTMLElement | null): HTMLElement | null {
 
 // An invisible layer must never catch the mouse, or it blocks the deck underneath (a hidden header over the top
 // of the page swallowed every click and hover there). A stylesheet rule, not an inline style, so Framer can't reset
-// it, and it covers Framer's positioning box around the layer too (the element that holds this wrapper).
+// it. It covers the layer, plus Framer's positioning box around it, but only a box that holds nothing else: a
+// layer placed straight on the page has the page as its parent, and the page must keep taking clicks.
 // The deck's presses are sent from code, so they still arrive.
-const PASS_THROUGH = `*:has(> [data-deck-layer]), [data-deck-layer] * { pointer-events: none !important; }`
+const PASS_THROUGH = `[data-deck-layer] *, :has(> [data-deck-layer]):not(:has(> :not([data-deck-layer]))) { pointer-events: none !important; }`
 
 /** Wraps a hidden layer; when the deck sends `to`, answers it and presses that layer. */
 function deckTarget(to: "home" | "contact", Component): ComponentType {
