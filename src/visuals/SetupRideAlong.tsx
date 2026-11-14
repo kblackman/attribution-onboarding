@@ -88,7 +88,8 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
   const fit = Math.min((96 - ZOOM_LEFT) / (BOUNDS.w * UNIT), (FRAME_H - 14) / (BOUNDS.h * UNIT))
   const scale = zoomed ? fit : TIMING.follow
   const cx = zoomed ? BOUNDS.cx - ZOOM_LEFT / 2 / (UNIT * fit) : focus.x
-  const cy = zoomed ? BOUNDS.cy + 40 : focus.y
+  const zoomCy = BOUNDS.cy + 40
+  const cy = zoomed ? zoomCy : focus.y
   const cam = { x: `${-cx * UNIT * scale}cqw`, y: `${-cy * UNIT * scale}cqw`, scale }
   const camTr = reduced ? { duration: 0 } : { duration: TIMING.camera, ease: EASE_DECK }
 
@@ -192,8 +193,11 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
         <motion.div
           className="pointer-events-none absolute left-0 right-0 top-0 z-[5] h-0"
           initial={false}
-          animate={{ y: `${FRAME_H / 2 + (LANE_Y - cy) * UNIT * scale}cqw`, opacity: zoomed ? 1 : 0 }}
-          transition={reduced ? { duration: 0.3 } : { duration: 0.6, delay: zoomed ? 0.6 : 0 }}
+          // fixed at its zoomed-out spot, so it only fades (it used to ride along with the zoom, Kyle: awkward)
+          style={{ y: `${FRAME_H / 2 + (LANE_Y - zoomCy) * UNIT * fit}cqw` }}
+          animate={{ opacity: zoomed ? 1 : 0 }}
+          // in once the zoom has settled; out at once when the camera moves back in
+          transition={reduced ? { duration: 0.3 } : { duration: 0.6, delay: zoomed ? TIMING.camera : 0 }}
         >
           <span className={`${LANE_LABEL} bottom-[0.9cqw]`}>Outside Attribution</span>
         </motion.div>
@@ -202,7 +206,8 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
           className="absolute bottom-[1.6cqw] left-1/2 z-10 -translate-x-1/2"
           initial={false}
           animate={{ opacity: zoomed ? 1 : 0 }}
-          transition={reduced ? { duration: 0.3 } : { duration: 0.6, delay: zoomed ? 0.6 : 0 }}
+          // in once the zoom has settled; out at once when the camera moves back in
+          transition={reduced ? { duration: 0.3 } : { duration: 0.6, delay: zoomed ? TIMING.camera : 0 }}
         >
           <Legend />
         </motion.div>
