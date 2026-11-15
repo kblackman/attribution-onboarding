@@ -230,6 +230,7 @@ The piece is card and animation heavy, so it must not accumulate DOM or running 
 - 2026-11-14: More room between the New customer tag and its dot (gap 1.2cqw, was 0.5), per Kyle; the callout chip moved up to stay level with the tag.
 - 2026-11-14: The zoom-out's "Outside Attribution" label no longer rides along with the zoom (Kyle: awkward). It's fixed at its zoomed-out spot and only fades, starting once the camera settles (1.1s); the legend now waits for the zoom too. Measured: no movement, opacity 0 until 1.0s, 1 by 1.8s.
 - 2026-11-14: Session grid participants are pixelated webcam stills instead of vector avatars, per Kyle (blur reads as out of focus; emoji over faces, which Kyle uses elsewhere, would be noisy here). Five images generated with Figma AI (gpt-image-2.5-flare, Kyle's Freshpaint Work team, file "Attribution case study: webcam stand-ins", 2ZerIYUQmr3FvC8wpfkgXh): four customers, one per session, and one stand-in for Kyle repeated in every tile. Generated people, no real faces. Saved small (400px JPGs) in `public/assets/pattern/`; `Pixelated` in `SessionGrid.tsx` draws each as a mosaic in code, `PIXEL_CELLS` (10 blocks across) sets how coarse.
+- 2026-11-15: The zoom-out's "Outside Attribution" label is gone, per Kyle (it took too much room on the left), and the zoomed-out map is centered again (`ZOOM_LEFT` removed). The band, the counter and the callouts carry the lane. Kyle may drop the two lanes altogether.
 
 ## Beats
 | # | Slug | Steps | Visual | Status |

@@ -41,12 +41,10 @@ const FRAME_H = 62.5 // the 16:10 frame is 100cqw by 62.5cqw
   every page outside Attribution already sits on the row above (y -330), so a soft band shades everything above
   LANE_Y, with a dashed edge. Each time the marker climbs into it, "Times you left Attribution" ticks up.
   Manage conversions (below the row) is a drawer on the Attribution page, so it stays unshaded.
-  One quiet label, "Outside Attribution", appears only on the zoomed-out map (the pinned pills read as noisy, Kyle).
+  No label (Kyle, 2026-11-15: it took too much room on the left); the band, the counter and the callouts carry it.
 */
 const LANE_Y = -168 // map units: between the outside pages (bottom edge -255) and the Attribution row (top edge -81)
 // small dark pills, so they stay readable when a node passes under them
-// quiet on purpose (Kyle, 2026-11-14: the pills were noisy): plain small caps, no pill, one label only
-const LANE_LABEL = 'absolute left-[2cqw] whitespace-nowrap text-[clamp(9px,0.95cqw,14px)] font-semibold uppercase tracking-[0.16em] text-fg-soft'
 
 export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, onComplete, sub, requestNext }: VisualProps) {
   const autoplay = useAutoplay()
@@ -83,11 +81,10 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
 
   // camera: follow the marker, or fit the whole map
   const focus = nodeById(PATH[at].focus)
-  // zoomed out, the map leaves room on the left for the lane label (ZOOM_LEFT cqw)
-  const ZOOM_LEFT = 12
-  const fit = Math.min((96 - ZOOM_LEFT) / (BOUNDS.w * UNIT), (FRAME_H - 14) / (BOUNDS.h * UNIT))
+  // zoomed out, the whole map, centered (the lane label that needed room on the left is gone, Kyle 2026-11-15)
+  const fit = Math.min(94 / (BOUNDS.w * UNIT), (FRAME_H - 14) / (BOUNDS.h * UNIT))
   const scale = zoomed ? fit : TIMING.follow
-  const cx = zoomed ? BOUNDS.cx - ZOOM_LEFT / 2 / (UNIT * fit) : focus.x
+  const cx = zoomed ? BOUNDS.cx : focus.x
   const zoomCy = BOUNDS.cy + 40
   const cy = zoomed ? zoomCy : focus.y
   const cam = { x: `${-cx * UNIT * scale}cqw`, y: `${-cy * UNIT * scale}cqw`, scale }
@@ -188,19 +185,6 @@ export function SetupRideAlong({ active, startFinished, reducedMotion: reduced, 
         </motion.div>
 
 
-        {/* the lane's one label, only on the zoomed-out map (fading in with the legend): during the ride the band and
-            the counter say it; "In Attribution" is the default, so it goes unlabeled */}
-        <motion.div
-          className="pointer-events-none absolute left-0 right-0 top-0 z-[5] h-0"
-          initial={false}
-          // fixed at its zoomed-out spot, so it only fades (it used to ride along with the zoom, Kyle: awkward)
-          style={{ y: `${FRAME_H / 2 + (LANE_Y - zoomCy) * UNIT * fit}cqw` }}
-          animate={{ opacity: zoomed ? 1 : 0 }}
-          // in once the zoom has settled; out at once when the camera moves back in
-          transition={reduced ? { duration: 0.3 } : { duration: 0.6, delay: zoomed ? TIMING.camera : 0 }}
-        >
-          <span className={`${LANE_LABEL} bottom-[0.9cqw]`}>Outside Attribution</span>
-        </motion.div>
 
         <motion.div
           className="absolute bottom-[1.6cqw] left-1/2 z-10 -translate-x-1/2"
